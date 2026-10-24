@@ -48,6 +48,9 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+          # GitHub reports the license as AGPL-3.0; the project is AGPL-3.0-only.
+          labels: |
+            org.opencontainers.image.licenses=AGPL-3.0-only
       - id: build
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
