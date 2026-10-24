@@ -1,0 +1,35 @@
+{{define "title"}}Devices{{end}}
+{{define "content"}}{{with .Page}}
+<h1>Devices</h1>
+{{- if .Devices}}
+<div class="table-wrap stack"><table>
+<thead><tr><th>Label</th><th>Model</th><th>Paired</th><th>Last seen</th><th>Revoked</th><th></th></tr></thead>
+<tbody>
+{{- range .Devices}}
+<tr><td data-label="Label">{{.Label}}</td><td data-label="Model">{{with .Model}}{{.}}{{end}}</td><td data-label="Paired">{{.Paired}}</td><td data-label="Last seen">{{.LastSeen}}</td><td data-label="Revoked">{{with .Revoked}}revoked {{.}}{{else}}no{{end}}</td>
+<td>{{if .Active}}<form method="post" action="/devices/{{.ID}}/revoke"><button type="submit">Revoke</button></form>{{end}}</td></tr>
+{{- end}}
+</tbody>
+</table></div>
+{{- else}}
+<p class="empty">No watch paired.</p>
+{{- end}}
+<h2>Pair a watch</h2>
+<p class="meta">Open the coachd app on the watch and enter the 6-digit code it shows. Codes expire after 10 minutes.</p>
+{{- if .Pending}}
+<p>Waiting for confirmation (read the code on the watch):</p>
+<ul>
+{{- range .Pending}}
+<li>{{with .Model}}{{.}}{{else}}unknown model{{end}} <span class="meta">{{.Started}}</span></li>
+{{- end}}
+</ul>
+{{- end}}
+{{- with .Error}}
+<p class="alert">{{.}}</p>
+{{- end}}
+<form method="post" action="/devices/pair">
+<p><label>Code <input name="code" value="{{.DraftCode}}" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required></label></p>
+<p><label>Label <input name="label" value="{{.DraftLabel}}" maxlength="{{.MaxRunes}}" placeholder="watch (date)"></label></p>
+<button type="submit" class="primary">Pair</button>
+</form>
+{{end}}{{end}}

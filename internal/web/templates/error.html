@@ -1,0 +1,9 @@
+{{define "title"}}{{.Page.Title}}{{end}}
+{{define "content"}}{{with .Page}}
+<h1>{{.Title}}</h1>
+<p>{{.Message}}</p>
+{{- if .Login}}
+<p><a class="button" href="/login">Sign in</a></p>
+{{- end}}
+<p><a href="/">Back to the home page</a></p>
+{{end}}{{end}}

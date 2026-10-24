@@ -1,0 +1,77 @@
+# Grafana Cloud override. Enable with:
+#   docker compose -f compose.yaml -f compose.cloud.yaml up -d
+# Adds: trace export + profiles via Alloy (cloud-on.alloy), the three token
+# secrets, and the PDC agent. Requires secrets/grafana_cloud_otlp_token,
+# secrets/grafana_cloud_pyroscope_token (owner 473:473, 0400) and
+# secrets/grafana_cloud_pdc_token (owner 30000:30000, 0400), plus the
+# GRAFANA_CLOUD_* and GRAFANA_PDC_* variables in .env.
+
+services:
+  alloy:
+    # Grafana Cloud export needs outbound access (base alloy is internal-only).
+    # Own egress network: not shared with coachd, tailscale or pdc-agent.
+    networks: [internal, alloy-egress]
+    environment:
+      GRAFANA_CLOUD_OTLP_ENDPOINT: ${GRAFANA_CLOUD_OTLP_ENDPOINT:?set in .env}
+      GRAFANA_CLOUD_OTLP_USER: ${GRAFANA_CLOUD_OTLP_USER:?set in .env}
+      GRAFANA_CLOUD_PYROSCOPE_URL: ${GRAFANA_CLOUD_PYROSCOPE_URL:?set in .env}
+      GRAFANA_CLOUD_PYROSCOPE_USER: ${GRAFANA_CLOUD_PYROSCOPE_USER:?set in .env}
+    secrets:
+      - grafana_cloud_otlp_token
+      - grafana_cloud_pyroscope_token
+    volumes:
+      # Same target as the base file: this entry replaces cloud-off.alloy.
+      - ./alloy/cloud-on.alloy:/etc/alloy/cloud.alloy:ro
+
+  # VM and VL also join the dedicated pdc network so the agent can reach them.
+  victoriametrics:
+    networks: [internal, pdc]
+
+  victorialogs:
+    networks: [internal, pdc]
+
+  pdc-agent:
+    restart: unless-stopped
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    image: grafana/pdc-agent:0.0.67@sha256:e17e65368ca5d8267e8996030869c5cf1b6929e0344e08e90eef6e1179172601
+    # The agent only accepts the token as a -token flag. Read it from the secret
+    # file inside the container, so it is not in compose.yaml or `docker inspect`.
+    entrypoint:
+      - sh
+      - -c
+      - exec /usr/bin/pdc -token "$$(cat /run/secrets/grafana_cloud_pdc_token)" -cluster "$$GRAFANA_PDC_CLUSTER" -gcloud-hosted-grafana-id "$$GRAFANA_PDC_HOSTED_GRAFANA_ID" -ssh-key-file /ssh/grafana_pdc
+    environment:
+      GRAFANA_PDC_CLUSTER: ${GRAFANA_PDC_CLUSTER:?set in .env}
+      GRAFANA_PDC_HOSTED_GRAFANA_ID: ${GRAFANA_PDC_HOSTED_GRAFANA_ID:?set in .env}
+    secrets:
+      - grafana_cloud_pdc_token
+    tmpfs:
+      - /ssh:size=1m,mode=0700,uid=30000,gid=30000
+      - /tmp:size=8m,mode=1777
+    mem_limit: 64m
+    # Same rotation as x-hardened in compose.yaml (anchors do not cross files).
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on: [victoriametrics, victorialogs]
+    # pdc reaches only VM and VL; pdc-egress (Grafana Cloud) is the agent's
+    # alone, so it cannot reach coachd, alloy or tailscale on any network.
+    networks: [pdc, pdc-egress]
+
+networks:
+  pdc:
+    internal: true
+  alloy-egress: {}
+  pdc-egress: {}
+
+secrets:
+  grafana_cloud_otlp_token:
+    file: ./secrets/grafana_cloud_otlp_token
+  grafana_cloud_pyroscope_token:
+    file: ./secrets/grafana_cloud_pyroscope_token
+  grafana_cloud_pdc_token:
+    file: ./secrets/grafana_cloud_pdc_token

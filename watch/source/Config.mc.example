@@ -1,0 +1,8 @@
+// Template for Config.mc. build.sh writes Config.mc (git-ignored) from this
+// file, replacing the URL with COACHD_PUBLIC_URL. Do not edit Config.mc.
+import Toybox.Lang;
+
+module Config {
+    // coachd's public base URL: https, no trailing slash.
+    const SERVER_URL as String = "https://coachd.example.com";
+}

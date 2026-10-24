@@ -1,0 +1,11 @@
+/coachd
+/data/
+*.db*
+**/secrets/*
+!**/secrets/.gitkeep
+.secrets/
+.env
+/.superpowers/
+watch/bin/
+watch/source/Config.mc
+deploy/restic.env

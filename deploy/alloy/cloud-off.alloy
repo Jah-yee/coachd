@@ -1,0 +1,7 @@
+// Grafana Cloud disabled: traces are dropped locally, nothing leaves the host.
+// An output block with no consumers discards the batch (otelcol.exporter.debug
+// is experimental in the pinned Alloy). No profiles pipeline.
+
+otelcol.processor.batch "cloud_traces" {
+	output { }
+}

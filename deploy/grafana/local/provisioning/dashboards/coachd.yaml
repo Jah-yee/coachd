@@ -1,0 +1,12 @@
+# Dashboards for the local Grafana (compose.local.yaml): the repo's dashboards,
+# read-only in the UI (edit the JSON in git instead).
+apiVersion: 1
+providers:
+  - name: coachd
+    orgId: 1
+    folder: coachd
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    options:
+      path: /etc/coachd-grafana/dashboards

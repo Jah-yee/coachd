@@ -1,0 +1,17 @@
+name: Feature idea
+description: Suggest something coachd should do.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: coachd is a gateway, not a coach. Coaching logic, verdicts and blocking rules are out of scope (see CONTRIBUTING.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem, in a real moment you hit it
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you'd like coachd to do

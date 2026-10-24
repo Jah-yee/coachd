@@ -1,0 +1,22 @@
+# ntfy contact point and notification policy for the local Grafana
+# (compose.local.yaml). entrypoint.sh fills in the URL from
+# secrets/grafana_alert_url and provisions this only when that file is set.
+# Mirrors ../alerts/notifications.example.yaml.
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: ntfy
+    receivers:
+      - uid: coachd-ntfy
+        type: webhook
+        settings:
+          url: '__COACHD_ALERT_URL__'
+          httpMethod: POST
+policies:
+  - orgId: 1
+    receiver: ntfy
+    group_by: [alertname]
+    routes:
+      - receiver: ntfy
+        object_matchers:
+          - [service, "=", coachd]

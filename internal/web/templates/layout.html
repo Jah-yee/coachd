@@ -1,0 +1,36 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{template "title" .}} · coachd</title>
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<header class="top">
+<a class="brand" href="/">coachd</a>
+<nav aria-label="Pages"><a href="/notes">Notes</a> <a href="/devices">Devices</a> <a href="/passkeys">Passkeys</a> <a href="/audit">Audit</a></nav>
+<div class="account">
+{{- if .SignedIn}}
+<span class="state">Signed in</span>
+<form method="post" action="/logout"><button type="submit">Sign out</button></form>
+{{- else}}
+<span class="state">Signed out</span>
+<a class="button" href="/login">Sign in</a>
+{{- end}}
+</div>
+</header>
+<main>
+<p id="alert" class="alert" role="alert" hidden></p>
+{{template "content" .}}
+</main>
+</body>
+</html>
+{{end}}
+
+{{/* agent shows agent-written text: escaped by html/template, never
+     template.HTML, and visibly labelled. */}}
+{{define "agent"}}<span class="agent"><span class="agent-label">written by the agent</span> <span class="agent-text">{{.}}</span></span>{{end}}
+
+{{define "no-passkey"}}<p class="banner">No passkey enrolled. On the host, run: <code>docker compose exec coachd /coachd enroll</code></p>{{end}}

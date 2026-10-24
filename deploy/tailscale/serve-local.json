@@ -1,0 +1,13 @@
+{
+  "TCP": {
+    "443": { "HTTPS": true }
+  },
+  "Web": {
+    "${TS_CERT_DOMAIN}:443": {
+      "Handlers": {
+        "/": { "Proxy": "http://coachd:8081" },
+        "/grafana/": { "Proxy": "http://grafana:3000/grafana/" }
+      }
+    }
+  }
+}

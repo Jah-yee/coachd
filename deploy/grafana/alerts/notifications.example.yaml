@@ -1,0 +1,25 @@
+# Example notification setup for coachd alerts (not provisioned automatically).
+# Replace the ntfy placeholders; see README.md.
+apiVersion: 1
+contactPoints:
+  # Example only. Replace the URL placeholder with your ntfy topic URL. Keep the
+  # real topic (and any token) out of git: it is a bearer secret for the topic.
+  - orgId: 1
+    name: ntfy
+    receivers:
+      - uid: coachd-ntfy
+        type: webhook
+        settings:
+          url: https://REPLACE_WITH_NTFY_HOST/REPLACE_WITH_NTFY_TOPIC
+          httpMethod: POST
+          # ntfy accepts a Bearer token via Authorization if the topic is protected:
+          # authorization_scheme: Bearer
+          # authorization_credentials: set in the Grafana UI, never here
+policies:
+  - orgId: 1
+    receiver: ntfy
+    group_by: [alertname]
+    routes:
+      - receiver: ntfy
+        object_matchers:
+          - [service, "=", coachd]

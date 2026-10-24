@@ -1,0 +1,18 @@
+{{define "title"}}Passkeys{{end}}
+{{define "content"}}{{with .Page}}
+<h1>Passkeys</h1>
+{{- if .Keys}}
+<div class="table-wrap stack"><table>
+<thead><tr><th>Label</th><th>Created</th><th>Last used</th><th>Revoked</th><th></th></tr></thead>
+<tbody>
+{{- range .Keys}}
+<tr><td data-label="Label">{{.Label}}{{if .Current}} <span class="meta">(this session)</span>{{end}}</td><td data-label="Created">{{.Created}}</td><td data-label="Last used">{{.LastUsed}}</td><td data-label="Revoked">{{with .Revoked}}{{.}}{{else}}no{{end}}</td>
+<td>{{if .Active}}<form method="post" action="/passkeys/{{.ID}}/revoke"><button type="submit">Revoke</button></form>{{end}}</td></tr>
+{{- end}}
+</tbody>
+</table></div>
+<p class="meta">Revoking the passkey you are signed in with signs you out.</p>
+{{- else}}
+<p class="empty">No passkey enrolled.</p>
+{{- end}}
+{{end}}{{end}}

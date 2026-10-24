@@ -1,0 +1,13 @@
+{{define "title"}}Sign in{{end}}
+{{define "content"}}
+<h1>Sign in</h1>
+{{- if .Page.NoPasskey}}
+{{template "no-passkey"}}
+{{- else}}
+{{- if .SignedIn}}
+<p>You are signed in. Signing in again starts a new session.</p>
+{{- end}}
+<p>Sign in with your passkey: Face ID, fingerprint or the device PIN.</p>
+<p><button type="button" class="primary" data-action="login" data-next="{{.Page.Next}}">Sign in with passkey</button></p>
+{{- end}}
+{{end}}

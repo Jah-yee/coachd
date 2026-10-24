@@ -1,0 +1,103 @@
+{{define "title"}}Workout{{end}}
+{{define "content"}}{{with .Page}}
+{{- with .Error}}
+<p class="alert">{{.}}</p>
+{{- end}}
+<h1>{{template "agent" .Name}}</h1>
+<p class="meta">{{.Day}} · {{.Sport}} · status: <strong>{{.Status}}</strong></p>
+{{- with .DeliveryNote}}
+<p class="meta">{{.}}</p>
+{{- end}}
+<div class="compare{{if .Replaces}} two{{end}}">
+<section>
+<h2>Workout</h2>
+{{template "lines" .Lines}}
+{{- with .Notes}}
+<p>Notes: {{template "agent" .}}</p>
+{{- end}}
+</section>
+{{- with .Replaces}}
+<section>
+<h2>Replaces</h2>
+<p><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">status: <strong>{{.Status}}</strong></span></p>
+{{template "lines" .Lines}}
+{{- if .WatchHint}}
+<p class="banner">If you copied it to the watch, delete it there too. The watch app removes its own copy on the next sync.</p>
+{{- end}}
+</section>
+{{- end}}
+</div>
+<section>
+<h2>What the agent said it is for</h2>
+<p>{{template "agent" .Rationale}}</p>
+</section>
+{{- if .Warnings}}
+<section>
+<h2>Warnings</h2>
+<ul class="list">
+{{- range .Warnings}}
+<li>{{.}}</li>
+{{- end}}
+</ul>
+</section>
+{{- end}}
+{{- with .ReplacedBy}}
+<section>
+<h2>Replaced by</h2>
+<ul class="list">
+{{- range .}}
+<li><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">{{.Status}}</span></li>
+{{- end}}
+</ul>
+</section>
+{{- end}}
+{{- with .SameDay}}
+<section>
+<h2>Also planned that day</h2>
+<ul class="list">
+{{- range .}}
+<li><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">{{.Status}}</span></li>
+{{- end}}
+</ul>
+</section>
+{{- end}}
+<section class="actions">
+{{- if .DatePassed}}
+<p class="alert">this workout's date has passed</p>
+{{- end}}
+{{- with .Integrity}}
+<p class="alert">{{.}}</p>
+{{- end}}
+{{- if .NoPasskey}}
+{{template "no-passkey"}}
+{{- end}}
+{{- with .Approve}}
+<button type="button" class="primary" data-action="approve" data-url="{{.URL}}" data-ceremony="{{.Ceremony}}" data-options="{{.Options}}">Approve with passkey</button>
+{{- end}}
+{{- if .Decline}}
+<form method="post" action="/p/{{.ID}}/decline"><button type="submit">Decline</button></form>
+{{- end}}
+{{- if .Deliver}}
+<form method="post" action="/p/{{.ID}}/fit"><button type="submit" class="primary">Download FIT</button></form>
+{{- end}}
+{{- if .Withdraw}}
+<form method="post" action="/p/{{.ID}}/withdraw"><button type="submit">Withdraw</button></form>
+{{- end}}
+{{- with .SignIn}}
+<p><a href="/login">{{.}}</a></p>
+{{- end}}
+{{- if .WatchHint}}
+<p class="banner">If you copied it to the watch, delete it there too. The watch app removes its own copy on the next sync.</p>
+{{- end}}
+</section>
+{{end}}{{end}}
+
+{{/* lines shows Describe's lines: agent-written cues and notes, so the
+     whole list is one labelled block. */}}
+{{define "lines"}}<div class="agent agent-block"><span class="agent-label">written by the agent</span>
+<ol class="steps">
+{{- range .}}
+<li class="indent-{{.Indent}}">{{.Text}}</li>
+{{- end}}
+</ol>
+</div>{{end}}

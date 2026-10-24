@@ -1,0 +1,19 @@
+# Data sources for the local Grafana (compose.local.yaml). The alert rules use
+# the fixed UID coachd-vm; the dashboard picks both through its ds_* variables.
+apiVersion: 1
+datasources:
+  - name: VictoriaMetrics
+    uid: coachd-vm
+    type: prometheus
+    access: proxy
+    url: http://victoriametrics:8428
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: 60s
+  - name: VictoriaLogs
+    uid: coachd-vl
+    type: victoriametrics-logs-datasource
+    access: proxy
+    url: http://victorialogs:9428
+    editable: false

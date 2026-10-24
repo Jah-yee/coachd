@@ -1,0 +1,52 @@
+{{define "title"}}Home{{end}}
+{{define "content"}}{{with .Page}}
+{{if .NoPasskey}}{{template "no-passkey"}}{{end}}
+<section>
+<h1>Waiting for review</h1>
+{{- if .Pending}}
+<ul class="list">
+{{- range .Pending}}
+<li><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">{{plural .Warnings "warning"}}</span></li>
+{{- end}}
+</ul>
+{{- else}}
+<p class="empty">No workout is waiting for review.</p>
+{{- end}}
+</section>
+<section>
+<h2>Approved, next 14 days</h2>
+{{- if .Upcoming}}
+<ul class="list">
+{{- range .Upcoming}}
+<li><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">{{.Status}}</span></li>
+{{- end}}
+</ul>
+{{- else}}
+<p class="empty">No approved workout in the next 14 days.</p>
+{{- end}}
+</section>
+<section>
+<h2>Goal</h2>
+{{- with .Goal}}
+<div class="card">
+<p>{{template "agent" .Name}}</p>
+<p class="meta">{{.Day}} · {{.Sport}}{{with .Distance}} · {{.}}{{end}}{{with .Elevation}} · {{.}}{{end}}</p>
+{{- with .Target}}
+<p>Target: {{template "agent" .}}</p>
+{{- end}}
+{{- with .Notes}}
+<p>Notes: {{template "agent" .}}</p>
+{{- end}}
+<p class="meta">Read only: the agent sets the goal.</p>
+</div>
+{{- else}}
+<p class="empty">No active goal.</p>
+{{- end}}
+</section>
+{{- if .Apps}}
+<section>
+<h2>Connected apps</h2>
+<p><a href="/apps">See and revoke the apps connected to coachd</a></p>
+</section>
+{{- end}}
+{{end}}{{end}}

@@ -1,0 +1,20 @@
+{{define "title"}}Connected apps{{end}}
+{{define "content"}}{{with .Page}}
+<h1>Connected apps</h1>
+{{- if .Apps}}
+<div class="table-wrap stack"><table>
+<thead><tr><th>Web address</th><th>Name</th><th>Returns to</th><th>Access</th><th>Connected</th><th>Last used</th><th></th></tr></thead>
+<tbody>
+{{- range .Apps}}
+<tr>{{if .Web}}<td class="web" data-label="Web address"><strong>{{.Web}}</strong></td>{{else}}<td class="web" data-label="Web address">registered directly with coachd</td>{{end}}
+<td data-label="Name">{{.Name}} <span class="hint">(name given by the app)</span></td><td data-label="Returns to">{{.RedirectHosts}}</td><td data-label="Access">{{.Scopes}}</td>
+<td data-label="Connected">{{.Created}}</td><td data-label="Last used">{{.LastUsed}}</td>
+<td><form method="post" action="/apps/{{.ID}}/revoke"><button type="submit">Revoke</button></form></td></tr>
+{{- end}}
+</tbody>
+</table></div>
+<p class="meta">Revoking ends the app's access at once. To use the app again, connect it again from the app.</p>
+{{- else}}
+<p class="empty">No app is connected.</p>
+{{- end}}
+{{end}}{{end}}

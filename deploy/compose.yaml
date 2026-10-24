@@ -1,0 +1,175 @@
+# coachd deployment stack. Run from this directory: `docker compose up -d`.
+# Public lane: a HOST cloudflared (dashboard-managed tunnel) forwards to
+# http://localhost:8080, which is coachd's public listener published on
+# loopback only. Nothing else is published. Private lane: tailscale container.
+# Grafana Cloud is OFF by default; enable it by adding compose.cloud.yaml (see README).
+
+name: coachd
+
+x-hardened: &hardened
+  restart: unless-stopped
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  read_only: true
+  # Rotated container logs (30 MB per service at most).
+  logging:
+    driver: local
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  coachd:
+    <<: *hardened
+    build:
+      context: ..
+      args:
+        VERSION: ${COACHD_VERSION:-dev}
+    # A release image (see deploy/README.md) or the local build.
+    image: ${COACHD_IMAGE:-coachd:local}
+    # Only the public listener, only on loopback, for the host cloudflared.
+    # :8081 (private) and :9090 (ops, unauthenticated pprof) are never published.
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      COACHD_TIMEZONE: ${COACHD_TIMEZONE:?set COACHD_TIMEZONE in .env}
+      COACHD_GARMIN_KEY_EXPIRES: ${COACHD_GARMIN_KEY_EXPIRES:?set COACHD_GARMIN_KEY_EXPIRES in .env}
+      COACHD_GARMIN_API_KEY_FILE: /run/secrets/garmin_api_key
+      COACHD_PUBLIC_AUTH: ${COACHD_PUBLIC_AUTH:-}
+      COACHD_OAUTH_DCR: ${COACHD_OAUTH_DCR:-}
+      COACHD_ACCESS_TEAM_DOMAIN: ${COACHD_ACCESS_TEAM_DOMAIN:-}
+      COACHD_ACCESS_AUD: ${COACHD_ACCESS_AUD:-}
+      COACHD_ACCESS_ALLOWED_EMAIL: ${COACHD_ACCESS_ALLOWED_EMAIL:-}
+      COACHD_PUBLIC_URL: ${COACHD_PUBLIC_URL:-}
+      COACHD_NTFY_URL: ${COACHD_NTFY_URL:-}
+      COACHD_DEVICE_API: ${COACHD_DEVICE_API:-}
+      COACHD_NTFY_TOKEN_FILE: /run/secrets/ntfy_token
+      # Optional tuning; empty means the built-in default (see .env.example).
+      COACHD_POLL_INTERVAL: ${COACHD_POLL_INTERVAL:-}
+      COACHD_BACKFILL_DAYS: ${COACHD_BACKFILL_DAYS:-}
+      COACHD_BACKFILL_DELAY: ${COACHD_BACKFILL_DELAY:-}
+      COACHD_SYNC_MIN_INTERVAL: ${COACHD_SYNC_MIN_INTERVAL:-}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://alloy:4318
+      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+      # Soft heap limit below mem_limit (128m): the GC works harder before an OOM kill.
+      GOMEMLIMIT: 100MiB
+    secrets:
+      - garmin_api_key
+      - ntfy_token
+    volumes:
+      - coachd-data:/data
+    # SQLite temp files. Documented exception to "/data is the only writable path".
+    tmpfs:
+      - /tmp:size=16m,mode=1777,noexec,nosuid
+    healthcheck:
+      test: ["CMD", "/coachd", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    mem_limit: 128m
+    # 10 s HTTP shutdown + ingest wait + 5 s telemetry flush.
+    stop_grace_period: 25s
+    # Own egress network (Garmin API; also carries the loopback publish).
+    networks: [internal, coachd-egress]
+
+  tailscale:
+    <<: *hardened
+    image: tailscale/tailscale:v1.104.2@sha256:b11583ad2e93e4671128538c88cf11f460444a5d7e449311dd1933a400ab849d
+    hostname: raspberrypi-coachd
+    environment:
+      TS_USERSPACE: "true"
+      TS_HOSTNAME: raspberrypi-coachd
+      # containerboot hands this to `tailscale up`, which reads the key from the file.
+      TS_AUTHKEY: file:/run/secrets/tailscale_authkey
+      # Only use the key on first join; later restarts use the tailscale-state volume.
+      TS_AUTH_ONCE: "true"
+      # Tag only: no subnet routes, no exit node.
+      TS_EXTRA_ARGS: --advertise-tags=tag:coachd
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_SERVE_CONFIG: /config/serve.json
+    # No capabilities added (DAC_READ_SEARCH would enable open_by_handle_at
+    # host-file reads). The key file must be owned 0:0, mode 0400 (see README).
+    secrets:
+      - tailscale_authkey
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - ./tailscale:/config:ro
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+      - /var/run:size=1m
+    mem_limit: 96m
+    depends_on: [coachd]
+    networks: [internal, ts-egress]
+
+  alloy:
+    <<: *hardened
+    image: grafana/alloy:v1.21.2@sha256:89a5a320168387336b9ac3c850609c3ba7757eadd4ae5f1d819deb35e9854b18
+    # The image default user is root; compose sets the image's "alloy" user (473), which owns /var/lib/alloy/data so the new volume inherits it.
+    user: "473:473"
+    command:
+      - run
+      - /etc/alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --disable-reporting
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      # Replaced by cloud-on.alloy in compose.cloud.yaml (same target path).
+      - ./alloy/cloud-off.alloy:/etc/alloy/cloud.alloy:ro
+      - alloy-data:/var/lib/alloy/data
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    mem_limit: 256m
+    depends_on: [victoriametrics, victorialogs]
+    networks: [internal]
+
+  victoriametrics:
+    <<: *hardened
+    image: victoriametrics/victoria-metrics:v1.154.1@sha256:c7884f32920dd45a9d86542a717227e63af03e060e53bbf8031e6e6fd0e1e05d
+    command:
+      - -retentionPeriod=30d
+      - -storageDataPath=/storage
+      - -httpListenAddr=:8428
+    volumes:
+      - vm-data:/storage
+    mem_limit: 192m
+    networks: [internal]
+
+  victorialogs:
+    <<: *hardened
+    image: victoriametrics/victoria-logs:v1.53.0@sha256:251121fa882af99b95ba0c230a4a2f412ea602d2698c64a96c58dc9842bb755d
+    command:
+      - -retentionPeriod=30d
+      - -storageDataPath=/storage
+      - -httpListenAddr=:9428
+      - -retention.maxDiskSpaceUsageBytes=5GiB
+    volumes:
+      - vl-data:/storage
+    mem_limit: 192m
+    networks: [internal]
+
+# Every service that needs the internet has its own egress network, so no two
+# services share one: egress networks are not a path between containers.
+# Service-to-service traffic uses only the internal networks.
+networks:
+  internal:
+    internal: true
+  coachd-egress: {}
+  ts-egress: {}
+
+volumes:
+  coachd-data:
+  tailscale-state:
+  alloy-data:
+  vm-data:
+  vl-data:
+
+secrets:
+  garmin_api_key:
+    file: ./secrets/garmin_api_key
+  tailscale_authkey:
+    file: ./secrets/tailscale_authkey
+  # Must exist; may be empty (no token, or ntfy unused).
+  ntfy_token:
+    file: ./secrets/ntfy_token

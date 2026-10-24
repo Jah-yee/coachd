@@ -1,0 +1,14 @@
+.git
+.github
+.superpowers
+.secrets
+secrets
+deploy/secrets
+data
+*.db*
+docs
+.env
+**/.env
+**/*.db*
+**/secrets
+watch/

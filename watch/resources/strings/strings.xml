@@ -1,0 +1,25 @@
+<strings>
+    <string id="AppName">coachd</string>
+
+    <!-- Pairing view -->
+    <string id="PairTitle">Pair with coachd</string>
+    <string id="PairConfirm">Confirm it on coachd's Devices page</string>
+    <string id="PairExpired">Pairing expired — press START to retry</string>
+    <string id="PairTooMany">Too many pairing attempts, try again later</string>
+    <string id="PairFailed">Pairing failed ($1$)</string>
+
+    <!-- Status view; $1$ is filled in by the app -->
+    <string id="Syncing">Syncing…</string>
+    <string id="WorkoutsN">$1$ workouts</string>
+    <string id="WorkoutsOne">1 workout</string>
+    <string id="NoPhone">Connect your phone</string>
+    <string id="Paused">Sync paused, try again in a minute</string>
+    <string id="ConnProblem">Connection problem ($1$), try again</string>
+    <string id="Failed">Sync failed ($1$)</string>
+    <string id="LastSync">Last sync $1$</string>
+
+    <!-- Menu -->
+    <string id="MenuSync">Sync now</string>
+    <string id="MenuWorkouts">Workouts</string>
+    <string id="MenuUnpair">Unpair</string>
+</strings>

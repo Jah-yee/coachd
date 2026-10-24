@@ -1,0 +1,64 @@
+// Grafana Cloud enabled (compose.cloud.yaml). Endpoints and user IDs come from
+// the environment (.env); tokens only from secret files.
+
+otelcol.processor.batch "cloud_traces" {
+	output {
+		traces = [otelcol.exporter.otlphttp.cloud.input]
+	}
+}
+
+local.file "otlp_token" {
+	filename  = "/run/secrets/grafana_cloud_otlp_token"
+	is_secret = true
+}
+
+otelcol.auth.basic "cloud" {
+	username = sys.env("GRAFANA_CLOUD_OTLP_USER")
+	password = local.file.otlp_token.content
+}
+
+otelcol.exporter.otlphttp "cloud" {
+	client {
+		endpoint = sys.env("GRAFANA_CLOUD_OTLP_ENDPOINT")
+		auth     = otelcol.auth.basic.cloud.handler
+	}
+}
+
+local.file "pyroscope_token" {
+	filename  = "/run/secrets/grafana_cloud_pyroscope_token"
+	is_secret = true
+}
+
+pyroscope.write "cloud" {
+	endpoint {
+		url = sys.env("GRAFANA_CLOUD_PYROSCOPE_URL")
+
+		basic_auth {
+			username = sys.env("GRAFANA_CLOUD_PYROSCOPE_USER")
+			password = local.file.pyroscope_token.content
+		}
+	}
+}
+
+pyroscope.scrape "coachd" {
+	targets         = [{"__address__" = "coachd:9090", "service_name" = "coachd"}]
+	forward_to      = [pyroscope.write.cloud.receiver]
+	scrape_interval = "15s"
+
+	profiling_config {
+		profile.process_cpu {
+			enabled = true
+			path    = "/debug/pprof/profile"
+		}
+
+		profile.memory {
+			enabled = true
+			path    = "/debug/pprof/allocs"
+		}
+
+		profile.goroutine {
+			enabled = true
+			path    = "/debug/pprof/goroutine"
+		}
+	}
+}

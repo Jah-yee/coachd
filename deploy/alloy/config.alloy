@@ -1,0 +1,43 @@
+// coachd telemetry pipeline. Always mounted. The cloud part (trace export,
+// profiles) lives in cloud.alloy, which is cloud-off.alloy or cloud-on.alloy.
+
+otelcol.receiver.otlp "default" {
+	http {
+		endpoint = "0.0.0.0:4318"
+	}
+
+	output {
+		metrics = [otelcol.processor.batch.default.input]
+		logs    = [otelcol.processor.batch.default.input]
+		traces  = [otelcol.processor.batch.cloud_traces.input]
+	}
+}
+
+otelcol.processor.batch "default" {
+	output {
+		metrics = [otelcol.exporter.prometheus.victoria.input]
+		logs    = [otelcol.exporter.otlphttp.victorialogs.input]
+	}
+}
+
+// Metrics -> VictoriaMetrics
+otelcol.exporter.prometheus "victoria" {
+	forward_to = [prometheus.remote_write.victoria.receiver]
+}
+
+prometheus.remote_write "victoria" {
+	endpoint {
+		url = "http://victoriametrics:8428/api/v1/write"
+	}
+}
+
+// Logs -> VictoriaLogs (OTLP appends /v1/logs)
+otelcol.exporter.otlphttp "victorialogs" {
+	client {
+		endpoint = "http://victorialogs:9428/insert/opentelemetry"
+
+		tls {
+			insecure = true
+		}
+	}
+}

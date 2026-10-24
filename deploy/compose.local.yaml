@@ -1,0 +1,115 @@
+# Local monitoring override. Enable with:
+#   docker compose -f compose.yaml -f compose.local.yaml up -d
+# (or COMPOSE_FILE=compose.yaml:compose.local.yaml in .env; it also stacks with
+# compose.cloud.yaml). Adds: a hardened self-hosted Grafana with the repo's
+# dashboard, alert rules and data sources provisioned, reached only through the
+# tailscale node at https://<tailscale host>/grafana/ (serve-local.json).
+# Requires secrets/grafana_admin_password and secrets/grafana_alert_url (owner
+# 472:472, 0400; the alert URL file must exist and may be empty), plus
+# GRAFANA_ROOT_URL in .env. No host port is published.
+
+services:
+  grafana:
+    # Grafana OSS 12.4.13 (grafana/grafana is the OSS image; grafana/grafana-oss
+    # stopped receiving 12.x updates after 12.4.3). Multi-arch index digest.
+    image: grafana/grafana:12.4.13@sha256:41bbc1b5e04416f81891806076db2a2ff60a5d4da5f78d36a88b033a8c199185
+    user: "472:472"
+    restart: unless-stopped
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    # Same rotation as x-hardened in compose.yaml (anchors do not cross files).
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Assembles provisioning in /tmp (the alert URL secret goes into the contact
+    # point there, never into env or the compose files), then execs /run.sh.
+    entrypoint: ["/bin/sh", "/opt/coachd/entrypoint.sh"]
+    environment:
+      GF_PATHS_PROVISIONING: /tmp/provisioning
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:?set GRAFANA_ROOT_URL in .env (https://<tailscale host>/grafana/)}
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_SECURITY_COOKIE_SECURE: "true"
+      GF_SECURITY_DISABLE_GRAVATAR: "true"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_SNAPSHOTS_EXTERNAL_ENABLED: "false"
+      # victoriametrics-logs-datasource 0.33.1 (grafana.com, 2026-10-16), pinned.
+      GF_PLUGINS_PREINSTALL_SYNC: victoriametrics-logs-datasource@0.33.1
+      # Grafana 12.4 preinstalls these four apps from grafana.com by default.
+      # preinstall_disabled would also skip PREINSTALL_SYNC, so disable them by ID
+      # (disabled plugins are dropped from both preinstall lists and not loaded).
+      GF_PLUGINS_DISABLE_PLUGINS: grafana-lokiexplore-app,grafana-pyroscope-app,grafana-exploretraces-app,grafana-metricsdrilldown-app
+      # No plugin installs from the UI catalog, and no periodic signing-key
+      # download from grafana.com: the key built into Grafana verifies the pinned
+      # plugin (signature valid, also after a restart).
+      GF_PLUGINS_PLUGIN_ADMIN_ENABLED: "false"
+      GF_PLUGINS_PUBLIC_KEY_RETRIEVAL_DISABLED: "true"
+      GF_LOG_MODE: console
+      # The plugin zip (about 80 MB, every platform's binary) is downloaded to
+      # TMPDIR: keep it on the data volume, not in the 16 MB /tmp tmpfs (which
+      # would also count against mem_limit).
+      TMPDIR: /var/lib/grafana
+    secrets:
+      - grafana_admin_password
+      - grafana_alert_url
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/local/entrypoint.sh:/opt/coachd/entrypoint.sh:ro
+      - ./grafana/local/provisioning:/etc/coachd-grafana/provisioning:ro
+      - ./grafana/local/notifications.yaml.tmpl:/etc/coachd-grafana/notifications.yaml.tmpl:ro
+      - ./grafana/alerts/coachd-alerts.yaml:/etc/coachd-grafana/alerts/coachd-alerts.yaml:ro
+      - ./grafana/dashboards:/etc/coachd-grafana/dashboards:ro
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    healthcheck:
+      # busybox wget is in the image (no curl).
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000/grafana/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # The first start downloads the VictoriaLogs plugin before serving.
+      start_period: 60s
+    mem_limit: 256m
+    depends_on: [victoriametrics, victorialogs]
+    # grafana-data: VM and VL only. grafana-ui: tailscale only. grafana-egress:
+    # Grafana's own (plugin download, ntfy alerts), shared with nobody.
+    networks: [grafana-data, grafana-ui, grafana-egress]
+
+  # VM and VL also join grafana-data so Grafana can query them.
+  victoriametrics:
+    networks: [internal, grafana-data]
+
+  victorialogs:
+    networks: [internal, grafana-data]
+
+  # Tailscale joins grafana-ui (never grafana-data) and serves /grafana/ too.
+  tailscale:
+    environment:
+      TS_SERVE_CONFIG: /config/serve-local.json
+    networks: [internal, ts-egress, grafana-ui]
+
+networks:
+  grafana-data:
+    internal: true
+  grafana-ui:
+    internal: true
+  grafana-egress: {}
+
+volumes:
+  grafana-data:
+
+secrets:
+  grafana_admin_password:
+    file: ./secrets/grafana_admin_password
+  # Must exist; may be empty (alert notifications off).
+  grafana_alert_url:
+    file: ./secrets/grafana_alert_url

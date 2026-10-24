@@ -1,0 +1,43 @@
+{{define "title"}}Notes{{end}}
+{{define "content"}}{{with .Page}}
+<h1>Notes</h1>
+<p class="meta">{{.Count}} of {{.Max}}. The agent reads these. Editing an agent's note makes it yours.</p>
+{{- with .Error}}
+<p class="alert">{{.}}</p>
+{{- end}}
+{{- $cats := .Categories}}
+{{- $max := .MaxRunes}}
+{{- $cur := ""}}
+{{- range .Notes}}
+{{- if ne $cur .Category}}{{$cur = .Category}}
+<h2>{{.Category}}</h2>
+{{- end}}
+<div class="card">
+<p>{{if .ByAgent}}{{template "agent" .Text}}{{else}}{{.Text}}{{end}}</p>
+<p class="meta">by {{.Author}} · {{.Updated}}</p>
+{{- with .Error}}
+<p class="alert">{{.}}</p>
+{{- end}}
+<form method="post" action="/notes/{{.ID}}" class="stack">
+<select name="category" aria-label="Category">
+{{- $c := .FormCategory}}{{range $cats}}<option value="{{.}}"{{if eq (printf "%s" .) $c}} selected{{end}}>{{.}}</option>{{end}}
+</select>
+<textarea name="text" rows="3" maxlength="{{$max}}" aria-label="Text" required>{{.FormText}}</textarea>
+<button type="submit">Save</button>
+</form>
+<form method="post" action="/notes/{{.ID}}/delete"><button type="submit">Delete</button></form>
+</div>
+{{- else}}
+<p class="empty">No notes.</p>
+{{- end}}
+<section>
+<h2>Add a note</h2>
+<form method="post" action="/notes" class="stack">
+<select name="category" aria-label="Category">
+{{- $d := .DraftCategory}}{{range $cats}}<option value="{{.}}"{{if eq (printf "%s" .) $d}} selected{{end}}>{{.}}</option>{{end}}
+</select>
+<textarea name="text" rows="3" maxlength="{{$max}}" aria-label="Text" required>{{.DraftText}}</textarea>
+<button type="submit" class="primary">Add note</button>
+</form>
+</section>
+{{end}}{{end}}

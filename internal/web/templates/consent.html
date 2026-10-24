@@ -1,0 +1,35 @@
+{{define "title"}}Connect an app{{end}}
+{{define "content"}}{{with .Page}}
+<h1>Connect an app</h1>
+{{- if .Host}}
+<p>The app's web address: <strong>{{.HostDomain}}</strong>{{if ne .Host .HostDomain}} ({{.Host}}){{end}}</p>
+{{- else}}
+<p>This app is registered directly with coachd; its identity is not checked.</p>
+{{- end}}
+<p>Its name: <strong>{{.Name}}</strong> <span class="hint">(name given by the app)</span></p>
+<p>When you approve, your browser goes on to <strong>{{.RedirectHost}}</strong>.</p>
+{{- if .LoopbackOnly}}
+<p class="banner warning">Any program on this computer can claim to be this app. Approve only if you just started the connection yourself.</p>
+{{- else if .DomainMismatch}}
+<p class="banner warning">The return address is on a different site than the app's web address.</p>
+{{- end}}
+<form>
+<fieldset>
+<legend>What the app may do</legend>
+{{- if .HasRead}}
+<p>Read: your Garmin data, summaries, goal and notes.</p>
+{{- end}}
+{{- if .HasWrite}}
+<p><label><input type="checkbox" name="write"{{if .WriteDefault}} checked{{end}}> Write: set your goal and notes, and propose workouts. <strong>Workouts still need your passkey to approve.</strong></label></p>
+{{- end}}
+<p class="hint">A read-only grant cannot be widened later; to widen it, revoke and reconnect.</p>
+{{- if .RequireRecognise}}
+<p><label><input type="checkbox" name="recognise"> I recognise {{.RedirectHost}}.</label></p>
+{{- end}}
+</fieldset>
+<p>
+<button type="button" class="primary" data-action="consent-approve" data-request="{{.Request}}">Approve with passkey</button>
+<button type="button" data-action="consent-deny" data-request="{{.Request}}">Deny</button>
+</p>
+</form>
+{{end}}{{end}}

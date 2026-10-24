@@ -1,0 +1,249 @@
+# Grafana-managed alert rules for coachd (file-provisioning format).
+# coachd-vm is the fixed UID of the VictoriaMetrics data source that the local
+# Grafana provisions; use this file as is there. Only on Grafana Cloud with an
+# existing data source under another UID, rewrite a copy first:
+# sed 's/coachd-vm/<uid>/g' (see README.md).
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: coachd
+    folder: coachd
+    interval: 1m
+    rules:
+      - uid: coachd-garminsyncfailing
+        title: GarminSyncFailing
+        condition: C
+        for: 10m
+        noDataState: Alerting
+        execErrState: Error
+        labels:
+          severity: critical
+          service: coachd
+        annotations:
+          summary: "A Garmin data type has not synced successfully for over 3 hours"
+          description: "At least one Garmin data type has had no successful sync for over 3 hours (the query takes the max age across data types; sustained 10 minutes). Check get_status for which type, and the coachd logs for auth_failed or rate limiting."
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: coachd-vm
+            model:
+              refId: A
+              expr: 'max(coachd_garmin_sync_last_success_age_seconds)'
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings: {mode: dropNN}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: {type: gt, params: [10800]}
+      - uid: coachd-garminkeyexpiring
+        title: GarminKeyExpiring
+        condition: C
+        for: 0s
+        noDataState: NoData
+        execErrState: Error
+        labels:
+          severity: warning
+          service: coachd
+        annotations:
+          summary: "Garmin Personal API key expires within 7 days"
+          description: "The Garmin Personal API key has 7 days or fewer left. Rotate the key file and restart coachd."
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: coachd-vm
+            model:
+              refId: A
+              expr: '(coachd_garmin_key_days_left_days or coachd_garmin_key_days_left)'
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings: {mode: dropNN}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              # days left is a whole number: < 8 means <= 7
+              conditions:
+                - evaluator: {type: lt, params: [8]}
+      - uid: coachd-authfailurespike
+        title: AuthFailureSpike
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          severity: warning
+          service: coachd
+        annotations:
+          summary: "More than 20 authentication failures in 10 minutes"
+          description: "Authentication failures on the public or private lane exceeded 20 in 10 minutes. Check the lane and reason breakdown on the dashboard."
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: coachd-vm
+            model:
+              refId: A
+              # lane="device" is excluded: internet scanners hit the open device path.
+              expr: 'sum(increase(coachd_auth_failures_total{lane!="device"}[10m]))'
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings: {mode: dropNN}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: {type: gt, params: [20]}
+      - uid: coachd-datadiskfull
+        title: DataDiskFull
+        condition: C
+        for: 15m
+        noDataState: Alerting
+        execErrState: Error
+        labels:
+          severity: critical
+          service: coachd
+        annotations:
+          summary: "coachd data disk above 85 percent"
+          description: "The /data volume has been more than 85 percent full for 15 minutes. Prune or enlarge the disk."
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: coachd-vm
+            model:
+              refId: A
+              expr: 'coachd_data_disk_used_ratio'
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings: {mode: dropNN}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: {type: gt, params: [0.85]}
+      - uid: coachd-workoutdeliveryfailed
+        title: WorkoutDeliveryFailed
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          severity: warning
+          service: coachd
+        annotations:
+          summary: "Workout delivery failed"
+          description: "A workout was fetched by the watch but never acknowledged within 15 minutes (delivery_failed). Open the watch app and sync again; the next fetch retries the delivery."
+        data:
+          - refId: A
+            relativeTimeRange: {from: 3600, to: 0}
+            datasourceUid: coachd-vm
+            model:
+              refId: A
+              # coachd adds 0 to this series at start, so the first failure is an increase.
+              expr: 'increase(coachd_proposals_deliveries_total{outcome="failed"}[1h])'
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings: {mode: dropNN}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: {type: gt, params: [0]}
+      - uid: coachd-backupstale
+        title: BackupStale
+        condition: C
+        for: 10m
+        noDataState: Alerting
+        execErrState: Error
+        labels:
+          severity: warning
+          service: coachd
+        annotations:
+          summary: "No coachd backup in over 48 hours"
+          description: "The newest backup in /data/backups is older than 48 hours, or none exists. Check the coachd logs for \"backup failed\" and free space on /data, then run: docker compose exec coachd /coachd backup"
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: coachd-vm
+            model:
+              refId: A
+              expr: 'max(coachd_backup_age_seconds)'
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings: {mode: dropNN}
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator: {type: gt, params: [172800]}
