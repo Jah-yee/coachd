@@ -121,7 +121,9 @@ A device token and a pairing in progress belong to the server that issued them. 
     (today `source/Config.mc` is generated and git-ignored).
 - **Signing:** every build, sideload and Store, is signed with `.secrets/ciq-developer.der`. Store
   updates must use the same key, so it must be backed up. The key never leaves the owner's Mac.
-- **App version:** set in the manifest and bumped for every Store upload. **[builder]**
+- **App version:** the manifest has no version attribute (SDK 9.3.0 schema). The version is entered on
+  the developer dashboard at each upload and bumped every time; the upload checklist in `STORE.md`
+  says so. **[builder]**
 - **Upload [call]:** the owner uploads by hand on Garmin's developer dashboard. First
   `coachd-beta.iq` as a **beta** (tick "Beta App"), which only the owner's account can see and
   install, to test the phone-settings chain on the real watch. Only after the owner has approved the
