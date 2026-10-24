@@ -19,6 +19,12 @@ The release workflow publishes the section whose heading matches the pushed tag 
   - Notes fold their edit form away.
   - Sign-in, enrolment, consent and errors are centred cards.
   - Light and dark themes use `light-dark()`, and page changes cross-fade in browsers that support view transitions.
+- **Watch app:**
+  - The coachd URL is a setting in the Connect IQ phone app instead of being compiled in, so one Connect IQ Store app serves every runner. Sideloaded builds use `COACHD_PUBLIC_URL` as its default.
+  - The pairing is bound to that URL: changing it forgets the token and the pairing in progress before the app talks to another server, and the pairing screen shows the host.
+  - Supports fēnix and Forerunner models with app workouts (`watch/devices.sh`).
+  - `build.sh store` and `build.sh store-beta` build the Store packages; sideload, test and beta builds use a separate dev app id ("coachd dev").
+  - An installed watch app pairs again once after updating.
 
 ## [0.1.0] - 2026-10-24
 

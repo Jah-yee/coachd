@@ -48,7 +48,7 @@ There is no chat UI and no built-in LLM. You talk to Claude (or Claude Duet, Cha
   - **Public lane** (claude.ai, ChatGPT, the approval page on your phone): a hostname you control, exposed through a Cloudflare Tunnel or a reverse proxy such as Caddy. coachd authenticates it in one of two modes:
     - **Access mode:** Cloudflare Access does the login and MFA, and its Managed OAuth signs in the AI apps.
     - **Built-in mode** (`COACHD_PUBLIC_AUTH=builtin`): coachd does it itself, with your passkey for the page and its own OAuth 2.1 server for the AI apps. No Cloudflare account needed.
-- **Optional:** a fēnix or other Connect IQ watch for the watch app (sideloaded), and an ntfy topic for phone notifications.
+- **Optional:** a fēnix or Forerunner watch for the watch app (from the Connect IQ Store), and an ntfy topic for phone notifications.
 
 Start with [`deploy/README.md`](deploy/README.md).
 
@@ -130,7 +130,7 @@ OpenTelemetry flows to Grafana Alloy, which routes each signal:
 - **Done:**
   - Garmin ingest and backfill, summaries, MCP tools, both network lanes, telemetry.
   - Goal, notes, workout proposals with warnings, passkey approval, ntfy, FIT download.
-  - Connect IQ watch app with device pairing and delivery confirmation (sideloaded; opt-in with `COACHD_DEVICE_API=on`).
+  - Connect IQ watch app with device pairing and delivery confirmation (Connect IQ Store, your coachd URL set on the phone; opt-in with `COACHD_DEVICE_API=on`).
   - Backups and restore, a local Grafana profile, dashboards and alerts.
   - Built-in auth, so the public lane works without Cloudflare.
 - **Next:** a smoother first-time install, and wider live testing of AI clients against built-in mode. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).

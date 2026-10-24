@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-Implemented: M1 (data gateway), M2 (context, proposals, passkey approval, ntfy, FIT download), M3 (Connect IQ watch app), M4a (backups and restore, local monitoring, alerts) and built-in auth (coachd's own OAuth 2.1 server and passkey page gate, as an alternative to Cloudflare Access). The approved design is `docs/design/coachd-design.md`, with `docs/design/builtin-auth.md` for built-in auth (**[owner]** = owner decision, **[call]** = designer's call, **[builder]** = left to the implementer). Read them before changing behaviour.
+Implemented: M1 (data gateway), M2 (context, proposals, passkey approval, ntfy, FIT download), M3 (Connect IQ watch app), M4a (backups and restore, local monitoring, alerts) and built-in auth (coachd's own OAuth 2.1 server and passkey page gate, as an alternative to Cloudflare Access). The approved design is `docs/design/coachd-design.md`, with `docs/design/builtin-auth.md` for built-in auth and `docs/design/watch-store.md` for the watch app's Connect IQ Store distribution (**[owner]** = owner decision, **[call]** = designer's call, **[builder]** = left to the implementer). Read them before changing behaviour.
 
 ## Commands
 

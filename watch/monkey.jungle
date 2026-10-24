@@ -1,5 +1,6 @@
 project.manifest = manifest.xml
 
 # Only source/: the default (every .mc under the project) would also compile
-# the test helpers in test/ into the app. "build.sh test" adds test.jungle.
+# the test helpers in test/ into the app. "build.sh test" builds through the
+# generated bin/dev.jungle, which adds test/.
 base.sourcePath = source

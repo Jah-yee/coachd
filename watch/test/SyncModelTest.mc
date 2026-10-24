@@ -1,6 +1,6 @@
-// Run No Evil tests for SyncModel. build.sh test compiles them (test.jungle
-// adds this directory to the source path); running them needs the simulator:
-// monkeydo bin/coachd-test.prg <device> -t
+// Run No Evil tests for SyncModel, PairingModel and ServerModel. build.sh test
+// compiles them (its bin/dev.jungle adds this directory to the source path);
+// running them needs the simulator: monkeydo bin/coachd-test.prg <device> -t
 import Toybox.Lang;
 import Toybox.Test;
 

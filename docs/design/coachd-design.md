@@ -281,9 +281,9 @@ No MCP tool and no API reachable by agent credentials can approve, deliver, or a
   - The app acknowledges each download, and coachd marks the proposal `delivered`.
   - **Auth** [call]: a per-device token.
     - Enrolment: the watch shows a short code, and the runner confirms it on coachd's web page.
-    - This works for sideloaded apps; Garmin Connect Mobile app settings only work for Store installs.
+    - This works for sideloaded and Store installs alike. Garmin Connect Mobile app settings only work for Store installs; the Store app uses them for the coachd URL (`watch-store.md`).
     - Tokens are revocable.
-  - **Distribution:** sideloaded for the owner in M3. Whether to submit to the Connect IQ Store is decided in M4. [call]
+  - **Distribution:** sideloaded for the owner in M3. Since 2026-10-24: the Connect IQ Store, one public listing under the owner's account, with the coachd URL as a phone setting; sideloading stays for developers. See `watch-store.md`. [owner 2026-10-24]
   - **Reaching coachd through Cloudflare:** the watch-API path either uses a Cloudflare Access service token (headers set in `makeWebRequest`) or bypasses Access and relies on coachd's device token. [builder decides after testing; either way, coachd validates the device token]
   - Requires Connect IQ API level 3.0+ on the watch.
 - **Failure:** delivery failure or timeout moves the proposal to `delivery_failed`, sends an alert, and allows a retry.

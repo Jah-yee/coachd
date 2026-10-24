@@ -13,8 +13,8 @@
 #    replacing it. A Store beta cannot use the public app's id.
 # The dev id goes into bin/manifest-dev.xml and bin/dev.jungle, generated on
 # every build; tracked files are never edited. A jungle cannot reset
-# project.manifest, so bin/dev.jungle replaces monkey.jungle (and test.jungle)
-# for those builds: keep the two in step.
+# project.manifest, so bin/dev.jungle replaces monkey.jungle for those builds
+# (test builds add test/ to its source path): keep the two in step.
 #
 # The coachd URL is a setting in the Connect IQ phone app. Sideloaded apps get
 # no phone settings, so sideload and test builds compile COACHD_PUBLIC_URL
@@ -117,7 +117,8 @@ else
 	grep -qF "id=\"$dev_id\"" "$here/bin/manifest-dev.xml" &&
 		grep -qF 'name="@Strings.AppNameDev"' "$here/bin/manifest-dev.xml" ||
 		die "could not write bin/manifest-dev.xml"
-	# monkey.jungle with the dev manifest; test builds add test/ (test.jungle).
+	# monkey.jungle with the dev manifest; test builds add test/ (the helpers
+	# and the (:test) suite).
 	# Paths are relative to bin/.
 	sources="../source"
 	[[ $mode != test ]] || sources+=";../test"

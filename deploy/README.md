@@ -404,8 +404,9 @@ any connection you don't want back.
 
 ## 10. Watch app (M3)
 
-The Connect IQ watch app fetches approved workouts from coachd and acknowledges them. Build and
-sideload it as described in `watch/README.md`.
+The Connect IQ watch app fetches approved workouts from coachd and acknowledges them. Install it
+from the Connect IQ Store and set its coachd URL as described in `watch/README.md`; building and
+sideloading it yourself is in that file's Development section.
 
 1. Set `COACHD_DEVICE_API=on` in `.env` (default off; any value other than `on` or `off` is an
    error), then `docker compose up -d coachd`. coachd then serves `/device/v1/*` on the public
@@ -434,8 +435,10 @@ sideload it as described in `watch/README.md`.
    `coachd.<domain>` and URI path starting with `/device/v1/pairings`, count per IP, for
    example more than 10 requests in 10 seconds (one watch polls 3 to 4 times in 10 seconds),
    action Block for the timeout your plan allows.
-3. Pair: open the app on the watch and read the 6-digit code (valid 10 minutes). Confirm it on
-   the page at `<COACHD_PUBLIC_URL>/devices` (passkey session), or from a host shell:
+3. Pair: install coachd from the Connect IQ Store and, in the Connect IQ phone app, set its
+   coachd URL to `COACHD_PUBLIC_URL`. Open the app on the watch: it shows your host and a 6-digit
+   code (valid 10 minutes). Confirm it on the page at `<COACHD_PUBLIC_URL>/devices` (passkey
+   session), or from a host shell:
 
    ```bash
    docker compose exec coachd /coachd device pair <code> --label fenix
