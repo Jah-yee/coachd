@@ -6,7 +6,7 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
-## [0.1.0] - YYYY-MM-DD
+## [0.1.0] - 2026-10-24
 
 First public release.
 
