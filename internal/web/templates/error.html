@@ -1,9 +1,12 @@
 {{define "title"}}{{.Page.Title}}{{end}}
 {{define "content"}}{{with .Page}}
+<div class="card auth">
+<div class="auth-icon">{{if .Login}}{{template "i-passkey"}}{{else}}{{template "i-info"}}{{end}}</div>
 <h1>{{.Title}}</h1>
 <p>{{.Message}}</p>
 {{- if .Login}}
-<p><a class="button" href="/login">Sign in</a></p>
+<p><a class="button primary block" href="/login">Sign in</a></p>
 {{- end}}
 <p><a href="/">Back to the home page</a></p>
+</div>
 {{end}}{{end}}

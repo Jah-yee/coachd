@@ -1,10 +1,13 @@
 {{define "title"}}Enrol a passkey{{end}}
 {{define "content"}}
+<div class="card auth">
+<div class="auth-icon">{{template "i-passkey"}}</div>
 <h1>Enrol a passkey</h1>
 <p>This page works only from the link <code>coachd enroll</code> printed on the host. The link is valid for 10 minutes and works once.</p>
 <form class="stack" data-action="enroll">
-<label for="label">Name for this passkey (optional)</label>
+<label class="field" for="label"><span>Name for this passkey (optional)</span></label>
 <input id="label" name="label" type="text" maxlength="40" autocomplete="off" placeholder="phone">
-<button type="submit" class="primary">Create passkey</button>
+<button type="submit" class="primary block">{{template "i-plus"}}<span>Create passkey</span></button>
 </form>
+</div>
 {{end}}

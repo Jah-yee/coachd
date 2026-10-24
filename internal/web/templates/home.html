@@ -1,52 +1,56 @@
 {{define "title"}}Home{{end}}
 {{define "content"}}{{with .Page}}
 {{if .NoPasskey}}{{template "no-passkey"}}{{end}}
-<section>
+<div class="home">
+<section class="review">
+<div class="section-head">
 <h1>Waiting for review</h1>
+{{- if .Pending}}<span class="count">{{len .Pending}}<span class="visually-hidden"> waiting</span></span>{{end}}
+</div>
 {{- if .Pending}}
-<ul class="list">
+<ul class="rows">
 {{- range .Pending}}
-<li><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">{{plural .Warnings "warning"}}</span></li>
+<li>{{template "row" .}}</li>
 {{- end}}
 </ul>
 {{- else}}
-<p class="empty">No workout is waiting for review.</p>
+<div class="empty-state">{{template "i-check"}}<p class="empty">No workout is waiting for review.</p></div>
 {{- end}}
 </section>
-<section>
-<h2>Approved, next 14 days</h2>
+<section class="upcoming">
+<div class="section-head"><h2>Approved, next 14 days</h2></div>
 {{- if .Upcoming}}
-<ul class="list">
+<ul class="rows">
 {{- range .Upcoming}}
-<li><a href="/p/{{.ID}}">{{.Day}}</a> {{template "agent" .Name}} <span class="meta">{{.Status}}</span></li>
+<li>{{template "row" .}}</li>
 {{- end}}
 </ul>
 {{- else}}
-<p class="empty">No approved workout in the next 14 days.</p>
+<div class="empty-state">{{template "i-calendar"}}<p class="empty">No approved workout in the next 14 days.</p></div>
 {{- end}}
 </section>
-<section>
-<h2>Goal</h2>
+<section class="goal">
+<div class="section-head"><h2>Goal</h2></div>
 {{- with .Goal}}
-<div class="card">
-<p>{{template "agent" .Name}}</p>
+<div class="card goal-card">
+<p class="goal-countdown">{{template "i-flag"}}<span>{{.Countdown}}</span></p>
+<p class="goal-name">{{template "agent" .Name}}</p>
 <p class="meta">{{.Day}} · {{.Sport}}{{with .Distance}} · {{.}}{{end}}{{with .Elevation}} · {{.}}{{end}}</p>
+{{- if or .Target .Notes}}
+<dl class="facts">
 {{- with .Target}}
-<p>Target: {{template "agent" .}}</p>
+<div><dt>Target</dt><dd>{{template "agent" .}}</dd></div>
 {{- end}}
 {{- with .Notes}}
-<p>Notes: {{template "agent" .}}</p>
+<div><dt>Notes</dt><dd>{{template "agent" .}}</dd></div>
 {{- end}}
-<p class="meta">Read only: the agent sets the goal.</p>
+</dl>
+{{- end}}
+<p class="meta hint">Read only: the agent sets the goal.</p>
 </div>
 {{- else}}
-<p class="empty">No active goal.</p>
+<div class="empty-state">{{template "i-flag"}}<p class="empty">No active goal.</p></div>
 {{- end}}
 </section>
-{{- if .Apps}}
-<section>
-<h2>Connected apps</h2>
-<p><a href="/apps">See and revoke the apps connected to coachd</a></p>
-</section>
-{{- end}}
+</div>
 {{end}}{{end}}

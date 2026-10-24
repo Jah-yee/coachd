@@ -2,23 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f7fafc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#04101e" media="(prefers-color-scheme: dark)">
 <title>{{template "title" .}} · coachd</title>
+<link rel="icon" type="image/svg+xml" sizes="any" href="/static/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/static/favicon.png">
+<link rel="apple-touch-icon" href="/static/icon.png">
 <link rel="stylesheet" href="/static/app.css">
 <script src="/static/app.js" defer></script>
 </head>
-<body>
+<body class="page-{{.Name}}">
 <header class="top">
-<a class="brand" href="/">coachd</a>
-<nav aria-label="Pages"><a href="/notes">Notes</a> <a href="/devices">Devices</a> <a href="/passkeys">Passkeys</a> <a href="/audit">Audit</a></nav>
+<div class="bar">
+<a class="brand" href="/" aria-label="coachd home">{{template "mark"}}</a>
+<nav class="tabs" aria-label="Pages">
+{{- template "tab" (tab .Path "/" "Home")}}
+{{- template "tab" (tab .Path "/notes" "Notes")}}
+{{- template "tab" (tab .Path "/devices" "Devices")}}
+{{- template "tab" (tab .Path "/passkeys" "Passkeys")}}
+{{- if .Builtin}}{{template "tab" (tab .Path "/apps" "Apps")}}{{end}}
+{{- template "tab" (tab .Path "/audit" "Audit")}}
+</nav>
 <div class="account">
 {{- if .SignedIn}}
-<span class="state">Signed in</span>
-<form method="post" action="/logout"><button type="submit">Sign out</button></form>
+<span class="state signed-in">Signed in</span>
+<form method="post" action="/logout"><button type="submit" class="ghost">{{template "i-logout"}}<span>Sign out</span></button></form>
 {{- else}}
 <span class="state">Signed out</span>
-<a class="button" href="/login">Sign in</a>
+<a class="button primary" href="/login">Sign in</a>
 {{- end}}
+</div>
 </div>
 </header>
 <main>
@@ -29,8 +44,47 @@
 </html>
 {{end}}
 
+{{/* tab is one navigation link; tab (the func) marks the current page. */}}
+{{define "tab"}}<a href="{{.Href}}"{{if .Current}} aria-current="page"{{end}}>{{template "tab-icon" .Href}}<span>{{.Label}}</span></a>{{end}}
+{{define "tab-icon"}}{{if eq . "/"}}{{template "i-home"}}{{else if eq . "/notes"}}{{template "i-notes"}}{{else if eq . "/devices"}}{{template "i-watch"}}{{else if eq . "/passkeys"}}{{template "i-passkey"}}{{else if eq . "/apps"}}{{template "i-apps"}}{{else}}{{template "i-audit"}}{{end}}{{end}}
+
 {{/* agent shows agent-written text: escaped by html/template, never
      template.HTML, and visibly labelled. */}}
 {{define "agent"}}<span class="agent"><span class="agent-label">written by the agent</span> <span class="agent-text">{{.}}</span></span>{{end}}
 
 {{define "no-passkey"}}<p class="banner">No passkey enrolled. On the host, run: <code>docker compose exec coachd /coachd enroll</code></p>{{end}}
+
+{{/* date shows a dateParts as a calendar badge, with the date in words
+     for screen readers. */}}
+{{define "date"}}<span class="date-badge" aria-hidden="true"><span>{{.Date.Weekday}}</span><strong>{{.Date.Day}}</strong><span>{{.Date.Month}}</span></span>{{end}}
+
+{{/* status shows a proposal status as a coloured pill. */}}
+{{define "status"}}<span class="status status-{{.}}"><span class="visually-hidden">status: </span><strong>{{statusLabel .}}</strong></span>{{end}}
+
+{{/* row links one proposal: calendar badge, name, then what follows it. */}}
+{{define "row"}}<a class="row" href="/p/{{.ID}}">{{template "date" .}}<span class="row-main"><span class="row-title">{{template "agent" .Name}}</span><span class="row-sub"><span class="visually-hidden">{{.Day}}, </span>{{template "row-extra" .}}</span></span>{{template "i-chevron"}}</a>{{end}}
+{{define "row-extra"}}{{if eq .Status "pending"}}{{if .Warnings}}<span class="pill warn">{{template "i-alert"}}{{plural .Warnings "warning"}}</span>{{else}}<span class="pill">no warnings</span>{{end}}{{else}}{{template "status" .Status}}{{end}}{{end}}
+
+{{/* Icons: 24×24 strokes, inline so the CSP needs no image source. */}}
+{{/* mark is the coachd logo, inline so the stylesheet colours it for the
+     light and dark themes; the viewBox is cut to the drawing so it fills
+     its box. static/favicon.svg is the same drawing on a white tile. */}}
+{{define "mark"}}<svg class="mark" viewBox="122 75 430 430" aria-hidden="true" focusable="false"><path class="ink" d="M 529,149 C 485,105 397,75 306,88 C 209,98 126,184 126,291 C 122,401 196,478 286,491 C 378,509 477,457 541,393 C 555,376 546,360 528,355 C 436,321 338,350 279,470 C 236,459 203,433 174,393 C 150,348 150,309 183,278 L 239,222 Q 250,210 261,221 L 276,235 Q 287,245 297,233 L 357,168 Q 369,154 382,166 L 455,218 C 467,227 477,228 488,217 L 530,178 C 538,170 538,157 529,149 Z"/><path class="trail" d="M 173,389 C 278,353 415,333 493,348 C 394,337 290,396 235,453 C 204,431 185,409 173,389 Z"/><g fill="none" class="line" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M 246,311 L 231,334 L 251,339 L 241,351"/><path d="M 232,334 L 221,348 L 207,355"/><path d="M 244,312 L 260,320 L 277,320" stroke-width="7"/><path d="M 240,310 L 229,310 L 222,318" stroke-width="6"/></g><circle class="ink" cx="267" cy="293" r="8"/><g fill="none" class="line" stroke-linecap="round" stroke-linejoin="round"><circle cx="330" cy="323" r="14" stroke-width="5"/><circle cx="380" cy="323" r="14" stroke-width="5"/><path d="M 351,300 L 333,322 L 360,322 L 351,300 L 371,323 L 380,323" stroke-width="4"/><path d="M 359,289 L 346,288 L 340,298 L 354,302" stroke-width="9"/><path d="M 354,301 L 367,301 L 376,308" stroke-width="6"/></g><circle class="ink" cx="371" cy="273" r="7"/><g fill="none" class="line" stroke-linecap="round" stroke-linejoin="round"><path d="M 433,258 L 502,258" stroke-width="6"/><path d="M 431,251 L 431,265 M 438,249 L 438,267 M 499,249 L 499,267 M 506,252 L 506,264" stroke-width="6"/><path d="M 446,263 L 451,282 L 466,294 L 482,282 L 487,263" stroke-width="7"/><path d="M 466,295 L 466,309 L 455,334 M 466,309 L 479,334" stroke-width="8"/></g><circle class="ink" cx="466" cy="272" r="7"/></svg>{{end}}
+{{define "i-home"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 10.5 12 3.5l8.5 7V19a1.5 1.5 0 0 1-1.5 1.5h-4v-6h-6v6H5A1.5 1.5 0 0 1 3.5 19z"/></svg>{{end}}
+{{define "i-notes"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 3h8l4 4v12.5A1.5 1.5 0 0 1 17 21H6.5A1.5 1.5 0 0 1 5 19.5v-15A1.5 1.5 0 0 1 6.5 3z"/><path d="M14 3v4.5h4.5M8.5 12.5h7M8.5 16.5h4.5"/></svg>{{end}}
+{{define "i-watch"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="3.5"/><path d="m8.8 6 .7-3h5l.7 3M8.8 18l.7 3h5l.7-3M12 9.5V12l1.5 1.5"/></svg>{{end}}
+{{define "i-passkey"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="4"/><path d="M2.5 20.5a6.5 6.5 0 0 1 10.5-5.1"/><circle cx="18" cy="13.5" r="2.5"/><path d="M18 16v5M18 19h2"/></svg>{{end}}
+{{define "i-apps"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 3v4.5M15 3v4.5M6 7.5h12V11a6 6 0 0 1-12 0zM12 17v4"/></svg>{{end}}
+{{define "i-audit"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg>{{end}}
+{{define "i-logout"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 4H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3.5M10 8l-4 4 4 4M6 12h10"/></svg>{{end}}
+{{define "i-chevron"}}<svg class="icon chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9.5 6 6 6-6 6"/></svg>{{end}}
+{{define "i-back"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5m6-6-6 6 6 6"/></svg>{{end}}
+{{define "i-calendar"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>{{end}}
+{{define "i-sport"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12h4l2.5-7 5 14 2.5-7h4"/></svg>{{end}}
+{{define "i-alert"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.3 4.3 2.6 17.8A2 2 0 0 0 4.3 21h15.4a2 2 0 0 0 1.7-3.2L13.7 4.3a2 2 0 0 0-3.4 0zM12 9.5v4M12 17h.01"/></svg>{{end}}
+{{define "i-check"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>{{end}}
+{{define "i-flag"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 21V4M5 4h12l-2.5 4.5L17 13H5"/></svg>{{end}}
+{{define "i-download"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>{{end}}
+{{define "i-plus"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>{{end}}
+{{define "i-link"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg>{{end}}
+{{define "i-info"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5h.01"/></svg>{{end}}

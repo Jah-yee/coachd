@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="95 51 480 480" role="img" aria-labelledby="title desc">
+  <title id="title">coachd</title>
+  <desc id="desc">A navy C-shaped sports emblem, with running, cycling and strength training above a rising green trail.</desc>
+  <!-- Single continuous C silhouette, with mountain-shaped negative space -->
+  <path fill="#082C4B" d="M 529,149
+    C 485,105 397,75 306,88
+    C 209,98 126,184 126,291
+    C 122,401 196,478 286,491
+    C 378,509 477,457 541,393
+    C 555,376 546,360 528,355
+    C 436,321 338,350 279,470
+    C 236,459 203,433 174,393
+    C 150,348 150,309 183,278
+    L 239,222 Q 250,210 261,221
+    L 276,235 Q 287,245 297,233
+    L 357,168 Q 369,154 382,166
+    L 455,218 C 467,227 477,228 488,217
+    L 530,178 C 538,170 538,157 529,149 Z"/>
+  <!-- Curving green path is a distinct flat vector shape -->
+  <path fill="#0BC78F" d="M 173,389
+    C 278,353 415,333 493,348
+    C 394,337 290,396 235,453
+    C 204,431 185,409 173,389 Z"/>
+  <!-- Running -->
+  <g fill="none" stroke="#082C4B" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 246,311 L 231,334 L 251,339 L 241,351"/>
+    <path d="M 232,334 L 221,348 L 207,355"/>
+    <path d="M 244,312 L 260,320 L 277,320" stroke-width="7"/>
+    <path d="M 240,310 L 229,310 L 222,318" stroke-width="6"/>
+  </g>
+  <circle fill="#082C4B" cx="267" cy="293" r="8"/>
+  <!-- Cycling -->
+  <g fill="none" stroke="#082C4B" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="330" cy="323" r="14" stroke-width="5"/>
+    <circle cx="380" cy="323" r="14" stroke-width="5"/>
+    <path d="M 351,300 L 333,322 L 360,322 L 351,300 L 371,323 L 380,323" stroke-width="4"/>
+    <path d="M 359,289 L 346,288 L 340,298 L 354,302" stroke-width="9"/>
+    <path d="M 354,301 L 367,301 L 376,308" stroke-width="6"/>
+  </g>
+  <circle fill="#082C4B" cx="371" cy="273" r="7"/>
+  <!-- Strength training -->
+  <g fill="none" stroke="#082C4B" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 433,258 L 502,258" stroke-width="6"/>
+    <path d="M 431,251 L 431,265 M 438,249 L 438,267 M 499,249 L 499,267 M 506,252 L 506,264" stroke-width="6"/>
+    <path d="M 446,263 L 451,282 L 466,294 L 482,282 L 487,263" stroke-width="7"/>
+    <path d="M 466,295 L 466,309 L 455,334 M 466,309 L 479,334" stroke-width="8"/>
+  </g>
+  <circle fill="#082C4B" cx="466" cy="272" r="7"/>
+</svg>

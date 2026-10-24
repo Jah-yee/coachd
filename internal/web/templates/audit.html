@@ -1,17 +1,19 @@
 {{define "title"}}Audit{{end}}
 {{define "content"}}{{with .Page}}
+<header class="page-head">
 <h1>Audit log</h1>
 <p class="meta">Newest first, last 200 rows.</p>
+</header>
 {{- if .Rows}}
-<div class="table-wrap"><table>
+<div class="table-wrap card flush"><table class="audit">
 <thead><tr><th>Time</th><th>Lane</th><th>Actor</th><th>Client</th><th>Event</th><th>Target</th><th>Outcome</th></tr></thead>
 <tbody>
 {{- range .Rows}}
-<tr><td>{{.Time}}</td><td>{{.Lane}}</td><td>{{.Actor}}</td><td>{{.Client}}</td><td>{{.Event}}</td><td>{{.Target}}</td><td>{{.Outcome}}</td></tr>
+<tr><td class="nowrap">{{.Time}}</td><td>{{.Lane}}</td><td>{{.Actor}}</td><td><code>{{.Client}}</code></td><td><code>{{.Event}}</code></td><td><code>{{.Target}}</code></td><td><span class="pill outcome-{{.Outcome}}">{{.Outcome}}</span></td></tr>
 {{- end}}
 </tbody>
 </table></div>
 {{- else}}
-<p class="empty">Nothing recorded yet.</p>
+<div class="empty-state">{{template "i-audit"}}<p class="empty">Nothing recorded yet.</p></div>
 {{- end}}
 {{end}}{{end}}
