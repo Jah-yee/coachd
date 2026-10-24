@@ -1,6 +1,7 @@
 # A pushed tag vX.Y.Z publishes a signed multi-arch image to ghcr.io with an
 # SBOM and build provenance, then a GitHub release whose notes are the
-# matching CHANGELOG.md section.
+# matching CHANGELOG.md section. A pre-release tag (vX.Y.Z-rc.N) uses the
+# X.Y.Z section and is published as a pre-release.
 name: release
 on:
   push:
@@ -30,6 +31,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           v="${TAG#v}"
+          v="${v%%-*}"
           awk -v v="$v" 'index($0, "## [" v "]") == 1 {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > notes.md
           [ -s notes.md ] || { echo "CHANGELOG.md has no section for $v" >&2; exit 1; }
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
@@ -73,4 +75,6 @@ jobs:
             printf '\n## Image\n\n`%s@%s`\n\nVerify the signature before you run it:\n\n' "$IMAGE" "$DIGEST"
             printf '```bash\ncosign verify %s@%s \\\n  --certificate-identity-regexp "^https://github.com/%s/.github/workflows/release.yml@refs/tags/v" \\\n  --certificate-oidc-issuer https://token.actions.githubusercontent.com\n```\n' "$IMAGE" "$DIGEST" "$GITHUB_REPOSITORY"
           } >> notes.md
-          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file notes.md
+          pre=()
+          [[ "$TAG" == *-* ]] && pre=(--prerelease)
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file notes.md "${pre[@]}"

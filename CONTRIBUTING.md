@@ -60,6 +60,8 @@ Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md).
    It fails if the changelog has no section for the tag.
 4. On the first release, check that the ghcr.io package is public (Package settings → Change visibility).
 
+To try the pipeline without a real release, push a pre-release tag such as `vX.Y.Z-rc.1`. It uses the `X.Y.Z` section, is published as a GitHub pre-release, and its image gets only the `X.Y.Z-rc.1` tag (no `X.Y` or `latest`).
+
 ## Reporting bugs
 
 Open an issue with the version or commit, which mode you run (Access or built-in auth), what you did and what happened. Never paste tokens, passkeys, Garmin keys, `.env` contents or health data; redact them. Report security problems privately: see [`SECURITY.md`](SECURITY.md).
