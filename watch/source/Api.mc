@@ -8,13 +8,15 @@ import Toybox.Lang;
 // request in flight at a time: the watch's request queue is small and coachd
 // rate-limits per device.
 //
-// The device token and the pairing id are secrets: they go only into request
-// headers and URLs, never to System.println or the screen.
+// Every call takes the server's base URL. The device token and the pairing id
+// are secrets: they go only into request headers and URLs for the server they
+// came from (Store.server()), never to another server, System.println or the
+// screen. Only startPairing is given a URL before it is bound.
 module Api {
     typedef Callback as Method(code as Number, data as Dictionary or String or Null) as Void;
 
-    function url(path as String) as String {
-        return Config.SERVER_URL + "/device/v1" + path;
+    function url(base as String, path as String) as String {
+        return base + "/device/v1" + path;
     }
 
     // Headers for the authenticated calls. Without a token coachd answers
@@ -25,8 +27,8 @@ module Api {
     }
 
     // GET /device/v1/workouts: {"today", "workouts": [{"id", "date", "name"}]}.
-    function fetchDesired(cb as Callback) as Void {
-        Communications.makeWebRequest(url("/workouts"), null, {
+    function fetchDesired(base as String, cb as Callback) as Void {
+        Communications.makeWebRequest(url(base, "/workouts"), null, {
             :method => Communications.HTTP_REQUEST_METHOD_GET,
             :headers => authHeaders(),
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
@@ -36,8 +38,8 @@ module Api {
     // GET /device/v1/workouts/{id}/fit. The system parses the FIT workout and
     // stores it as one of the app's workouts; the callback gets no handle on
     // it, so Sync finds it by comparing workout ids before and after.
-    function downloadFit(id as String, cb as Callback) as Void {
-        Communications.makeWebRequest(url("/workouts/" + id + "/fit"), null, {
+    function downloadFit(base as String, id as String, cb as Callback) as Void {
+        Communications.makeWebRequest(url(base, "/workouts/" + id + "/fit"), null, {
             :method => Communications.HTTP_REQUEST_METHOD_GET,
             :headers => authHeaders(),
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_FIT
@@ -45,10 +47,10 @@ module Api {
     }
 
     // POST /device/v1/workouts/{id}/ack with the JSON body {}.
-    function ack(id as String, cb as Callback) as Void {
+    function ack(base as String, id as String, cb as Callback) as Void {
         var headers = authHeaders();
         headers["Content-Type"] = Communications.REQUEST_CONTENT_TYPE_JSON;
-        Communications.makeWebRequest(url("/workouts/" + id + "/ack"), {}, {
+        Communications.makeWebRequest(url(base, "/workouts/" + id + "/ack"), {}, {
             :method => Communications.HTTP_REQUEST_METHOD_POST,
             :headers => headers,
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
@@ -57,8 +59,8 @@ module Api {
 
     // POST /device/v1/pairings with {"model": model}:
     // 201 {"pairing_id", "code", "expires_in_s"}.
-    function startPairing(model as String, cb as Callback) as Void {
-        Communications.makeWebRequest(url("/pairings"), {"model" => model}, {
+    function startPairing(base as String, model as String, cb as Callback) as Void {
+        Communications.makeWebRequest(url(base, "/pairings"), {"model" => model}, {
             :method => Communications.HTTP_REQUEST_METHOD_POST,
             :headers => {"Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON},
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
@@ -67,8 +69,8 @@ module Api {
 
     // GET /device/v1/pairings/{pairingId}: 200 {"status": "pending"},
     // {"status": "paired", "token"} (exactly once) or {"status": "expired"}.
-    function pollPairing(pairingId as String, cb as Callback) as Void {
-        Communications.makeWebRequest(url("/pairings/" + pairingId), null, {
+    function pollPairing(base as String, pairingId as String, cb as Callback) as Void {
+        Communications.makeWebRequest(url(base, "/pairings/" + pairingId), null, {
             :method => Communications.HTTP_REQUEST_METHOD_GET,
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
         }, cb);

@@ -16,10 +16,12 @@ import Toybox.Time;
 // The mapping is persisted after every change, so an interrupted run keeps
 // what it did; a workout downloaded but not acknowledged stays unmapped, and
 // the next run removes it as an orphan and delivers it again.
-// Requests are strictly sequential. Progress and the outcome go to
+// Requests are strictly sequential and go to the bound server
+// (Store.server()), taken once at the start. Progress and the outcome go to
 // CoachdApp.setStatus, which StatusView draws. A new run is a new object;
 // cancel() makes a run ignore the responses still in flight.
 class Sync {
+    private var _base as String = "";
     private var _busy as Boolean = false;
     private var _cancelled as Boolean = false;
     private var _desired as Array<Dictionary> = [] as Array<Dictionary>;
@@ -45,9 +47,15 @@ class Sync {
     }
 
     function start() as Void {
+        var base = Store.server();
+        if (base == null) {
+            getApp().showStart();
+            return;
+        }
+        _base = base;
         _busy = true;
         getApp().setStatus(Ui.text(Rez.Strings.Syncing));
-        Api.fetchDesired(method(:onDesired));
+        Api.fetchDesired(_base, method(:onDesired));
     }
 
     function cancel() as Void {
@@ -93,7 +101,7 @@ class Sync {
         _current = _todo[_next];
         _next += 1;
         _before = Workouts.ids();
-        Api.downloadFit(_current, method(:onFit));
+        Api.downloadFit(_base, _current, method(:onFit));
     }
 
     function onFit(code as Number, data as Dictionary or String or Null) as Void {
@@ -113,7 +121,7 @@ class Sync {
             return;
         }
         _newId = fresh[0];
-        Api.ack(_current, method(:onAck));
+        Api.ack(_base, _current, method(:onAck));
     }
 
     function onAck(code as Number, data as Dictionary or String or Null) as Void {
