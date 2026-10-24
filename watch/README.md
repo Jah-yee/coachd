@@ -43,7 +43,7 @@ made meanwhile, instead of starting another pairing. It is forgotten once paired
 | Message | Meaning |
 |---|---|
 | Connect your phone | No Bluetooth connection to the phone (error -104); the watch retries every 3 s. |
-| coachd not found (404): check the URL | Nothing answers at that URL's device API: a wrong URL (such as the MCP URL ending in `/mcp`), or `COACHD_DEVICE_API` is off. |
+| Not coachd's device API (`<code>`): check the URL | coachd's page or Cloudflare Access answered instead of the device API (401, 403 or 404): a wrong URL (such as the MCP URL ending in `/mcp`), `COACHD_DEVICE_API` is off, or in Access mode the `/device/v1` Bypass application is missing. |
 | Too many pairing attempts, try again later | coachd's pairing limits (HTTP 429: too many pairings started, or too many polls); the watch retries after a minute. |
 | Pairing failed (`<code>`) | Any other error, with the same codes as the sync messages below; the watch retries every 3 s. |
 

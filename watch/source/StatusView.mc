@@ -90,14 +90,16 @@ module Ui {
     }
 
     // The pairing view's text for a failed pairing call: -104 (no phone),
-    // 404 (nothing at that URL: a wrong URL or the device API off), 429
+    // 401, 403 or 404 (not coachd's device API: a wrong URL such as the /mcp
+    // connector URL, or the device API off, so coachd's page or Cloudflare
+    // Access answered; a healthy pairing endpoint never answers these), 429
     // (coachd's pairing limits) or any other code.
     function pairingErrorText(code as Number) as String {
         if (code == Communications.BLE_CONNECTION_UNAVAILABLE) {
             return text(Rez.Strings.NoPhone);
         }
-        if (code == 404) {
-            return text(Rez.Strings.PairNotFound);
+        if (code == 401 || code == 403 || code == 404) {
+            return Lang.format(text(Rez.Strings.PairWrongUrl), [code]);
         }
         if (code == 429) {
             return text(Rez.Strings.PairTooMany);

@@ -95,14 +95,26 @@ function serverCurrentFallsBackToDefault(logger as Logger) as Boolean {
 }
 
 (:test)
-function pairingErrorTextNames404(logger as Logger) as Boolean {
-    var got = Ui.pairingErrorText(404);
-    var other = Ui.pairingErrorText(403);
-    if (!"coachd not found (404): check the URL".equals(got)) {
-        logger.error("404: got " + got);
-        return false;
+function pairingErrorTextNamesWrongUrl(logger as Logger) as Boolean {
+    // A healthy POST /device/v1/pairings answers 201, 400, 429 or 500. A
+    // wrong URL (such as the /mcp connector URL) or the device API turned
+    // off reaches coachd's page or Access instead: 401, 403 or 404.
+    var ok = true;
+    var codes = [401, 403, 404];
+    for (var i = 0; i < codes.size(); i++) {
+        var want = "Not coachd's device API (" + codes[i] + "): check the URL";
+        var got = Ui.pairingErrorText(codes[i]);
+        if (!want.equals(got)) {
+            logger.error(codes[i] + ": got " + got);
+            ok = false;
+        }
     }
-    return "Pairing failed (403)".equals(other);
+    var other = Ui.pairingErrorText(500);
+    if (!"Pairing failed (500)".equals(other)) {
+        logger.error("500: got " + other);
+        ok = false;
+    }
+    return ok;
 }
 
 (:test)
