@@ -895,3 +895,42 @@ func TestProposeZwiftWarning(t *testing.T) {
 		t.Fatalf("running: %+v", got)
 	}
 }
+
+// An expiry is committed before stale deliveries are failed, so a failure in
+// that second step (here a missing table; at shutdown a cancelled context)
+// must not hide the expiry from the log.
+func TestExpireTickLogsCommittedExpiryWhenLaterStepFails(t *testing.T) {
+	f := newFixture(t)
+	r := mustPropose(t, f, "2026-10-25", nil)
+	*f.now = time.Date(2026, 10, 27, 9, 0, 0, 0, bratislava)
+	raw, err := sql.Open("sqlite", f.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer raw.Close()
+	if _, err := raw.Exec(`DROP TABLE deliveries`); err != nil {
+		t.Fatal(err)
+	}
+
+	f.svc.expireTick(context.Background())
+
+	if p, _ := f.db.GetProposal(context.Background(), r.ID); p.Status != store.ProposalExpired {
+		t.Fatalf("status = %s", p.Status)
+	}
+	var expired, failed bool
+	for _, line := range strings.Split(strings.TrimSpace(f.logs.String()), "\n") {
+		var rec map[string]any
+		if err := json.Unmarshal([]byte(line), &rec); err != nil {
+			t.Fatalf("log %q: %v", line, err)
+		}
+		switch rec["msg"] {
+		case "proposals expired":
+			expired = rec["count"] == float64(1)
+		case "proposal expiry failed":
+			failed = true
+		}
+	}
+	if !expired || !failed {
+		t.Fatalf("expired logged %v, failure logged %v; logs:\n%s", expired, failed, f.logs)
+	}
+}

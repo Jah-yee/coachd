@@ -21,6 +21,10 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.
 
+### Fixed
+
+- Proposals that expired were not logged when the stale-delivery check after them failed, for example during shutdown. This also made a release test flaky.
+
 ## [0.3.0] - 2026-10-25
 
 ### Added
