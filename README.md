@@ -1,12 +1,15 @@
 # coachd
 
+[![CI](https://github.com/stefiix92/coachd/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/stefiix92/coachd/actions/workflows/ci.yml?query=branch%3Amain)
+[![Latest release](https://img.shields.io/github/v/release/stefiix92/coachd)](https://github.com/stefiix92/coachd/releases/latest)
+
 > A self-hosted gateway between your AI coach and your Garmin watch. It serves your Garmin data to any AI agent and puts the workout you agreed on onto your watch, but only after you approve it.
 
 Ships as one Docker image that runs anywhere: a Raspberry Pi, a home server or a VPS. One instance serves one runner. Your Garmin key stays on your hardware.
 
 Design: [`docs/design/coachd-design.md`](docs/design/coachd-design.md), plus the built-in auth mode in [`docs/design/builtin-auth.md`](docs/design/builtin-auth.md). Install guide: [`deploy/README.md`](deploy/README.md).
 
-**Status:** early and built by one runner for their own training, but it works end to end: Garmin data in, MCP out, passkey-approved workouts to the watch. Expect rough edges and breaking changes before a tagged release.
+**Status:** early and built by one runner for their own training, but it works end to end: Garmin data in, MCP out, passkey-approved workouts to the watch. Expect rough edges. While the version is 0.x, a minor release may change configuration or behaviour, so read the [changelog](CHANGELOG.md) before upgrading.
 
 <p align="center">
   <img src="docs/images/approve.png" width="250" alt="Approval page on a phone: an agent-proposed threshold workout with its steps, the agent's reason, a warning, and the Approve with passkey button">
@@ -151,6 +154,10 @@ Not affiliated with or endorsed by Garmin. Not medical advice. If something hurt
 
 - Contributions are welcome: see [`CONTRIBUTING.md`](CONTRIBUTING.md). Commits need a DCO sign-off.
 - Found a vulnerability? Report it privately, as described in [`SECURITY.md`](SECURITY.md). Please don't open a public issue.
+
+## Support
+
+coachd is free and built in spare time. If it helps your training, you can [buy me a coffee on Ko-fi](https://ko-fi.com/stefiix92).
 
 ## License
 
