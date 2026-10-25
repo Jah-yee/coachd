@@ -391,6 +391,7 @@ func writeCalls(pendingID string) map[string]map[string]any {
 		"propose_workout": {"workout": timeWorkout("2026-10-24"), "rationale": ""},
 		"cancel_proposal": {"id": pendingID},
 		"request_sync":    {},
+		"send_message":    {"text": "hi"},
 	}
 }
 

@@ -2092,6 +2092,24 @@
       ],
       "isError": true
     },
+    "send_message_empty": {
+      "content": [
+        {
+          "type": "text",
+          "text": "text: required"
+        }
+      ],
+      "isError": true
+    },
+    "send_message_needs_write_scope": {
+      "content": [
+        {
+          "type": "text",
+          "text": "insufficient scope"
+        }
+      ],
+      "isError": true
+    },
     "set_goal": {
       "content": [
         {
@@ -4671,6 +4689,38 @@
         {
           "type": "text",
           "text": "validating \"arguments\": validating root: validating /properties/from: type: 2.0261018e+07 has type \"integer\", want \"string\""
+        }
+      ],
+      "isError": true,
+      "resultType": "complete"
+    },
+    "send_message_empty": {
+      "_meta": {
+        "io.modelcontextprotocol/serverInfo": {
+          "name": "coachd",
+          "version": "test"
+        }
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "text: required"
+        }
+      ],
+      "isError": true,
+      "resultType": "complete"
+    },
+    "send_message_needs_write_scope": {
+      "_meta": {
+        "io.modelcontextprotocol/serverInfo": {
+          "name": "coachd",
+          "version": "test"
+        }
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "insufficient scope"
         }
       ],
       "isError": true,
