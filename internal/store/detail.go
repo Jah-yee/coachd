@@ -29,12 +29,16 @@ type ActivityDetail struct {
 	// cached as JSON of fitdata.Workout in the same way, with its fingerprint
 	// in a column of its own for ActivityWorkouts.
 	Workout *fitdata.Workout
+	// Perceived is written to the activity's own row (Activity.Perceived),
+	// not to the cache; GetActivityDetail leaves it empty.
+	Perceived fitdata.Perceived
 }
 
 // NewActivityDetail is the detail cached for a decoded activity: its laps,
 // its series downsampled to fitdata.MaxSeriesPoints and its workout.
 func NewActivityDetail(a fitdata.Activity) ActivityDetail {
-	return ActivityDetail{Laps: a.Laps, Series: fitdata.Downsample(a.Points, fitdata.MaxSeriesPoints), Workout: a.Workout}
+	return ActivityDetail{Laps: a.Laps, Series: fitdata.Downsample(a.Points, fitdata.MaxSeriesPoints), Workout: a.Workout,
+		Perceived: a.Perceived}
 }
 
 // PutActivityDetail upserts the detail for an activity. The activity row must exist.
@@ -62,12 +66,29 @@ func (db *DB) PutActivityDetail(ctx context.Context, id int64, d ActivityDetail)
 		wkt = sql.NullString{String: string(b), Valid: true}
 		fp = sql.NullString{String: d.Workout.Fingerprint, Valid: true}
 	}
-	_, err = db.sql.ExecContext(ctx, `
+	tx, err := db.sql.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("store: put activity detail: %w", err)
+	}
+	defer tx.Rollback()
+	if _, err = tx.ExecContext(ctx, `
 INSERT INTO activity_detail (activity_id, laps_json, series_json, workout_json, workout_fp, computed_at) VALUES (?,?,?,?,?,?)
 ON CONFLICT(activity_id) DO UPDATE SET laps_json=excluded.laps_json, series_json=excluded.series_json,
 	workout_json=excluded.workout_json, workout_fp=excluded.workout_fp, computed_at=excluded.computed_at`,
-		id, string(laps), string(series), wkt, fp, fmtTime(time.Now()))
-	if err != nil {
+		id, string(laps), string(series), wkt, fp, fmtTime(time.Now())); err != nil {
+		return fmt.Errorf("store: put activity detail: %w", err)
+	}
+	var feel, rpe any
+	if d.Perceived.FeelPct != nil {
+		feel = *d.Perceived.FeelPct
+	}
+	if d.Perceived.RPE != nil {
+		rpe = *d.Perceived.RPE
+	}
+	if _, err := tx.ExecContext(ctx, `UPDATE activities SET perceived_feel=?, perceived_rpe=? WHERE id=?`, feel, rpe, id); err != nil {
+		return fmt.Errorf("store: put perceived: %w", err)
+	}
+	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("store: put activity detail: %w", err)
 	}
 	return nil

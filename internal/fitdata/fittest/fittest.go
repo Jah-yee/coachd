@@ -31,6 +31,7 @@ type Options struct {
 	Workout    []byte                       // a FIT workout file whose workout and workout_step messages the activity records
 	Gaps       map[int]time.Duration        // extra time before record i (a pause)
 	LapPower   func(lap int) (watts uint16) // avg_power per lap; nil leaves it unset
+	Feel, RPE  *uint8                       // the session's workout_feel (0-100) and workout_rpe (×10); nil leaves them unset
 	Modify     func(steps []proto.Message)  // edits the copied workout_step messages, as a watch might
 }
 
@@ -112,8 +113,14 @@ func Build(o Options) ([]byte, error) {
 	}
 
 	end := times[o.Records]
-	f.Sessions = append(f.Sessions, mesgdef.NewSession(nil).
-		SetTimestamp(end).SetStartTime(o.Start))
+	sess := mesgdef.NewSession(nil).SetTimestamp(end).SetStartTime(o.Start)
+	if o.Feel != nil {
+		sess.SetWorkoutFeel(*o.Feel)
+	}
+	if o.RPE != nil {
+		sess.SetWorkoutRpe(*o.RPE)
+	}
+	f.Sessions = append(f.Sessions, sess)
 	f.Activity = mesgdef.NewActivity(nil).SetTimestamp(end).SetNumSessions(1)
 
 	fit := f.ToFIT(nil)

@@ -232,3 +232,29 @@ func TestNewActivityDetailDownsamples(t *testing.T) {
 		t.Fatalf("detail = %d points, %d laps, workout %v", len(d.Series), len(d.Laps), d.Workout)
 	}
 }
+
+func TestPutActivityDetailWritesPerceived(t *testing.T) {
+	db := openTest(t)
+	ctx := context.Background()
+	seedActivity(t, db, 9)
+	if err := db.PutActivityDetail(ctx, 9, ActivityDetail{Perceived: fitdata.Perceived{FeelPct: ip(75), RPE: fp64(6)}}); err != nil {
+		t.Fatal(err)
+	}
+	a, err := db.GetActivity(ctx, 9)
+	if err != nil || a.Perceived.FeelPct == nil || *a.Perceived.FeelPct != 75 || a.Perceived.RPE == nil || *a.Perceived.RPE != 6 {
+		t.Fatalf("activity = %+v, %v", a.Perceived, err)
+	}
+	// Garmin listing the activity again leaves them; a detail without them clears them.
+	if err := db.UpsertActivity(ctx, mkAct(9, "2026-10-20", SportRunning, 10000), nil); err != nil {
+		t.Fatal(err)
+	}
+	if a, _ := db.GetActivity(ctx, 9); a.Perceived.FeelPct == nil {
+		t.Fatal("an upsert cleared the perceived rating")
+	}
+	if err := db.PutActivityDetail(ctx, 9, ActivityDetail{}); err != nil {
+		t.Fatal(err)
+	}
+	if a, _ := db.GetActivity(ctx, 9); a.Perceived.FeelPct != nil || a.Perceived.RPE != nil {
+		t.Fatalf("perceived = %+v, want cleared", a.Perceived)
+	}
+}

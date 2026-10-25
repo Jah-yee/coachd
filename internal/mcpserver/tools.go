@@ -62,7 +62,8 @@ func (s *svc) register(srv *mcp.Server) {
 	addTool(s, srv, &mcp.Tool{Name: "get_activity", Annotations: read(), Description: "One activity by ID. " +
 		"detail summary (default) returns the summary; laps adds per-lap splits; series adds laps plus a heart " +
 		"rate, pace, distance and altitude series reduced to at most 600 points. laps and series are empty when " +
-		"no FIT file is stored (has_fit false). For an activity recorded from a structured workout on the watch, " +
+		"no FIT file is stored (has_fit false). perceived is the runner's own rating entered on the watch after " +
+		"the activity, read from the FIT file. For an activity recorded from a structured workout on the watch, " +
 		"laps and series also add workout: the steps the watch followed; the steps as executed, with seconds " +
 		"inside, below and above each heart-rate or pace range; and proposal_id, the delivered proposal it " +
 		"carried out. start_local is the start instant in the runner's timezone, so its " +
@@ -200,7 +201,13 @@ type activityOut struct {
 	AvgHRBpm       *int              `json:"avg_hr_bpm" jsonschema:"Average heart rate in beats per minute"`
 	MaxHRBpm       *int              `json:"max_hr_bpm" jsonschema:"Maximum heart rate in beats per minute"`
 	HasFIT         bool              `json:"has_fit" jsonschema:"Whether the original FIT file is stored (needed for laps and series)"`
+	Perceived      perceivedOut      `json:"perceived" jsonschema:"The runner's own rating after the activity, entered on the watch; read from the FIT file"`
 	GarminDerived  activityGarminOut `json:"garmin_derived" jsonschema:"Garmin's proprietary estimates for the activity"`
+}
+
+type perceivedOut struct {
+	FeelPct *int     `json:"feel_pct" jsonschema:"How the runner felt, 0 (very weak) to 100 (very strong); null when not given"`
+	RPE     *float64 `json:"rpe" jsonschema:"Rating of perceived exertion, 0 to 10; null when not given"`
 }
 
 type activityGarminOut struct {
@@ -432,6 +439,10 @@ func (s *svc) getActivity(ctx context.Context, in getActivityInput) (getActivity
 	if err != nil {
 		return getActivityOut{}, err
 	}
+	// A detail decoded just now has also just written the rating to the row.
+	if p := d.Perceived; p.FeelPct != nil || p.RPE != nil {
+		out.Perceived = perceived(p)
+	}
 	for _, l := range d.Laps {
 		out.Laps = append(out.Laps, lapOut{Index: l.Index, StartOffsetS: whole(l.StartOffsetS), DurationS: whole(l.DurationS),
 			DistanceKm: round(l.DistanceKm, 2), AvgHRBpm: l.AvgHRBpm, MaxHRBpm: l.MaxHRBpm,
@@ -540,9 +551,14 @@ func (s *svc) activity(a store.Activity) activityOut {
 		NameUntrusted: a.NameUntrusted, DistanceKm: round(a.DistanceM/1000, 2), DurationS: whole(a.DurationS),
 		MovingTimeS: whole(a.MovingS), ElevationGainM: round(a.ElevGainM, 1), ElevationLossM: round(a.ElevLossM, 1),
 		AvgHRBpm: wholePtr(a.AvgHR), MaxHRBpm: wholePtr(a.MaxHR), HasFIT: a.FITStatus == store.FITStored,
+		Perceived: perceived(a.Perceived),
 		GarminDerived: activityGarminOut{TrainingLoad: roundPtr(g.TrainingLoad, 1), AerobicTE: roundPtr(g.AerobicTE, 1),
 			AnaerobicTE: roundPtr(g.AnaerobicTE, 1), VO2Max: roundPtr(g.VO2Max, 1), TSS: roundPtr(g.TSS, 1)},
 	}
+}
+
+func perceived(p fitdata.Perceived) perceivedOut {
+	return perceivedOut{FeelPct: p.FeelPct, RPE: roundPtr(p.RPE, 1)}
 }
 
 // parseRange validates an inclusive from..to range of at most max days.

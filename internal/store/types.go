@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stefiix92/coachd/internal/civil"
+	"github.com/stefiix92/coachd/internal/fitdata"
 )
 
 // ErrNotFound is returned when a requested row does not exist.
@@ -47,9 +48,12 @@ type Activity struct {
 	AvgHR, MaxHR                                        *float64
 	Manual                                              bool
 	Garmin                                              ActivityGarmin
-	FITPath                                             string // relative to DataDir
-	FITStatus                                           FITStatus
-	FITAttempts                                         int
+	// Perceived is the runner's own rating from the FIT session, set with the
+	// activity's detail; UpsertActivity never writes it.
+	Perceived   fitdata.Perceived
+	FITPath     string // relative to DataDir
+	FITStatus   FITStatus
+	FITAttempts int
 }
 
 // DailyGarmin holds Garmin-proprietary derived daily values.

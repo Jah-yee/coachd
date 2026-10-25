@@ -154,3 +154,31 @@ func TestDecodeLongActivityStreams(t *testing.T) {
 		t.Fatalf("Decode allocated %.1f MiB, want <= %d MiB", float64(got)/(1<<20), maxBytes>>20)
 	}
 }
+
+func TestDecodePerceived(t *testing.T) {
+	u8 := func(v uint8) *uint8 { return &v }
+	for name, tc := range map[string]struct {
+		feel, rpe *uint8
+		wantFeel  *int
+		wantRPE   *float64
+	}{
+		"both":         {u8(75), u8(60), ptr(75), ptr(6.0)},
+		"weak, max":    {u8(0), u8(100), ptr(0), ptr(10.0)},
+		"not asked":    {nil, nil, nil, nil},
+		"out of range": {u8(101), u8(0xFF), nil, nil},
+	} {
+		b, err := fittest.Build(fittest.Options{Start: start, Laps: 1, Records: 10, HR: 140, SpeedMS: 3, Feel: tc.feel, RPE: tc.rpe})
+		if err != nil {
+			t.Fatal(err)
+		}
+		a, err := Decode(bytes.NewReader(b))
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := a.Perceived
+		if (p.FeelPct == nil) != (tc.wantFeel == nil) || p.FeelPct != nil && *p.FeelPct != *tc.wantFeel ||
+			(p.RPE == nil) != (tc.wantRPE == nil) || p.RPE != nil && *p.RPE != *tc.wantRPE {
+			t.Errorf("%s: perceived = %v %v", name, p.FeelPct, p.RPE)
+		}
+	}
+}

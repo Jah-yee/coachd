@@ -6,6 +6,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-25
+
 ### Added
 
 - **Watch app v2** (`docs/design/watch-v2.md`):
@@ -21,17 +23,14 @@ The release workflow publishes the section whose heading matches the pushed tag 
   - `workout.proposal_id` links the activity to the delivered proposal it carried out, and `list_workouts` gains `activity_ids` on each workout. The link needs the steps the watch recorded to equal the workout coachd delivered, and the dates to be within 3 days.
   - Garmin Coach and Garmin Connect workouts get the steps too, without a link. Zwift-recorded rides do not: their files carry no step index.
   - Not yet checked on a workout delivered by the coachd watch app: if the watch rewrites the steps, the steps still show and only the link is missing.
-
 - **Approve the week** (`docs/design/approve-week.md`): when several workouts are waiting, **Review all** (`/review`) shows each one in full, then approves all of them with one passkey prompt.
   - The passkey ceremony binds every workout's ID and content hash; the approval is all or nothing in one transaction, and any change since the page was shown refuses it with the day of the workout that changed.
   - Left out, with the reason: workouts whose date has passed, whose content does not match its hash, or that another waiting workout replaces; at most 20 at a time.
   - The home page links it when two or more are waiting, and a waiting workout's page says how many more are waiting.
-
 - **Renew the Garmin key on the page** (`docs/design/garmin-key-renewal.md`): **Garmin key** (`/garmin`, linked from the home page, which warns 14 days before expiry) takes a new key and its validity (30, 90 or 180 days, or 1 year). coachd checks it with Garmin, stores it in the data directory (`garmin-key.json`, mode 0600) and switches at once, without a restart; `get_status` and the key-expiry metric follow. If Garmin refuses the key, nothing changes. The key is never shown, logged or backed up, and the audit log records `garmin_key_renewed` with its outcome.
-
 - **Notes that expire** (`docs/design/expiring-notes.md`): `upsert_note` takes an optional `valid_until` (today up to 366 days ahead) for facts that stop being true. After that day `get_notes` leaves the note out unless `include_expired` is true, and reports `expired_count`; each note shows `valid_until` and `expired`. Expired notes are never deleted automatically and still count toward the 50-note cap; the "notes full" error says how many agent notes are expired. The notes page shows the date and fades expired notes.
-
 - **Post-run webhook** (`docs/design/post-run-webhook.md`): with `COACHD_WEBHOOK_URL` set, coachd POSTs `{"event":"activity.stored","activity_id",...,"date","sport","proposal_id"}` (IDs only) when an activity that started in the last 48 hours is stored, after its FIT file and per-step numbers are in, so your own automation can wake the agent for a post-run review. Optional bearer token from `COACHD_WEBHOOK_TOKEN_FILE`; retries like ntfy; new metric `coachd_webhook_sends_total{outcome}`.
+- **Your post-activity rating** (`docs/design/perceived-effort.md`): `list_activities` and `get_activity` show `perceived: {feel_pct, rpe}`, the "How did you feel?" and RPE answers you give on the watch after a workout, read from the FIT file (the Personal API's JSON does not carry them). Null until the FIT file is read, or when you skipped the questions. Migration 0013 resets the detail cache once more so they fill in.
 
 ### Changed
 

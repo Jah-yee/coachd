@@ -29,6 +29,12 @@ func storeFIT(t *testing.T, e *env, id int64, records, laps int) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	storeFITBytes(t, e, id, b)
+}
+
+// storeFITBytes stores b as activity id's FIT file.
+func storeFITBytes(t *testing.T, e *env, id int64, b []byte) {
+	t.Helper()
 	rel := filepath.Join("fit", "2026", "act.fit")
 	if err := os.MkdirAll(filepath.Join(e.dir, "fit", "2026"), 0o700); err != nil {
 		t.Fatal(err)
@@ -647,3 +653,30 @@ func TestSoftDeletedActivityHidden(t *testing.T) {
 
 // fixedDate is a KeyExpires that always answers d.
 func fixedDate(d civil.Date) func() civil.Date { return func() civil.Date { return d } }
+
+func TestActivityPerceived(t *testing.T) {
+	e := newEnv(t, readIdentity())
+	ctx := context.Background()
+	if err := e.db.UpsertActivity(ctx, testActivity(t, 5, "2026-10-22", "tempo"), nil); err != nil {
+		t.Fatal(err)
+	}
+	feel, rpe := uint8(75), uint8(60)
+	b, err := fittest.Build(fittest.Options{Start: testNow.Add(-24 * time.Hour).UTC(), Laps: 1, Records: 60, HR: 150, SpeedMS: 3,
+		Feel: &feel, RPE: &rpe})
+	if err != nil {
+		t.Fatal(err)
+	}
+	storeFITBytes(t, e, 5, b)
+	want := map[string]any{"feel_pct": 75.0, "rpe": 6.0}
+	// Unknown before the FIT file is read; the first detail read fills it.
+	if got := obj(t, e.call(t, "get_activity", map[string]any{"id": 5}).object(t)["perceived"]); got["feel_pct"] != nil {
+		t.Fatalf("before the FIT is read: %v", got)
+	}
+	if got := obj(t, e.call(t, "get_activity", map[string]any{"id": 5, "detail": "laps"}).object(t)["perceived"]); !mapsEqual(got, want) {
+		t.Fatalf("laps detail: %v", got)
+	}
+	acts := arr(t, e.call(t, "list_activities", map[string]any{"from": "2026-10-22", "to": "2026-10-22"}).object(t)["activities"])
+	if got := obj(t, obj(t, acts[0])["perceived"]); !mapsEqual(got, want) {
+		t.Fatalf("list_activities: %v", got)
+	}
+}

@@ -40,7 +40,8 @@ coachd is a **gateway, not a coach**:
    - you approve with a passkey;
    - it delivers through a Connect IQ watch app, or as a FIT file download;
    - a cycling workout with time-based steps also downloads as a Zwift workout file (`.zwo`), with power targets in % of FTP.
-4. **Planned vs actual.** When you run a structured workout on the watch, coachd reads the steps back from the activity's FIT file: per executed step, the time, distance, heart rate, pace and power, and the seconds inside, below and above its heart-rate or pace range. It links the activity to the workout it delivered, so the agent can review a week of plans against what you did. This works for Garmin Coach and Garmin Connect workouts too, without the link.
+4. **Your own rating.** The "How did you feel?" and RPE answers you give on the watch after a workout reach the agent too, read from the FIT file.
+5. **Planned vs actual.** When you run a structured workout on the watch, coachd reads the steps back from the activity's FIT file: per executed step, the time, distance, heart rate, pace and power, and the seconds inside, below and above its heart-rate or pace range. It links the activity to the workout it delivered, so the agent can review a week of plans against what you did. This works for Garmin Coach and Garmin Connect workouts too, without the link.
 
 There is no chat UI and no built-in LLM. You talk to Claude (or Claude Duet, ChatGPT, Gemini, Cursor, Open WebUI or a local model), and the agent calls coachd over **MCP**.
 

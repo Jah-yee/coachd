@@ -43,6 +43,17 @@ type Activity struct {
 	// Workout is set when the file records a structured workout: a workout
 	// message and at least one lap with a valid wkt_step_index.
 	Workout *Workout
+	// Perceived is the runner's own rating after the activity, from the
+	// first session; nil fields when the watch did not ask or they skipped.
+	Perceived Perceived
+}
+
+// Perceived is the post-activity self-evaluation a Garmin watch records:
+// how the runner felt, 0 (very weak) to 100 (very strong), and the rating of
+// perceived exertion, 0 to 10.
+type Perceived struct {
+	FeelPct *int
+	RPE     *float64
 }
 
 // Decode reads an activity FIT file. Invalid sentinel values become nil.
@@ -71,7 +82,7 @@ func Decode(r io.Reader) (Activity, error) {
 		}
 		laps = append(laps, l.Lap)
 	}
-	return Activity{Laps: laps, Points: c.points, Workout: c.workout()}, nil
+	return Activity{Laps: laps, Points: c.points, Workout: c.workout(), Perceived: c.perceived}, nil
 }
 
 // DecodeWorkout reads the steps of a FIT workout file, such as one coachd
@@ -105,6 +116,8 @@ type collector struct {
 	hasWorkout   bool
 	wktName      string
 	steps        []WorkoutStep
+	sessions     int
+	perceived    Perceived // from the first session
 }
 
 // pendingLap is a lap whose StartOffsetS waits for the activity start, with
@@ -128,6 +141,14 @@ func (c *collector) OnMesg(m proto.Message) {
 	case mesgnum.Session:
 		if c.sessionStart.IsZero() {
 			c.sessionStart = datetime.ToTime(value(&m, fieldnum.SessionStartTime).Uint32())
+		}
+		if c.sessions++; c.sessions == 1 {
+			if f := value(&m, fieldnum.SessionWorkoutFeel).Uint8(); f <= 100 {
+				c.perceived.FeelPct = ptr(int(f))
+			}
+			if r := value(&m, fieldnum.SessionWorkoutRpe).Uint8(); r <= 100 {
+				c.perceived.RPE = ptr(float64(r) / 10)
+			}
 		}
 	case mesgnum.Workout:
 		c.hasWorkout = true
