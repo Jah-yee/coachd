@@ -16,10 +16,16 @@ The release workflow publishes the section whose heading matches the pushed tag 
   - **Glance** on fēnix 7 and later: the next workout and unread messages.
   - The app needs two new permissions, Background and Notifications.
 - **Device API:** `GET /device/v1/workouts/{id}` (a workout's detail) and `GET /device/v1/messages`, both read-only. An older watch app ignores them, and the new app works against an older coachd without details or messages.
+- **Planned vs actual** (`docs/design/workout-outcome.md`):
+  - For an activity recorded from a structured workout on the watch, `get_activity` with detail `laps` or `series` adds `workout`: the steps the watch followed, and each executed step with its time, distance, heart rate, pace, power and, for a heart-rate or pace range, the seconds inside, below and above it. Numbers only, computed from the activity's FIT file at ingest.
+  - `workout.proposal_id` links the activity to the delivered proposal it carried out, and `list_workouts` gains `activity_ids` on each workout. The link needs the steps the watch recorded to equal the workout coachd delivered, and the dates to be within 3 days.
+  - Garmin Coach and Garmin Connect workouts get the steps too, without a link. Zwift-recorded rides do not: their files carry no step index.
+  - Not yet checked on a workout delivered by the coachd watch app: if the watch rewrites the steps, the steps still show and only the link is missing.
 
 ### Changed
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.
+- **Upgrade note:** the activity detail cache (laps, series and now workouts) is reset by a migration and rebuilds from the stored FIT files: newest first, 20 activities per FIT drain, and on each `get_activity` that misses it.
 
 ## [0.3.0] - 2026-10-25
 

@@ -40,6 +40,7 @@ coachd is a **gateway, not a coach**:
    - you approve with a passkey;
    - it delivers through a Connect IQ watch app, or as a FIT file download;
    - a cycling workout with time-based steps also downloads as a Zwift workout file (`.zwo`), with power targets in % of FTP.
+4. **Planned vs actual.** When you run a structured workout on the watch, coachd reads the steps back from the activity's FIT file: per executed step, the time, distance, heart rate, pace and power, and the seconds inside, below and above its heart-rate or pace range. It links the activity to the workout it delivered, so the agent can review a week of plans against what you did. This works for Garmin Coach and Garmin Connect workouts too, without the link.
 
 There is no chat UI and no built-in LLM. You talk to Claude (or Claude Duet, ChatGPT, Gemini, Cursor, Open WebUI or a local model), and the agent calls coachd over **MCP**.
 
@@ -72,6 +73,7 @@ All of these tools exist today:
 - No tool can approve, deliver or withdraw a workout. Only you can, on coachd's approval page with a passkey.
 - The approval page, ntfy notifications and FIT download are available (M2b). A proposal that nobody approves stays `pending` and expires at the end of its date.
 - Agents can edit or delete only notes that agents wrote. Your own notes are read-only to them.
+- `get_activity` with detail `laps` shows the planned and executed steps of a structured workout, and `list_workouts` lists the activities that carried out each delivered workout. The link needs the steps the watch recorded to equal the workout coachd delivered, dated within 3 days of it.
 - `send_message` stores up to 300 characters for the watch app, which shows it and, with background checks on, notifies you within about 15 minutes. A message is display-only: it cannot carry or change a workout, and it is sent nowhere else (not to ntfy).
 
 ## Approval flow
@@ -151,6 +153,7 @@ OpenTelemetry flows to Grafana Alloy, which routes each signal:
   - Watch app v2: the next workout on the main screen, workout details with the agent's rationale, agent messages, background checks with notifications, and a glance (see [`watch/README.md`](watch/README.md)).
   - Backups and restore, a local Grafana profile, dashboards and alerts.
   - Built-in auth, so the public lane works without Cloudflare.
+  - Planned vs actual: executed workout steps and their link to the delivered workout.
 - **Next:** a smoother first-time install, and wider live testing of AI clients against built-in mode. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Known risks
