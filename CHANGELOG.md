@@ -6,6 +6,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-25
+
 ### Changed
 
 - **Runner page redesign:** a new look for every page, still without JavaScript frameworks or a build step.
