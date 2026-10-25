@@ -244,6 +244,15 @@ func leafStep(n node, idx int) (*mesgdef.WorkoutStep, error) {
 			}
 			st.SetTargetType(typedef.WktStepTargetCadence).SetTargetValue(0).
 				SetCustomTargetValueLow(lo).SetCustomTargetValueHigh(hi)
+		case "power":
+			// Custom power values 0–1000 are % of FTP.
+			lo, ok1 := val(t.LowPctFTP)
+			hi, ok2 := val(t.HighPctFTP)
+			if !ok1 || !ok2 {
+				return nil, bad
+			}
+			st.SetTargetType(typedef.WktStepTargetPower).SetTargetValue(0).
+				SetCustomTargetValueLow(lo).SetCustomTargetValueHigh(hi)
 		default:
 			return nil, fmt.Errorf("fitworkout: step %d: unknown target %q", idx, t.Type)
 		}

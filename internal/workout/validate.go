@@ -20,6 +20,8 @@ const (
 	maxRepeat        = 50
 	minCadence       = 30
 	maxCadence       = 250
+	minPowerPct      = 20
+	maxPowerPct      = 300
 	maxTimeS         = 36000
 	maxDistanceM     = 100000
 	defaultPaceSPerK = 360
@@ -324,9 +326,9 @@ func noteHR(a *acc, v int) {
 // checkTarget validates a target and returns the slow pace bound (0 if none).
 func checkTarget(path string, t *Target, l Limits, r sportRule, a *acc) (int, error) {
 	switch t.Type {
-	case "none", "hr", "pace", "cadence", "effort":
+	case "none", "hr", "pace", "cadence", "effort", "power":
 	default:
-		return 0, bad("%s.type: %q is not one of none|hr|pace|cadence|effort", path, clip(t.Type))
+		return 0, bad("%s.type: %q is not one of none|hr|pace|cadence|effort|power", path, clip(t.Type))
 	}
 	if t.Type != "effort" && t.Cue != "" {
 		return 0, bad("%s: cue set for type=%s; cue is only for type=effort", path, t.Type)
@@ -339,6 +341,7 @@ func checkTarget(path string, t *Target, l Limits, r sportRule, a *acc) (int, er
 			{"low_bpm", "hr", t.LowBpm != nil}, {"high_bpm", "hr", t.HighBpm != nil},
 			{"low_pace_s_per_km", "pace", t.LowPaceSPerKm != nil}, {"high_pace_s_per_km", "pace", t.HighPaceSPerKm != nil},
 			{"low_spm", "cadence", t.LowSpm != nil}, {"high_spm", "cadence", t.HighSpm != nil},
+			{"low_pct_ftp", "power", t.LowPctFTP != nil}, {"high_pct_ftp", "power", t.HighPctFTP != nil},
 		} {
 			if f.set && f.typ != allowed {
 				return bad("%s: %s set for type=%s", path, f.name, t.Type)
@@ -386,6 +389,14 @@ func checkTarget(path string, t *Target, l Limits, r sportRule, a *acc) (int, er
 			return 0, err
 		}
 		return 0, pair("low_spm", "high_spm", t.LowSpm, t.HighSpm, minCadence, maxCadence, "spm")
+	case "power":
+		if r.sport != store.SportCycling {
+			return 0, bad("%s: power targets are only supported for cycling", path)
+		}
+		if err := other("power"); err != nil {
+			return 0, err
+		}
+		return 0, pair("low_pct_ftp", "high_pct_ftp", t.LowPctFTP, t.HighPctFTP, minPowerPct, maxPowerPct, "% FTP")
 	case "effort":
 		if err := other("effort"); err != nil {
 			return 0, err
@@ -395,5 +406,5 @@ func checkTarget(path string, t *Target, l Limits, r sportRule, a *acc) (int, er
 		}
 		return 0, CheckText(path+".cue", t.Cue, maxCueRunes)
 	}
-	return 0, bad("%s.type: %q is not one of none|hr|pace|cadence|effort", path, clip(t.Type))
+	return 0, bad("%s.type: %q is not one of none|hr|pace|cadence|effort|power", path, clip(t.Type))
 }

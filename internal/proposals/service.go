@@ -25,6 +25,7 @@ import (
 	"github.com/stefiix92/coachd/internal/store"
 	"github.com/stefiix92/coachd/internal/telemetry"
 	"github.com/stefiix92/coachd/internal/workout"
+	"github.com/stefiix92/coachd/internal/zwiftworkout"
 )
 
 const maxRationaleRunes = 2000
@@ -155,6 +156,9 @@ func (s *Service) Propose(ctx context.Context, w workout.Workout, rationale stri
 	in, err := s.warningInputs(ctx, plan, replaces, now, today)
 	if err != nil {
 		return ProposeResult{}, err
+	}
+	if plan.Sport == store.SportCycling {
+		in.ZwiftUnsupported = zwiftworkout.Unsupported(w)
 	}
 	warnings := guidance.Warnings(in)
 	if warnings == nil {

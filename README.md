@@ -38,7 +38,8 @@ coachd is a **gateway, not a coach**:
 3. **Workout out.** The agent proposes a structured workout. coachd checks that it's well-formed and attaches warnings, such as "longer than 110% of your longest run in the last 30 days". Then:
    - it notifies your phone;
    - you approve with a passkey;
-   - it delivers through a Connect IQ watch app, or as a FIT file download.
+   - it delivers through a Connect IQ watch app, or as a FIT file download;
+   - a cycling workout with time-based steps also downloads as a Zwift workout file (`.zwo`), with power targets in % of FTP.
 
 There is no chat UI and no built-in LLM. You talk to Claude (or Claude Duet, ChatGPT, Gemini, Cursor, Open WebUI or a local model), and the agent calls coachd over **MCP**.
 
@@ -77,7 +78,7 @@ All of these tools exist today:
 2. coachd sends a minimal ntfy notice ("Workout for Tue 28 Oct ready to review") if ntfy is configured.
 3. You open the approval page (behind Cloudflare Access, or signed in with your passkey in built-in mode), and read the workout, warnings and the agent's rationale (labelled as agent text).
 4. You approve with a passkey (Face ID or fingerprint); decline is one tap after a passkey login.
-5. The watch app picks it up on its next sync and confirms delivery. Without the watch app, download the FIT file from the page and copy it to the watch (`GARMIN/NewFiles`); the first download marks it `delivered`.
+5. The watch app picks it up on its next sync and confirms delivery. Without the watch app, download the FIT file from the page and copy it to the watch (`GARMIN/NewFiles`). For a cycling workout whose steps all have a time duration, **Download for Zwift** also offers a `.zwo` file (see below). The first download of either file marks it `delivered`.
 
 ### Enrol a passkey
 
@@ -90,6 +91,16 @@ docker compose exec coachd /coachd enroll
 In Access mode, sign in at `<COACHD_PUBLIC_URL>/` through Access first, then open the printed link in
 that browser within 10 minutes (Access's login redirect would drop the link's `#token`). In built-in
 mode, just open the link. You can enrol more passkeys and revoke them on the page.
+
+### Zwift workouts
+
+A cycling workout whose steps all have a time duration can be downloaded for Zwift. Power targets are in % of FTP, so Zwift applies the FTP set in your Zwift profile; other targets (heart rate, cadence, an effort cue) become free-ride blocks with an on-screen message.
+
+1. On the approved workout's page, click **Download for Zwift**.
+2. Copy the `.zwo` file into `Documents/Zwift/Workouts/<your Zwift ID>/` on your Mac (`Documents\Zwift\Workouts\<your Zwift ID>\` on Windows). If the numbered folder is missing, start Zwift on that computer and sign in once.
+3. Restart Zwift. The workout is under **Custom Workouts** in the workout list.
+
+Zwift on Apple TV or iPad cannot import files: import on a Mac or PC first, and Zwift's cloud sync brings it to your other devices. A cycling workout with distance, open or heart-rate-bounded steps cannot be a Zwift workout; the page says which step, and the agent gets the same fact as a warning.
 
 ### ntfy
 
@@ -133,6 +144,7 @@ OpenTelemetry flows to Grafana Alloy, which routes each signal:
 - **Done:**
   - Garmin ingest and backfill, summaries, MCP tools, both network lanes, telemetry.
   - Goal, notes, workout proposals with warnings, passkey approval, ntfy, FIT download.
+  - Power targets for cycling, and Zwift workout downloads.
   - Connect IQ watch app with device pairing and delivery confirmation (Connect IQ Store, your coachd URL set on the phone; opt-in with `COACHD_DEVICE_API=on`).
   - Backups and restore, a local Grafana profile, dashboards and alerts.
   - Built-in auth, so the public lane works without Cloudflare.

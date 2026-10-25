@@ -244,3 +244,19 @@ func TestFileName(t *testing.T) {
 		t.Errorf("short id: %s", got)
 	}
 }
+
+// Custom power values 0–1000 are % of FTP in the FIT profile, so the
+// percentages go in unchanged.
+func TestEncodePower(t *testing.T) {
+	w := workout.Workout{Name: "p", Sport: "cycling", Steps: []workout.Step{
+		{StepBase: base("active", dur("time", 600), &workout.Target{Type: "power", LowPctFTP: ip(88), HighPctFTP: ip(92)})},
+	}}
+	_, wk, st := encode(t, w)
+	if wk.Sport != typedef.SportCycling {
+		t.Errorf("sport = %v", wk.Sport)
+	}
+	s := st[0]
+	if s.TargetType != typedef.WktStepTargetPower || s.TargetValue != 0 || s.CustomTargetValueLow != 88 || s.CustomTargetValueHigh != 92 {
+		t.Errorf("power: %+v", s)
+	}
+}

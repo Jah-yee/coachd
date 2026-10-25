@@ -1,0 +1,11 @@
+<workout_file>
+  <author>coachd</author>
+  <name>Sweet spot</name>
+  <description>Steady</description>
+  <sportType>bike</sportType>
+  <workout>
+    <SteadyState Duration="600" Power="0.55"></SteadyState>
+    <SteadyState Duration="300" Power="0.9"></SteadyState>
+    <SteadyState Duration="300" Power="0.895"></SteadyState>
+  </workout>
+</workout_file>

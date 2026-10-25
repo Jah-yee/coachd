@@ -64,6 +64,9 @@ type WarningInputs struct {
 	LastSyncAt                     *time.Time
 	Now                            time.Time
 	WeeksOfHistory                 int
+	// ZwiftUnsupported is why a cycling workout cannot be a Zwift workout
+	// (zwiftworkout.Unsupported); empty when it can, or for other sports.
+	ZwiftUnsupported string
 }
 
 // pct1 is a/b as a percentage rounded UP to one decimal, so a spike that only
@@ -88,7 +91,7 @@ func noRun(measure string, other float64) string {
 }
 
 // Warnings returns warnings ordered: spike_distance, spike_duration, same_day,
-// above_max_hr, stale_data, thin_history.
+// above_max_hr, zwift_not_exportable, stale_data, thin_history.
 func Warnings(in WarningInputs) []Warning {
 	var ws []Warning
 	p := in.Plan
@@ -128,6 +131,9 @@ func Warnings(in WarningInputs) []Warning {
 	if p.MaxTargetHR != nil && in.MaxHR90d != nil && *in.MaxHR90d > 0 && *p.MaxTargetHR > *in.MaxHR90d {
 		ws = append(ws, Warning{"above_max_hr", fmt.Sprintf(
 			"planned target of %d bpm is above the highest heart rate in the last 90 days (%d bpm)", *p.MaxTargetHR, *in.MaxHR90d)})
+	}
+	if in.ZwiftUnsupported != "" {
+		ws = append(ws, Warning{"zwift_not_exportable", "not exportable to Zwift: " + in.ZwiftUnsupported})
 	}
 	if in.LastSyncAt == nil {
 		ws = append(ws, Warning{"stale_data", "no successful sync is recorded"})

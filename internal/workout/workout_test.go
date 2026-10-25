@@ -502,3 +502,50 @@ func TestCheckLine(t *testing.T) {
 		}
 	}
 }
+
+func powerStep(lo, hi *int) Step {
+	return sb("active", &Duration{Type: "time", TimeS: ip(600)}, &Target{Type: "power", LowPctFTP: lo, HighPctFTP: hi})
+}
+
+func cycling(steps ...Step) Workout {
+	w := base(steps...)
+	w.Sport = "cycling"
+	return w
+}
+
+func TestPowerTarget(t *testing.T) {
+	ok(t, cycling(powerStep(ip(88), ip(92))))
+	ok(t, cycling(powerStep(ip(20), ip(300))))
+	for _, c := range []struct {
+		w    Workout
+		want string
+	}{
+		{base(powerStep(ip(88), ip(92))), "steps[0].target: power targets are only supported for cycling"},
+		{cycling(powerStep(ip(10), ip(92))), "steps[0].target: low_pct_ftp 10 % FTP below 20"},
+		{cycling(powerStep(ip(88), ip(301))), "steps[0].target: high_pct_ftp 301 % FTP above 300"},
+		{cycling(powerStep(ip(95), ip(90))), "steps[0].target: low_pct_ftp 95 is above high_pct_ftp 90; low must not exceed high"},
+		{cycling(powerStep(ip(88), nil)), "steps[0].target: high_pct_ftp is required"},
+		{cycling(sb("active", &Duration{Type: "time", TimeS: ip(600)}, &Target{Type: "hr", LowBpm: ip(120), HighBpm: ip(140), LowPctFTP: ip(50)})),
+			"steps[0].target: low_pct_ftp set for type=hr"},
+		{cycling(sb("active", &Duration{Type: "time", TimeS: ip(600)}, &Target{Type: "watts"})),
+			`steps[0].target.type: "watts" is not one of none|hr|pace|cadence|effort|power`},
+	} {
+		if got := reason(t, c.w); got != c.want {
+			t.Errorf("reason = %q, want %q", got, c.want)
+		}
+	}
+}
+
+// Existing proposals hash their canonical JSON; the power fields must not
+// change the bytes of a workout that does not use them.
+func TestCanonicalJSONUnchangedWithoutPower(t *testing.T) {
+	w := cycling(sb("active", &Duration{Type: "time", TimeS: ip(600)}, &Target{Type: "hr", LowBpm: ip(120), HighBpm: ip(140)}))
+	b, err := CanonicalJSON(w)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `{"name":"Easy","sport":"cycling","date":"2026-10-23","steps":[{"kind":"active","duration":{"type":"time","time_s":600},"target":{"type":"hr","low_bpm":120,"high_bpm":140}}]}`
+	if string(b) != want {
+		t.Fatalf("canonical JSON\n got %s\nwant %s", b, want)
+	}
+}

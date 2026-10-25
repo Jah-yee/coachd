@@ -793,3 +793,24 @@ func callMetrics(t *testing.T, e *env) (calls, durations map[string]int) {
 	}
 	return calls, durations
 }
+
+// An agent planning a Zwift ride learns before proposing what Zwift takes.
+func TestProposeWorkoutDescribesZwift(t *testing.T) {
+	e := newEnv(t, readIdentity())
+	res, err := e.connect(t, "").ListTools(context.Background(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tl := range res.Tools {
+		if tl.Name != "propose_workout" {
+			continue
+		}
+		for _, want := range []string{"not exportable to Zwift", "cycling", "time durations", "% of FTP"} {
+			if !strings.Contains(tl.Description, want) {
+				t.Errorf("propose_workout description lacks %q: %q", want, tl.Description)
+			}
+		}
+		return
+	}
+	t.Fatal("no propose_workout tool")
+}

@@ -89,7 +89,7 @@ func NewMetrics(mp metric.MeterProvider) (*Metrics, error) {
 	counter(&out.AuthFailures, "coachd.auth.failures", "Authentication failures")
 	counter(&out.NotifySends, "coachd.notify.sends", "ntfy notifications by outcome")
 	counter(&out.ProposalWarnings, "coachd.proposals.warnings", "Proposal warnings by code")
-	counter(&out.Deliveries, "coachd.proposals.deliveries", "Workout FIT downloads by outcome")
+	counter(&out.Deliveries, "coachd.proposals.deliveries", "Workout downloads by outcome; web downloads also by format")
 	hist(&out.ApprovalLatency, "coachd.proposals.approval_latency", "Time from proposal to approval", approvalBuckets)
 	counter(&out.BackupRuns, "coachd.backup.runs", "Backup runs by outcome")
 	counter(&out.DeviceRequests, "coachd.device.requests", "Device API requests by endpoint and outcome")

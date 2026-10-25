@@ -31,7 +31,10 @@ func (s *svc) registerProposals(srv *mcp.Server) {
 		"a structured workout for a date from today up to 14 days ahead. coachd checks only physical plausibility: " +
 		"an implausible workout returns verdict invalid with a reason and stores nothing. A plausible one is stored " +
 		"as pending with deterministic warnings (longest-run spike, same-day workouts, heart rate above the 90-day " +
-		"maximum, stale data, thin history), which never block. A pending proposal waits for the runner: the runner " +
+		"maximum, not exportable to Zwift, stale data, thin history), which never block. Power targets are in % of " +
+		"FTP and only for cycling. Zwift takes only time durations: the runner can download a cycling workout for " +
+		"Zwift when every step has one; distance, open and heart-rate-bounded steps give the Zwift warning. " +
+		"A pending proposal waits for the runner: the runner " +
 		"must approve on coachd's page; this tool cannot approve, and nothing reaches the watch until then. To " +
 		"change a proposal, propose a new one with replaces set to its id." + localWrite + descSuffix},
 		auth.ScopeWrite, s.proposeWorkout)

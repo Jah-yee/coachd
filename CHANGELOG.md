@@ -6,6 +6,22 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-25
+
+### Added
+
+- **Power targets for cycling:** `propose_workout` takes a `power` step target in % of FTP (`low_pct_ftp`, `high_pct_ftp`, 20 to 300, cycling only). The approval page shows it, and the FIT file carries it to the watch.
+- **Download for Zwift:** an approved cycling workout whose steps all have a time duration downloads as a Zwift workout file (`.zwo`) from its page; copy it into Zwift's Workouts folder on a Mac or PC (see the README).
+  - Power steps become steady-state blocks at the middle of the band; a two-step power repeat becomes a Zwift interval set. Heart-rate, pace, cadence and effort targets become free-ride blocks with an on-screen message.
+  - The first download of either file, FIT or `.zwo`, marks the workout delivered.
+  - The `.zwo` files were not tried in Zwift before this release. Text is kept to plain ASCII to be safe. If Zwift does not list a downloaded workout, please open an issue.
+- **Warning `zwift_not_exportable`:** a cycling workout with a distance, open or heart-rate-bounded step gets a warning naming the step. It never blocks.
+- **Telemetry:** workout downloads carry a `format` attribute (`fit` or `zwo`).
+
+### Changed
+
+- The cadence target's schema text says it is rpm for cycling.
+
 ## [0.2.0] - 2026-10-25
 
 ### Changed

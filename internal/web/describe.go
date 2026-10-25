@@ -27,7 +27,8 @@ var kindLabels = map[string]string{
 // Describe renders a workout as plain lines for the page, e.g.
 // "Warm-up · 10:00 · HR 120–140 bpm", "Repeat 6×", "Active · 400 m · pace 3:50–4:00 /km",
 // "Recovery · open (lap button)", "Active · until HR above 160 bpm",
-// "Active · 2 km · cadence 170–180 spm", "Active · 5:00 · effort: <cue>"; step notes become an
+// "Active · 2 km · cadence 170–180 spm", "Active · 5:00 · effort: <cue>",
+// "Active · 5:00 · power 88–92% FTP"; step notes become an
 // extra line "note: <notes>" at Indent+1.
 //
 // Cues and notes are agent-written: the page must show the lines escaped and
@@ -104,6 +105,8 @@ func describeTarget(t *workout.Target) string {
 		return "cadence " + num(t.LowSpm) + "–" + num(t.HighSpm) + " spm"
 	case "effort":
 		return "effort: " + t.Cue
+	case "power":
+		return "power " + num(t.LowPctFTP) + "–" + num(t.HighPctFTP) + "% FTP"
 	}
 	return t.Type
 }
