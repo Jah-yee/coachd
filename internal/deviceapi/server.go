@@ -1,15 +1,16 @@
 // Package deviceapi serves /device/v1/*, the HTTP API the Connect IQ watch
-// app talks to: pairing, the desired set of approved workouts, FIT download
-// and delivery acknowledgement.
+// app talks to: pairing, the desired set of approved workouts, their details,
+// FIT download, delivery acknowledgement and the agent's messages.
 //
 // Ruling R-M3-1: it is mounted on the public listener outside the Cloudflare
 // Access middleware, so every request is hostile internet traffic until the
 // device bearer token checks out. The pairing endpoints are open; everything
 // else needs a token issued after the runner confirmed the pairing code.
 //
-// No agent path to the watch: this API can only read the desired set,
-// download FIT files of workouts already in it and acknowledge them. It
-// never approves, declines, withdraws or changes a proposal.
+// No agent path to the watch: this API can only read the desired set and its
+// details, download FIT files of workouts already in it, acknowledge them and
+// read the agent's messages (display-only text). It never approves, declines,
+// withdraws or changes a proposal, and never writes a message.
 package deviceapi
 
 import (
@@ -100,8 +101,10 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /device/v1/pairings", s.instrument("pairing_create", pairingLimit(s.pairCreate, s.createPairing)))
 	mux.HandleFunc("GET /device/v1/pairings/{id}", s.instrument("pairing_poll", pairingLimit(s.pairPoll, s.pollPairing)))
 	mux.HandleFunc("GET /device/v1/workouts", s.instrument("workouts", s.requireDevice(s.desired)))
+	mux.HandleFunc("GET /device/v1/workouts/{id}", s.instrument("workout_detail", s.requireDevice(s.detail)))
 	mux.HandleFunc("GET /device/v1/workouts/{id}/fit", s.instrument("workout_fit", s.requireDevice(s.fit)))
 	mux.HandleFunc("POST /device/v1/workouts/{id}/ack", s.instrument("workout_ack", s.requireDevice(s.ack)))
+	mux.HandleFunc("GET /device/v1/messages", s.instrument("messages", s.requireDevice(s.messages)))
 	mux.HandleFunc("/", s.instrument("unknown", notFound))
 	return headers(canonical(limitBody(mux)))
 }

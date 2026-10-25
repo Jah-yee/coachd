@@ -302,6 +302,17 @@ func (ts *testServer) addProposal(t *testing.T, name string, date civil.Date, st
 	tenMin := 600
 	w := workout.Workout{Name: name, Sport: "running", Date: date.String(), Steps: []workout.Step{
 		{StepBase: workout.StepBase{Kind: "warmup", Duration: &workout.Duration{Type: "time", TimeS: &tenMin}}}}}
+	return ts.addWorkout(t, w, "base building", status)
+}
+
+// addWorkout stores w as a proposal in status with rationale, and a stored
+// trace context.
+func (ts *testServer) addWorkout(t *testing.T, w workout.Workout, rationale string, status store.ProposalStatus) store.Proposal {
+	t.Helper()
+	date, err := civil.Parse(w.Date)
+	if err != nil {
+		t.Fatal(err)
+	}
 	canon, err := workout.CanonicalJSON(w)
 	if err != nil {
 		t.Fatal(err)
@@ -310,7 +321,7 @@ func (ts *testServer) addProposal(t *testing.T, name string, date civil.Date, st
 	rand.Read(id)
 	now := ts.clock.Now()
 	p := store.Proposal{ID: hex.EncodeToString(id), Date: date, Sport: store.Sport(w.Sport), Name: w.Name,
-		ContentJSON: canon, ContentHash: workout.ContentHash(canon), Rationale: "base building",
+		ContentJSON: canon, ContentHash: workout.ContentHash(canon), Rationale: rationale,
 		WarningsJSON: []byte("[]"), Status: status, StatusAt: now, CreatedAt: now,
 		CreatedLane: "private", CreatedBy: "agent", CreatedClient: "claude", TraceID: testTraceID, SpanID: testSpanID}
 	if err := ts.db.InsertProposal(context.Background(), p, store.AuditEvent{At: now, Lane: "private", Actor: "agent",
