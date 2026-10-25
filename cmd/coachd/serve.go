@@ -162,10 +162,19 @@ func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, keys *ga
 		return fmt.Errorf("register gauges: %w", err)
 	}
 
-	svc := ingest.New(db, g, tel, ingest.Options{
+	ingestOpts := ingest.Options{
 		TZ: cfg.TZ, DataDir: cfg.DataDir, BackfillDays: cfg.BackfillDays, BackfillDelay: cfg.BackfillDelay,
 		SyncMinInterval: cfg.SyncMinInterval, PollInterval: cfg.PollInterval, Now: time.Now,
-	})
+	}
+	var webhook *notify.Webhook
+	if cfg.WebhookURL != "" {
+		webhook = notify.NewWebhook(cfg.WebhookURL, cfg.WebhookToken, db, nil, tel.Metrics, tel.Logger, tel.Tracer)
+		ingestOpts.Events = webhook // only when configured: a nil *Webhook in the interface is not nil
+		if strings.HasPrefix(cfg.WebhookURL, "http://") {
+			log.Warn("webhook URL is plain http: its token travels in clear text")
+		}
+	}
+	svc := ingest.New(db, g, tel, ingestOpts)
 	propDeps := proposals.Deps{DB: db, TZ: cfg.TZ, Now: time.Now, Limits: workout.DefaultLimits, Log: tel.Logger, Metrics: tel.Metrics}
 	var ntfy *notify.Ntfy
 	if cfg.NtfyURL != "" {
@@ -298,6 +307,10 @@ func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, keys *ga
 	defer cancel()
 	var wg sync.WaitGroup
 	wg.Add(4)
+	if webhook != nil {
+		wg.Add(1)
+		go func() { defer wg.Done(); webhook.Run(runCtx) }()
+	}
 	if ntfy != nil {
 		wg.Add(1)
 		go func() { defer wg.Done(); ntfy.Run(runCtx) }()

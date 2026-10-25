@@ -53,6 +53,7 @@ type Metrics struct {
 	MCPDuration       metric.Float64Histogram
 	AuthFailures      metric.Int64Counter
 	NotifySends       metric.Int64Counter
+	WebhookSends      metric.Int64Counter
 	ProposalWarnings  metric.Int64Counter
 	Deliveries        metric.Int64Counter
 	ApprovalLatency   metric.Float64Histogram
@@ -88,6 +89,7 @@ func NewMetrics(mp metric.MeterProvider) (*Metrics, error) {
 	hist(&out.MCPDuration, "coachd.mcp.call.duration", "MCP tool call duration", requestBuckets)
 	counter(&out.AuthFailures, "coachd.auth.failures", "Authentication failures")
 	counter(&out.NotifySends, "coachd.notify.sends", "ntfy notifications by outcome")
+	counter(&out.WebhookSends, "coachd.webhook.sends", "post-run webhook events by outcome")
 	counter(&out.ProposalWarnings, "coachd.proposals.warnings", "Proposal warnings by code")
 	counter(&out.Deliveries, "coachd.proposals.deliveries", "Workout downloads by outcome; web downloads also by format")
 	hist(&out.ApprovalLatency, "coachd.proposals.approval_latency", "Time from proposal to approval", approvalBuckets)

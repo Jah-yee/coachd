@@ -36,6 +36,10 @@ type Config struct {
 	// dynamic client registration (builtin mode only).
 	PublicAuth PublicAuth
 	OAuthDCR   bool
+	// WebhookURL (COACHD_WEBHOOK_URL) receives an event when a recent
+	// activity is stored; WebhookToken, from COACHD_WEBHOOK_TOKEN_FILE, is
+	// its optional bearer token. Both are secrets: never logged.
+	WebhookURL, WebhookToken string
 }
 
 // PublicAuth selects how the public listener authenticates requests.
@@ -151,6 +155,18 @@ func Load(getenv func(string) string) (*Config, error) {
 	if p := getenv("COACHD_NTFY_TOKEN_FILE"); p != "" && c.NtfyURL != "" {
 		if c.NtfyToken, err = ReadSecretFile(p); err != nil {
 			return nil, fmt.Errorf("COACHD_NTFY_TOKEN_FILE: %w", err)
+		}
+	}
+	if v := getenv("COACHD_WEBHOOK_URL"); v != "" {
+		u, err := url.Parse(v)
+		if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" || u.User != nil {
+			return nil, fmt.Errorf("COACHD_WEBHOOK_URL: must be an absolute http(s) URL without user info")
+		}
+		c.WebhookURL = v
+	}
+	if p := getenv("COACHD_WEBHOOK_TOKEN_FILE"); p != "" && c.WebhookURL != "" {
+		if c.WebhookToken, err = ReadSecretFile(p); err != nil {
+			return nil, fmt.Errorf("COACHD_WEBHOOK_TOKEN_FILE: %w", err)
 		}
 	}
 

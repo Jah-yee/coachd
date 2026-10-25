@@ -1,0 +1,208 @@
+package notify
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"io"
+	"log/slog"
+	"net/http"
+	"net/http/httptest"
+	"path/filepath"
+	"slices"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"go.opentelemetry.io/otel/attribute"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/metric/metricdata"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace/tracetest"
+
+	"github.com/stefiix92/coachd/internal/civil"
+	"github.com/stefiix92/coachd/internal/fitdata"
+	"github.com/stefiix92/coachd/internal/store"
+	"github.com/stefiix92/coachd/internal/telemetry"
+)
+
+type webhookRig struct {
+	w      *Webhook
+	db     *store.DB
+	reader *sdkmetric.ManualReader
+	logs   *bytes.Buffer
+	spans  *tracetest.SpanRecorder
+}
+
+func newWebhookRig(t *testing.T, url, token string) *webhookRig {
+	t.Helper()
+	db, err := store.Open(context.Background(), filepath.Join(t.TempDir(), "coachd.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { db.Close() })
+	r := sdkmetric.NewManualReader()
+	m, err := telemetry.NewMetrics(sdkmetric.NewMeterProvider(sdkmetric.WithReader(r)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	logs := &bytes.Buffer{}
+	spans := tracetest.NewSpanRecorder()
+	w := NewWebhook(url, token, db, http.DefaultClient, m, slog.New(slog.NewJSONHandler(logs, nil)),
+		sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(spans)).Tracer("notify"))
+	w.sleep = func(ctx context.Context, d time.Duration) error { return ctx.Err() }
+	rig := &webhookRig{w: w, db: db, reader: r, logs: logs, spans: spans}
+	t.Cleanup(func() {
+		if url != "" && strings.Contains(logs.String(), url) || token != "" && strings.Contains(logs.String(), token) {
+			t.Error("a log line holds the webhook URL or token")
+		}
+		for _, s := range spans.Ended() {
+			for _, kv := range s.Attributes() {
+				if !slices.Contains(telemetry.AllowedKeys, string(kv.Key)) {
+					t.Errorf("span attribute %q is not allowlisted", kv.Key)
+				}
+			}
+		}
+	})
+	return rig
+}
+
+func (r *webhookRig) outcomes(t *testing.T) map[string]int64 {
+	t.Helper()
+	var rm metricdata.ResourceMetrics
+	if err := r.reader.Collect(context.Background(), &rm); err != nil {
+		t.Fatal(err)
+	}
+	out := map[string]int64{}
+	for _, sm := range rm.ScopeMetrics {
+		for _, m := range sm.Metrics {
+			if m.Name != "coachd.webhook.sends" {
+				continue
+			}
+			for _, dp := range m.Data.(metricdata.Sum[int64]).DataPoints {
+				v, _ := dp.Attributes.Value(attribute.Key("outcome"))
+				out[v.AsString()] += dp.Value
+			}
+		}
+	}
+	return out
+}
+
+func (r *webhookRig) run(t *testing.T, cond func() bool) {
+	t.Helper()
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { r.w.Run(ctx); close(done) }()
+	deadline := time.Now().Add(3 * time.Second)
+	for !cond() && time.Now().Before(deadline) {
+		time.Sleep(5 * time.Millisecond)
+	}
+	cancel()
+	<-done
+	if !cond() {
+		t.Fatal("condition not reached")
+	}
+}
+
+var run26 = store.Activity{ID: 24745625144, Date: civil.Date{Year: 2026, Month: 10, Day: 26}, Sport: store.SportRunning}
+
+func TestWebhookSendsEvent(t *testing.T) {
+	var mu sync.Mutex
+	var bodies []string
+	var auth, ctype string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		mu.Lock()
+		bodies, auth, ctype = append(bodies, string(b)), r.Header.Get("Authorization"), r.Header.Get("Content-Type")
+		mu.Unlock()
+	}))
+	defer srv.Close()
+	rig := newWebhookRig(t, srv.URL+"/hook/secret-path", "hook-token")
+	rig.w.ActivityStored(context.Background(), run26)
+	rig.run(t, func() bool { mu.Lock(); defer mu.Unlock(); return len(bodies) == 1 })
+	if bodies[0] != `{"event":"activity.stored","activity_id":24745625144,"date":"2026-10-26","sport":"running","proposal_id":null}` {
+		t.Fatalf("body %s", bodies[0])
+	}
+	if auth != "Bearer hook-token" || ctype != "application/json" {
+		t.Fatalf("headers %q %q", auth, ctype)
+	}
+	if got := rig.outcomes(t); got["sent"] != 1 {
+		t.Fatalf("outcomes %v", got)
+	}
+}
+
+// The event names the delivered proposal the activity carried out.
+func TestWebhookEventLinksProposal(t *testing.T) {
+	var got Event
+	var n atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewDecoder(r.Body).Decode(&got)
+		n.Add(1)
+	}))
+	defer srv.Close()
+	rig := newWebhookRig(t, srv.URL, "")
+	ctx := context.Background()
+	// A delivered proposal whose FIT steps the activity recorded.
+	canon := []byte(`{"name":"Easy","sport":"running","date":"2026-10-26","steps":[{"kind":"active","duration":{"type":"time","time_s":1800}}]}`)
+	p := store.Proposal{ID: strings.Repeat("ab", 16), Date: run26.Date, Sport: store.SportRunning, Name: "Easy", ContentJSON: canon,
+		ContentHash: "h", Status: store.ProposalDelivered, StatusAt: time.Now(), CreatedAt: time.Now(), CreatedLane: "private"}
+	if err := rig.db.InsertProposal(ctx, p, store.AuditEvent{At: time.Now(), Event: "proposal_delivered", Target: p.ID, Outcome: "ok"}); err != nil {
+		t.Fatal(err)
+	}
+	steps := []fitdata.WorkoutStep{{Index: 0, Intensity: 0, DurationType: 0, DurationValue: 1800000, TargetType: 2,
+		TargetValue: 0xFFFFFFFF, CustomLow: 0xFFFFFFFF, CustomHigh: 0xFFFFFFFF}}
+	a := run26
+	a.StartLocal, a.StartUTC, a.WeekStart, a.FITStatus = time.Now(), time.Now(), a.Date.WeekStart(), store.FITStored
+	if err := rig.db.UpsertActivity(ctx, a, []byte(`{}`)); err != nil {
+		t.Fatal(err)
+	}
+	if err := rig.db.PutActivityDetail(ctx, a.ID, store.ActivityDetail{Workout: &fitdata.Workout{Steps: steps,
+		Fingerprint: fitdata.Fingerprint(steps)}}); err != nil {
+		t.Fatal(err)
+	}
+	rig.w.ActivityStored(ctx, a)
+	rig.run(t, func() bool { return n.Load() == 1 })
+	if got.ProposalID == nil || *got.ProposalID != p.ID {
+		t.Fatalf("event %+v, want proposal %s", got, p.ID)
+	}
+}
+
+func TestWebhookRetriesAndRejects(t *testing.T) {
+	for name, tc := range map[string]struct {
+		codes    []int
+		attempts int32
+		outcome  string
+	}{
+		"5xx then ok":  {[]int{502, 200}, 2, "sent"},
+		"always 5xx":   {[]int{500, 500, 500}, 3, "error"},
+		"4xx at once":  {[]int{404}, 1, "rejected"},
+		"429 is retry": {[]int{429, 204}, 2, "sent"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			var calls atomic.Int32
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				i := calls.Add(1) - 1
+				w.WriteHeader(tc.codes[min(int(i), len(tc.codes)-1)])
+			}))
+			defer srv.Close()
+			rig := newWebhookRig(t, srv.URL, "")
+			rig.w.ActivityStored(context.Background(), run26)
+			rig.run(t, func() bool { return rig.outcomes(t)[tc.outcome] == 1 })
+			if calls.Load() != tc.attempts {
+				t.Fatalf("attempts %d, want %d", calls.Load(), tc.attempts)
+			}
+		})
+	}
+}
+
+func TestWebhookQueueFullDrops(t *testing.T) {
+	rig := newWebhookRig(t, "http://127.0.0.1:1/hook", "")
+	for i := 0; i < queueSize+1; i++ {
+		rig.w.ActivityStored(context.Background(), run26) // never blocks: no worker runs
+	}
+	if got := rig.outcomes(t); got["dropped"] != 1 {
+		t.Fatalf("outcomes %v", got)
+	}
+}

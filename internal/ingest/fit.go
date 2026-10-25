@@ -248,6 +248,10 @@ func (s *Service) fetchFIT(ctx context.Context, a store.Activity) (status store.
 		s.storeDetail(ctx, a.ID, bytes.NewReader(body))
 	}
 	s.logFIT(ctx, a.ID, string(status), err)
+	if s.opts.Events != nil && (status == store.FITStored || status == store.FITUnavailable) &&
+		s.now().Sub(a.StartUTC) <= recentActivity {
+		s.opts.Events.ActivityStored(ctx, a)
+	}
 	return status, nil
 }
 
