@@ -3,6 +3,7 @@ import Toybox.Lang;
 // The pure part of pairing persistence: whether a stored pairing can be
 // resumed and when a new one expires. No Toybox I/O, so the (:test) suite
 // covers it.
+(:background, :glance)
 module PairingModel {
     // The expiry assumed when coachd's answer has no usable expires_in_s.
     const DEFAULT_TTL_S = 600;

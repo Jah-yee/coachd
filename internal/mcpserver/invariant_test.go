@@ -24,10 +24,10 @@ func TestNoRunnerOnlyPaths(t *testing.T) {
 	agentCalls := []string{"ApproveProposal", "UpdateRunnerNote", "DeleteNote", "EnrollPasskey", "RevokePasskey", "CreateSession", "UsePasskey",
 		"ConfirmPairing", "ClaimPairing", "RecordFetch", "AckDelivery", "RevokeDevice"}
 	// The watch may claim its pairing, fetch and acknowledge; it never
-	// approves, transitions, writes notes or passkeys, confirms a pairing or
-	// revokes a device.
-	deviceCalls := []string{"ApproveProposal", "TransitionProposal", "UpdateRunnerNote", "DeleteNote", "InsertNote", "EnrollPasskey",
-		"RevokePasskey", "CreateSession", "UsePasskey", "ConfirmPairing", "RevokeDevice"}
+	// approves, transitions, writes notes, messages or passkeys, confirms a
+	// pairing or revokes a device.
+	deviceCalls := []string{"ApproveProposal", "TransitionProposal", "UpdateRunnerNote", "DeleteNote", "InsertNote", "InsertMessage",
+		"EnrollPasskey", "RevokePasskey", "CreateSession", "UsePasskey", "ConfirmPairing", "RevokeDevice"}
 	pkgs := []struct {
 		dir     string
 		imports []string

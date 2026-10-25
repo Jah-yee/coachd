@@ -6,6 +6,21 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+### Added
+
+- **Watch app v2** (`docs/design/watch-v2.md`):
+  - The main screen shows the next workout: its day, name, sport, duration and distance; the sync status moves to a footer.
+  - START opens a menu that lists the workouts from today on; selecting one shows its steps, notes and the agent's rationale, and START there begins it.
+  - **Agent messages:** the new MCP tool `send_message` (1 to 300 characters, write scope) stores a short display-only message. The watch shows the latest five from the last seven days under Messages, with an unread count on the main screen. Messages go nowhere else, not to ntfy.
+  - **Background checks:** every 15 minutes while paired, the watch asks coachd for new messages and workouts and notifies you (a notification on fēnix 7 and later, an "open coachd?" prompt on older watches). It never downloads in the background: open the app to sync. A new **Notifications** setting in the Connect IQ app turns it off.
+  - **Glance** on fēnix 7 and later: the next workout and unread messages.
+  - The app needs two new permissions, Background and Notifications.
+- **Device API:** `GET /device/v1/workouts/{id}` (a workout's detail) and `GET /device/v1/messages`, both read-only. An older watch app ignores them, and the new app works against an older coachd without details or messages.
+
+### Changed
+
+- The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.
+
 ### Fixed
 
 - Proposals that expired were not logged when the stale-delivery check after them failed, for example during shutdown. This also made a release test flaky.

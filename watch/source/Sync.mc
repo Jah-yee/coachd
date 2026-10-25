@@ -4,7 +4,8 @@ import Toybox.PersistedContent;
 import Toybox.Time;
 
 // One foreground sync run:
-//  1. fetch the desired set;
+//  1. fetch the desired set (storing it deletes the details of workouts that
+//     left it);
 //  2. read the ids of the app's workouts on the watch;
 //  3. apply SyncModel.plan: remove the workouts that left the set (or are
 //     orphans), then drop the stale mappings;
@@ -12,13 +13,18 @@ import Toybox.Time;
 //     created by comparing ids before and after; with exactly one new id,
 //     acknowledge it and store the mapping once coachd confirmed the ack
 //     (otherwise skip the ack and count it as unmapped);
-//  5. record the time of a complete sync.
+//  5. fetch the detail of each desired workout that has none stored;
+//  6. fetch the agent's messages;
+//  7. record the time of a complete sync.
+// Details and messages are extras: a coachd without them answers 404, and
+// any error on them that does not stop the sync is ignored (the next sync
+// asks again).
 // The mapping is persisted after every change, so an interrupted run keeps
 // what it did; a workout downloaded but not acknowledged stays unmapped, and
 // the next run removes it as an orphan and delivers it again.
 // Requests are strictly sequential and go to the bound server
 // (Store.server()), taken once at the start. Progress and the outcome go to
-// CoachdApp.setStatus, which StatusView draws. A new run is a new object;
+// CoachdApp.setStatus, which HomeView draws. A new run is a new object;
 // cancel() makes a run ignore the responses still in flight.
 class Sync {
     private var _base as String = "";
@@ -27,6 +33,7 @@ class Sync {
     private var _desired as Array<Dictionary> = [] as Array<Dictionary>;
     private var _map as Dictionary<String, Number> = {} as Dictionary<String, Number>;
     private var _todo as Array<String> = [] as Array<String>;
+    private var _details as Array<String> = [] as Array<String>;
     private var _next as Number = 0;
     private var _current as String = "";
     private var _before as Array<Number> = [] as Array<Number>;
@@ -71,7 +78,7 @@ class Sync {
             stop(code);
             return;
         }
-        var desired = parseDesired(data);
+        var desired = SyncModel.parseDesired(data);
         if (desired == null) {
             stop(Communications.INVALID_HTTP_BODY_IN_NETWORK_RESPONSE);
             return;
@@ -95,7 +102,7 @@ class Sync {
 
     private function downloadNext() as Void {
         if (_next >= _todo.size()) {
-            finish();
+            startDetails();
             return;
         }
         _current = _todo[_next];
@@ -139,6 +146,60 @@ class Sync {
         downloadNext();
     }
 
+    private function startDetails() as Void {
+        _details = [] as Array<String>;
+        for (var i = 0; i < _desired.size(); i++) {
+            var id = _desired[i]["id"] as String;
+            if (Store.detail(id) == null) {
+                _details.add(id);
+            }
+        }
+        _next = 0;
+        detailNext();
+    }
+
+    private function detailNext() as Void {
+        if (_next >= _details.size()) {
+            Api.fetchMessages(_base, method(:onMessages));
+            return;
+        }
+        _current = _details[_next];
+        _next += 1;
+        Api.fetchDetail(_base, _current, method(:onDetail));
+    }
+
+    function onDetail(code as Number, data as Dictionary or String or Null) as Void {
+        if (_cancelled) {
+            return;
+        }
+        if (code == 200) {
+            var d = SyncModel.parseDetail(data);
+            if (d != null) {
+                Store.setDetail(_current, d);
+            }
+        } else if (SyncModel.stopsSync(code)) {
+            stop(code);
+            return;
+        }
+        detailNext();
+    }
+
+    function onMessages(code as Number, data as Dictionary or String or Null) as Void {
+        if (_cancelled) {
+            return;
+        }
+        if (code == 200) {
+            var list = SyncModel.parseMessages(data);
+            if (list != null) {
+                Store.setMessages(list);
+            }
+        } else if (SyncModel.stopsSync(code)) {
+            stop(code);
+            return;
+        }
+        finish();
+    }
+
     // A download or ack failed. 401, 429, -104 and the transport and storage
     // errors (timeouts, a dropped connection, full storage...) end the run
     // (see SyncModel.stopsSync); any other code (an HTTP error, a FIT the
@@ -162,11 +223,12 @@ class Sync {
             getApp().setStatus(Ui.errorText(failure));
             return;
         }
-        // "Last sync" means everything in the set is on the watch.
+        // "Last sync" means everything in the set is on the watch; home
+        // shows it when the status is empty.
         if (_unmapped == 0) {
             Store.setLastSync(Time.now().value());
         }
-        getApp().setStatus(Ui.countText(mappedCount()));
+        getApp().setStatus("");
     }
 
     // Ends the run on code, keeping what already succeeded. A 401 means the
@@ -180,47 +242,6 @@ class Sync {
             return;
         }
         getApp().setStatus(Ui.errorText(code));
-    }
-
-    // The desired workouts that are mapped (and so on the watch).
-    private function mappedCount() as Number {
-        var n = 0;
-        for (var i = 0; i < _desired.size(); i++) {
-            if (_map.hasKey(_desired[i]["id"] as String)) {
-                n += 1;
-            }
-        }
-        return n;
-    }
-
-    // The desired set as [{"id", "name", "date"}], or null when the response
-    // is malformed: a partial list would remove the missing workouts.
-    private function parseDesired(data as Dictionary or String or Null) as Array<Dictionary> or Null {
-        if (!(data instanceof Dictionary)) {
-            return null;
-        }
-        var list = data["workouts"];
-        if (!(list instanceof Array)) {
-            return null;
-        }
-        var out = [] as Array<Dictionary>;
-        for (var i = 0; i < list.size(); i++) {
-            var w = list[i];
-            if (!(w instanceof Dictionary)) {
-                return null;
-            }
-            var id = w["id"];
-            var name = w["name"];
-            var date = w["date"];
-            if (!(id instanceof String) || !(name instanceof String) || !(date instanceof String)) {
-                return null;
-            }
-            if (!Api.isId(id)) {
-                return null;
-            }
-            out.add({"id" => id, "name" => name, "date" => date});
-        }
-        return out;
     }
 }
 

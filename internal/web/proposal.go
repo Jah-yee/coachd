@@ -65,7 +65,7 @@ var (
 // step lines are agent-written: the template shows them escaped and labelled.
 type proposalPage struct {
 	ID, Name, Day, Sport, Status string
-	Lines                        []Line
+	Lines                        []workout.Line
 	Notes, Rationale             string
 	Warnings                     []string // coachd's own warning messages
 	Replaces                     *replacedView
@@ -87,7 +87,7 @@ type proposalPage struct {
 // replacedView is the proposal a replacement replaces, shown beside it.
 type replacedView struct {
 	ID, Name, Day, Status string
-	Lines                 []Line
+	Lines                 []workout.Line
 	WatchHint             bool
 }
 
@@ -148,7 +148,7 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 	intact, decoded := hash == p.ContentHash, err == nil
 	switch {
 	case err == nil:
-		v.Lines, v.Notes = Describe(w), w.Notes
+		v.Lines, v.Notes = workout.Describe(w), w.Notes
 	case intact: // tampered content may not decode; intact content must
 		return v, fmt.Errorf("web: proposal %s content: %w", p.ID, err)
 	}
@@ -173,7 +173,7 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 			r := &replacedView{ID: old.ID, Name: old.Name, Day: longDay(old.Date), Status: string(old.Status),
 				WatchHint: old.Status == store.ProposalWithdrawn}
 			if ow, _, err := storedWorkout(old); err == nil {
-				r.Lines = Describe(ow)
+				r.Lines = workout.Describe(ow)
 			}
 			v.Replaces = r
 		}

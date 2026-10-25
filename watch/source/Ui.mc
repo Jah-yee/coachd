@@ -5,70 +5,11 @@ import Toybox.Time;
 import Toybox.Time.Gregorian;
 import Toybox.WatchUi;
 
-// The main screen once paired: the sync status and the time of the last
-// complete sync. It starts a sync the first time it is shown; START opens the
-// menu.
-class StatusView extends WatchUi.View {
-    private var _synced as Boolean = false;
-
-    function initialize() {
-        View.initialize();
-    }
-
-    function onShow() as Void {
-        var app = getApp();
-        app.statusVisible = true;
-        if (Server.current() == null) {
-            app.showStart();
-            return;
-        }
-        if (Store.token() == null) {
-            app.showPairing();
-            return;
-        }
-        if (!_synced) {
-            _synced = true;
-            app.startSync();
-        }
-    }
-
-    function onHide() as Void {
-        getApp().statusVisible = false;
-    }
-
-    function onUpdate(dc as Dc) as Void {
-        var w = dc.getWidth();
-        var h = dc.getHeight();
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
-        dc.clear();
-        dc.drawText(w / 2, h / 6, Graphics.FONT_SMALL, Ui.text(Rez.Strings.AppName), Graphics.TEXT_JUSTIFY_CENTER);
-        Ui.drawWrapped(dc, h / 2, Graphics.FONT_SMALL, getApp().status, (w * 4) / 5);
-        var last = Store.lastSync();
-        if (last != null) {
-            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(w / 2, (h * 3) / 4, Graphics.FONT_XTINY, Ui.lastSyncText(last), Graphics.TEXT_JUSTIFY_CENTER);
-        }
-    }
-}
-
-class StatusDelegate extends WatchUi.BehaviorDelegate {
-    function initialize() {
-        BehaviorDelegate.initialize();
-    }
-
-    // START/ENTER opens the menu.
-    function onSelect() as Boolean {
-        WatchUi.pushView(mainMenu(), new MainMenuDelegate(), WatchUi.SLIDE_UP);
-        return true;
-    }
-
-    function onMenu() as Boolean {
-        return onSelect();
-    }
-}
-
 // Texts and drawing shared by the views.
 module Ui {
+    // The colour of day labels, headings and the unread count.
+    const ACCENT = Graphics.COLOR_ORANGE;
+
     function text(id as ResourceId) as String {
         return WatchUi.loadResource(id) as String;
     }
@@ -107,14 +48,6 @@ module Ui {
         return Lang.format(text(Rez.Strings.PairFailed), [code]);
     }
 
-    // "1 workout" or "<n> workouts".
-    function countText(n as Number) as String {
-        if (n == 1) {
-            return text(Rez.Strings.WorkoutsOne);
-        }
-        return Lang.format(text(Rez.Strings.WorkoutsN), [n]);
-    }
-
     // "Last sync HH:MM" in the watch's local time.
     function lastSyncText(epoch as Number) as String {
         var t = Gregorian.info(new Time.Moment(epoch), Time.FORMAT_SHORT);
@@ -124,7 +57,11 @@ module Ui {
 
     // Draws text centred on the screen around y, word-wrapped to width.
     function drawWrapped(dc as Dc, y as Number, font as Graphics.FontType, s as String, width as Number) as Void {
-        var lines = wrap(dc, font, s, width);
+        drawLines(dc, y, font, wrap(dc, font, s, width));
+    }
+
+    // Draws lines centred on the screen around y.
+    function drawLines(dc as Dc, y as Number, font as Graphics.FontType, lines as Array<String>) as Void {
         var lh = dc.getFontHeight(font);
         var top = y - (lines.size() * lh) / 2;
         for (var i = 0; i < lines.size(); i++) {
@@ -132,10 +69,32 @@ module Ui {
         }
     }
 
-    // Splits s at spaces into lines no wider than width (a longer word gets a
-    // line of its own).
+    // At most max lines of s wrapped to width; the last ends in "…" when
+    // text was left out.
+    function wrapMax(dc as Dc, font as Graphics.FontType, s as String, width as Number, max as Number) as Array<String> {
+        var lines = wrap(dc, font, s, width);
+        if (lines.size() <= max) {
+            return lines;
+        }
+        lines = lines.slice(0, max);
+        var last = lines[max - 1];
+        while (last.length() > 1 && dc.getTextWidthInPixels(last + "…", font) > width) {
+            last = last.substring(0, last.length() - 1) as String;
+        }
+        lines[max - 1] = last + "…";
+        return lines;
+    }
+
+    // Splits s at newlines, then at spaces into lines no wider than width (a
+    // longer word gets a line of its own).
     function wrap(dc as Dc, font as Graphics.FontType, s as String, width as Number) as Array<String> {
         var lines = [] as Array<String>;
+        var nl = s.find("\n");
+        if (nl != null) {
+            lines.addAll(wrap(dc, font, s.substring(0, nl) as String, width));
+            lines.addAll(wrap(dc, font, s.substring(nl + 1, s.length()) as String, width));
+            return lines;
+        }
         var line = "";
         var rest = s;
         while (rest.length() > 0) {

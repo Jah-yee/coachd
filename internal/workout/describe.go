@@ -1,14 +1,12 @@
-package web
+package workout
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/stefiix92/coachd/internal/workout"
 )
 
-// Line is one line of a described workout. Indent is the nesting level:
+// Line is one line of a described  Indent is the nesting level:
 // 0 for a top-level step, 1 inside a repeat, 2 inside a nested repeat; a
 // step's note sits one level below its step. Kind is the step kind the page
 // styles the line by: a kindLabels key, "repeat", "note", or "" for a kind
@@ -24,16 +22,16 @@ var kindLabels = map[string]string{
 	"warmup": "Warm-up", "active": "Active", "recovery": "Recovery", "rest": "Rest", "cooldown": "Cool-down",
 }
 
-// Describe renders a workout as plain lines for the page, e.g.
+// Describe renders a workout as plain lines, e.g.
 // "Warm-up · 10:00 · HR 120–140 bpm", "Repeat 6×", "Active · 400 m · pace 3:50–4:00 /km",
 // "Recovery · open (lap button)", "Active · until HR above 160 bpm",
 // "Active · 2 km · cadence 170–180 spm", "Active · 5:00 · effort: <cue>",
 // "Active · 5:00 · power 88–92% FTP"; step notes become an
 // extra line "note: <notes>" at Indent+1.
 //
-// Cues and notes are agent-written: the page must show the lines escaped and
+// Cues and notes are agent-written: a page must show the lines escaped and
 // labelled. Describe never fails; a missing value reads "?".
-func Describe(w workout.Workout) []Line {
+func Describe(w Workout) []Line {
 	var out []Line
 	for _, s := range w.Steps {
 		out = describeStep(out, s.StepBase, s.Count, 0)
@@ -47,7 +45,7 @@ func Describe(w workout.Workout) []Line {
 	return out
 }
 
-func describeStep(out []Line, s workout.StepBase, count, indent int) []Line {
+func describeStep(out []Line, s StepBase, count, indent int) []Line {
 	text, kind := fmt.Sprintf("Repeat %d×", count), "repeat"
 	if s.Kind != "repeat" {
 		label, ok := kindLabels[s.Kind]
@@ -71,7 +69,7 @@ func describeStep(out []Line, s workout.StepBase, count, indent int) []Line {
 	return out
 }
 
-func describeDuration(d *workout.Duration) string {
+func describeDuration(d *Duration) string {
 	if d == nil {
 		return ""
 	}
@@ -90,7 +88,7 @@ func describeDuration(d *workout.Duration) string {
 	return d.Type
 }
 
-func describeTarget(t *workout.Target) string {
+func describeTarget(t *Target) string {
 	if t == nil {
 		return ""
 	}

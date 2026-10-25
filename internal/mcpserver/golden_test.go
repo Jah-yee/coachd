@@ -213,6 +213,8 @@ var resultCases = []resultCase{
 	{"list_workouts_range_too_large", "full", "list_workouts", map[string]any{"from": "2026-10-01", "to": "2026-12-02"}},
 	{"schema_propose_missing_workout", "write", "propose_workout", map[string]any{"rationale": "x"}},
 	{"schema_cancel_extra", "full", "cancel_proposal", map[string]any{"id": "nope", "status": "approved"}},
+	{"send_message_empty", "write", "send_message", map[string]any{"text": ""}},
+	{"send_message_needs_write_scope", "read", "send_message", map[string]any{"text": "hi"}},
 }
 
 // goldenEnvs builds the deterministic fixtures the result cases run against.
@@ -431,6 +433,7 @@ func TestToolResultsMatchOutputSchema(t *testing.T) {
 		"propose_workout":  resolvedOutput[proposeWorkoutOut](t, advertised, "propose_workout", (*svc).proposeWorkout),
 		"cancel_proposal":  resolvedOutput[cancelProposalOut](t, advertised, "cancel_proposal", (*svc).cancelProposal),
 		"list_workouts":    resolvedOutput[listWorkoutsOut](t, advertised, "list_workouts", (*svc).listWorkouts),
+		"send_message":     resolvedOutput[sendMessageOut](t, advertised, "send_message", (*svc).sendMessage),
 	}
 	if len(schemas) != len(advertised) {
 		t.Fatalf("%d schemas for %d advertised tools", len(schemas), len(advertised))
@@ -499,6 +502,7 @@ func TestToolResultsMatchOutputSchema(t *testing.T) {
 		call("cancel_pending", "cancel_proposal", map[string]any{"id": p["id"]})
 		n := call("upsert_note_create", "upsert_note", map[string]any{"category": "other", "text": "x"})
 		call("delete_note", "delete_note", map[string]any{"id": n["note"].(map[string]any)["id"]})
+		call("send_message", "send_message", map[string]any{"text": "x"})
 	}
 	for tool := range schemas {
 		if checked[tool] == 0 {

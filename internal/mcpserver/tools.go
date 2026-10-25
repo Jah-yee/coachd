@@ -78,6 +78,7 @@ func (s *svc) register(srv *mcp.Server) {
 
 	s.registerContext(srv)
 	s.registerProposals(srv)
+	s.registerMessages(srv)
 }
 
 // localWrite says a write tool changes nothing outside coachd.
