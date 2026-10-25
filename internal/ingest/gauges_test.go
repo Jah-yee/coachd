@@ -25,7 +25,7 @@ func TestGauges(t *testing.T) {
 		t.Fatal(err)
 	}
 	tz := bratislava(t)
-	g := NewGauges(e.db, civil.Of(testNow, tz).AddDays(30), tz, e.dir, e.clock.Now)
+	g := NewGauges(e.db, func() civil.Date { return civil.Of(testNow, tz).AddDays(30) }, tz, e.dir, e.clock.Now)
 
 	ages := g.SyncAges(ctx)
 	if len(ages) != 1 || ages[TypeSleep] != (2*time.Hour).Seconds() {
@@ -52,7 +52,7 @@ func TestGauges(t *testing.T) {
 
 func TestGaugesDiskErrorIsNaN(t *testing.T) {
 	e := newEnv(t, newFake(), nil)
-	g := NewGauges(e.db, civil.Date{}, bratislava(t), e.dir+"/missing", e.clock.Now)
+	g := NewGauges(e.db, func() civil.Date { return civil.Date{} }, bratislava(t), e.dir+"/missing", e.clock.Now)
 	if r := g.DiskUsedRatio(); !math.IsNaN(r) {
 		t.Fatalf("ratio %v", r)
 	}
@@ -60,7 +60,7 @@ func TestGaugesDiskErrorIsNaN(t *testing.T) {
 
 func TestGaugesBackupAge(t *testing.T) {
 	e := newEnv(t, newFake(), nil)
-	g := NewGauges(e.db, civil.Date{}, bratislava(t), e.dir, e.clock.Now)
+	g := NewGauges(e.db, func() civil.Date { return civil.Date{} }, bratislava(t), e.dir, e.clock.Now)
 	if a := g.BackupAgeSeconds(); !math.IsNaN(a) {
 		t.Fatalf("age %v without backups", a)
 	}
@@ -82,7 +82,7 @@ func TestGaugesBackupAge(t *testing.T) {
 func TestGaugesDeviceLastSeen(t *testing.T) {
 	e := newEnv(t, newFake(), nil)
 	ctx := context.Background()
-	g := NewGauges(e.db, civil.Date{}, bratislava(t), e.dir, e.clock.Now)
+	g := NewGauges(e.db, func() civil.Date { return civil.Date{} }, bratislava(t), e.dir, e.clock.Now)
 	if got := g.DeviceLastSeenAges(ctx); len(got) != 0 {
 		t.Fatalf("no devices: %v", got)
 	}

@@ -38,7 +38,7 @@ const (
 // Client talks to the Garmin Personal API. It is safe for concurrent use.
 type Client struct {
 	base    string
-	key     string
+	key     string // guarded by mu, like the token: UseKey replaces it
 	hc      *http.Client
 	probeHC *http.Client // hc without following redirects, for ActivityExists
 	metrics *telemetry.Metrics

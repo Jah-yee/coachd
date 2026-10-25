@@ -68,6 +68,8 @@ func (s *Server) routeTable() []route {
 		{"POST /devices/pair", s.requireSession(s.devicePair), false},
 		{"POST /devices/{id}/revoke", s.requireSession(s.deviceRevoke), false},
 		{"GET /audit", s.auditPage, false},
+		{"GET /garmin", s.garminPageGet, false},
+		{"POST /garmin", s.requireSession(s.garminRenew), false},
 	}
 	if s.d.OAuth != nil {
 		rs = append(rs,

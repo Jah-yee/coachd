@@ -65,7 +65,9 @@ func TestPerfServe(t *testing.T) {
 	sctx, cancel := context.WithCancel(ctx)
 	ready := make(chan Addrs, 1)
 	done := make(chan error, 1)
-	go func() { done <- runServe(sctx, cfg, emptyGarmin{}, testTel(t), func(a Addrs) { ready <- a }) }()
+	go func() {
+		done <- runServe(sctx, cfg, emptyGarmin{}, testKeys(t, cfg), testTel(t), func(a Addrs) { ready <- a })
+	}()
 	var addrs Addrs
 	select {
 	case addrs = <-ready:

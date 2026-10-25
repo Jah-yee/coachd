@@ -81,7 +81,7 @@ func wantNum(t *testing.T, m map[string]any, key string, want float64) {
 
 func TestGetStatusReportsKeyDaysLeft(t *testing.T) {
 	e := newEnv(t, readIdentity(), func(d *Deps) {
-		d.KeyExpires = mustDate(t, "2026-11-02") // now + 10 d
+		d.KeyExpires = fixedDate(mustDate(t, "2026-11-02")) // now + 10 d
 	})
 	ctx := context.Background()
 	success := testNow.Add(-2 * time.Hour)
@@ -145,7 +145,7 @@ func TestGetStatusGaps90d(t *testing.T) {
 }
 
 func TestGetStatusEmptyStore(t *testing.T) {
-	e := newEnv(t, readIdentity(), func(d *Deps) { d.KeyExpires = civil.Date{} }) // expiry not configured
+	e := newEnv(t, readIdentity(), func(d *Deps) { d.KeyExpires = nil }) // expiry not configured
 	got := e.call(t, "get_status", nil).object(t)
 	if s := arr(t, got["sync"]); len(s) != 0 {
 		t.Fatalf("sync %v", s)
@@ -155,7 +155,7 @@ func TestGetStatusEmptyStore(t *testing.T) {
 }
 
 func TestGetStatusExpiredKeyNegative(t *testing.T) {
-	e := newEnv(t, readIdentity(), func(d *Deps) { d.KeyExpires = mustDate(t, "2026-10-20") })
+	e := newEnv(t, readIdentity(), func(d *Deps) { d.KeyExpires = fixedDate(mustDate(t, "2026-10-20")) })
 	got := e.call(t, "get_status", nil).object(t)
 	wantNum(t, obj(t, got["garmin_key"]), "days_left", -3)
 }
@@ -644,3 +644,6 @@ func TestSoftDeletedActivityHidden(t *testing.T) {
 		t.Fatalf("first_date = %v, want 2026-10-21 (the deleted 2026-10-19 activity excluded)", cov["first_date"])
 	}
 }
+
+// fixedDate is a KeyExpires that always answers d.
+func fixedDate(d civil.Date) func() civil.Date { return func() civil.Date { return d } }

@@ -21,26 +21,61 @@ func (c *Client) token(ctx context.Context) (string, error) {
 	if c.tok != "" && c.now().Before(c.tokExpiry) {
 		return c.tok, nil
 	}
-	status, hdr, body, err := c.roundTrip(ctx, c.hc, "token", http.MethodPost, c.base+tokenPath, "ApiKey "+c.key, maxJSONBody)
+	tok, life, err := c.exchange(ctx, c.key)
 	if err != nil {
 		return "", err
 	}
+	c.setToken(tok, life)
+	return c.tok, nil
+}
+
+// UseKey exchanges key for a token, holding the token lock so that no request
+// runs with a half-switched key. When Garmin accepts it and commit returns
+// nil, the client uses key and that token from then on. Otherwise the old key
+// and token stay: a refused key is ErrUnauthorized, a 429 a
+// *RateLimitedError, as for any token exchange.
+func (c *Client) UseKey(ctx context.Context, key string, commit func() error) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	tok, life, err := c.exchange(ctx, key)
+	if err != nil {
+		return err
+	}
+	if err := commit(); err != nil {
+		return err
+	}
+	c.key = key
+	c.setToken(tok, life)
+	return nil
+}
+
+// exchange trades key for a bearer token and its lifetime. c.mu must be held.
+func (c *Client) exchange(ctx context.Context, key string) (string, time.Duration, error) {
+	status, hdr, body, err := c.roundTrip(ctx, c.hc, "token", http.MethodPost, c.base+tokenPath, "ApiKey "+key, maxJSONBody)
+	if err != nil {
+		return "", 0, err
+	}
 	switch {
 	case status == http.StatusUnauthorized || status == http.StatusForbidden:
-		return "", ErrUnauthorized
+		return "", 0, ErrUnauthorized
 	case status == http.StatusTooManyRequests:
-		return "", c.rateLimited(hdr)
+		return "", 0, c.rateLimited(hdr)
 	case status < 200 || status > 299:
-		return "", &StatusError{Endpoint: "token", Status: status}
+		return "", 0, &StatusError{Endpoint: "token", Status: status}
 	}
 	tok, life, ok := parseTokenBody(body, c.now())
 	if !ok {
-		return "", &StatusError{Endpoint: "token", Status: status}
+		return "", 0, &StatusError{Endpoint: "token", Status: status}
 	}
+	return tok, life, nil
+}
+
+// setToken caches tok, renewing it a margin before its lifetime ends. c.mu
+// must be held.
+func (c *Client) setToken(tok string, life time.Duration) {
 	margin := min(time.Hour, life/2)
 	c.tok = tok
 	c.tokExpiry = c.now().Add(life - margin)
-	return c.tok, nil
 }
 
 // invalidate drops the cached token if it is still the one that failed.

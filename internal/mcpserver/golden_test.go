@@ -221,7 +221,7 @@ var resultCases = []resultCase{
 func goldenEnvs(t *testing.T) map[string]*env {
 	t.Helper()
 	ctx := context.Background()
-	full := newEnv(t, fullIdentity(), func(d *Deps) { d.KeyExpires = mustDate(t, "2026-11-02") })
+	full := newEnv(t, fullIdentity(), func(d *Deps) { d.KeyExpires = fixedDate(mustDate(t, "2026-11-02")) })
 	success := testNow.Add(-2 * time.Hour)
 	fresh := testNow.Add(-6 * time.Hour)
 	for _, st := range []store.SyncState{

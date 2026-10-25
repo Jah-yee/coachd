@@ -17,7 +17,7 @@ import (
 // data volume. A failed read drops that point; it never panics.
 type Gauges struct {
 	db         *store.DB
-	keyExpires civil.Date
+	keyExpires func() civil.Date
 	tz         *time.Location
 	dataDir    string
 	now        func() time.Time
@@ -25,8 +25,9 @@ type Gauges struct {
 
 var _ telemetry.GaugeSource = (*Gauges)(nil)
 
-// NewGauges builds a GaugeSource. A nil now means time.Now.
-func NewGauges(db *store.DB, keyExpires civil.Date, tz *time.Location, dataDir string, now func() time.Time) *Gauges {
+// NewGauges builds a GaugeSource; keyExpires is the last day the Garmin
+// key in use is valid. A nil now means time.Now.
+func NewGauges(db *store.DB, keyExpires func() civil.Date, tz *time.Location, dataDir string, now func() time.Time) *Gauges {
 	if now == nil {
 		now = time.Now
 	}
@@ -60,7 +61,7 @@ func (g *Gauges) ages(ctx context.Context, pick func(store.SyncState) *time.Time
 
 // KeyDaysLeft is the number of calendar days until the Garmin key expires.
 func (g *Gauges) KeyDaysLeft() float64 {
-	return float64(g.keyExpires.Sub(civil.Of(g.now(), g.tz)))
+	return float64(g.keyExpires().Sub(civil.Of(g.now(), g.tz)))
 }
 
 // DBSizeBytes is the database file plus WAL size, NaN on error.

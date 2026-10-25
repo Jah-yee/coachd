@@ -35,12 +35,14 @@ type SyncRequester interface {
 // no-op, nil Now is time.Now, nil TZ is UTC and nil Proposals is a
 // proposals.Service over DB with workout.DefaultLimits.
 type Deps struct {
-	DB         *store.DB
-	Sync       SyncRequester
-	Proposals  *proposals.Service
-	TZ         *time.Location
-	Now        func() time.Time
-	KeyExpires civil.Date
+	DB        *store.DB
+	Sync      SyncRequester
+	Proposals *proposals.Service
+	TZ        *time.Location
+	Now       func() time.Time
+	// KeyExpires is the last day the Garmin key in use is valid; nil or a
+	// zero date means unknown.
+	KeyExpires func() civil.Date
 	DataDir    string
 	Metrics    *telemetry.Metrics
 	Audit      auth.Auditor
