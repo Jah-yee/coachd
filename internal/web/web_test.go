@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/stefiix92/coachd/internal/auth"
+	"github.com/stefiix92/coachd/internal/civil"
 	"github.com/stefiix92/coachd/internal/passkey/passkeytest"
 	"github.com/stefiix92/coachd/internal/store"
 )
@@ -596,7 +597,8 @@ func TestHomeNoPasskeyBanner(t *testing.T) {
 
 func TestStaticAssets(t *testing.T) {
 	ts := newTestServer(t)
-	for path, ctype := range map[string]string{"/static/app.js": "text/javascript", "/static/app.css": "text/css"} {
+	for path, ctype := range map[string]string{"/static/app.js": "text/javascript", "/static/app.css": "text/css",
+		"/static/favicon.svg": "image/svg+xml", "/static/favicon.png": "image/png", "/static/icon.png": "image/png"} {
 		rec := ts.do(t, "GET", path, nil, nil)
 		if rec.Code != http.StatusOK || !strings.HasPrefix(rec.Header().Get("Content-Type"), ctype) {
 			t.Errorf("GET %s: status %d, Content-Type %q", path, rec.Code, rec.Header().Get("Content-Type"))
@@ -659,5 +661,23 @@ func TestSessionTokenHashing(t *testing.T) {
 	}
 	if _, err := ts.db.SessionByHash(context.Background(), []byte(cookie.Value), ts.clock.Now()); err == nil {
 		t.Fatal("session stored by its plain token")
+	}
+}
+
+func TestCountdown(t *testing.T) {
+	today := civil.Date{Year: 2026, Month: time.October, Day: 24}
+	for n, want := range map[int]string{0: "today", 1: "tomorrow", -1: "yesterday", 62: "in 62 days", -3: "3 days ago"} {
+		if got := countdown(today, today.AddDays(n)); got != want {
+			t.Errorf("countdown(%+d days) = %q, want %q", n, got, want)
+		}
+	}
+}
+
+func TestNavMarksCurrentPage(t *testing.T) {
+	ts := newTestServer(t)
+	c := ts.enroll(t)
+	body := ts.do(t, "GET", "/notes", nil, c).Body.String()
+	if !strings.Contains(body, `<a href="/notes" aria-current="page">`) || strings.Count(body, `aria-current="page"`) != 1 {
+		t.Errorf("notes page must mark its own tab, and only it: %s", body)
 	}
 }

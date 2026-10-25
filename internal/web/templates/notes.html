@@ -1,7 +1,9 @@
 {{define "title"}}Notes{{end}}
 {{define "content"}}{{with .Page}}
+<header class="page-head">
 <h1>Notes</h1>
-<p class="meta">{{.Count}} of {{.Max}}. The agent reads these. Editing an agent's note makes it yours.</p>
+<p class="meta"><span class="pill">{{.Count}} of {{.Max}}</span> The agent reads these. Editing an agent's note makes it yours.</p>
+</header>
 {{- with .Error}}
 <p class="alert">{{.}}</p>
 {{- end}}
@@ -10,34 +12,41 @@
 {{- $cur := ""}}
 {{- range .Notes}}
 {{- if ne $cur .Category}}{{$cur = .Category}}
-<h2>{{.Category}}</h2>
+<h2 class="group">{{.Category}}</h2>
 {{- end}}
 <div class="card">
-<p>{{if .ByAgent}}{{template "agent" .Text}}{{else}}{{.Text}}{{end}}</p>
+<p{{if .ByAgent}} class="quote"{{end}}>{{if .ByAgent}}{{template "agent" .Text}}{{else}}{{.Text}}{{end}}</p>
 <p class="meta">by {{.Author}} · {{.Updated}}</p>
 {{- with .Error}}
 <p class="alert">{{.}}</p>
 {{- end}}
-<form method="post" action="/notes/{{.ID}}" class="stack">
+<details class="edit"{{if .Error}} open{{end}}>
+<summary>Edit</summary>
+<form method="post" action="/notes/{{.ID}}" class="stack" id="note-{{.ID}}">
 <select name="category" aria-label="Category">
 {{- $c := .FormCategory}}{{range $cats}}<option value="{{.}}"{{if eq (printf "%s" .) $c}} selected{{end}}>{{.}}</option>{{end}}
 </select>
 <textarea name="text" rows="3" maxlength="{{$max}}" aria-label="Text" required>{{.FormText}}</textarea>
-<button type="submit">Save</button>
 </form>
-<form method="post" action="/notes/{{.ID}}/delete"><button type="submit">Delete</button></form>
+<div class="form-actions">
+<button type="submit" class="primary" form="note-{{.ID}}">Save</button>
+<form method="post" action="/notes/{{.ID}}/delete"><button type="submit" class="danger">Delete</button></form>
+</div>
+</details>
 </div>
 {{- else}}
-<p class="empty">No notes.</p>
+<div class="empty-state">{{template "i-notes"}}<p class="empty">No notes.</p></div>
 {{- end}}
-<section>
+<section class="card add">
 <h2>Add a note</h2>
 <form method="post" action="/notes" class="stack">
-<select name="category" aria-label="Category">
+<label class="field"><span>Category</span>
+<select name="category">
 {{- $d := .DraftCategory}}{{range $cats}}<option value="{{.}}"{{if eq (printf "%s" .) $d}} selected{{end}}>{{.}}</option>{{end}}
-</select>
-<textarea name="text" rows="3" maxlength="{{$max}}" aria-label="Text" required>{{.DraftText}}</textarea>
-<button type="submit" class="primary">Add note</button>
+</select></label>
+<label class="field"><span>Text</span>
+<textarea name="text" rows="3" maxlength="{{$max}}" required>{{.DraftText}}</textarea></label>
+<div class="form-actions"><button type="submit" class="primary">{{template "i-plus"}}<span>Add note</span></button></div>
 </form>
 </section>
 {{end}}{{end}}

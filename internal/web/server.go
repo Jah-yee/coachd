@@ -40,7 +40,7 @@ import (
 //go:embed templates/*.html
 var templateFS embed.FS
 
-//go:embed static/app.js static/app.css
+//go:embed static/app.js static/app.css static/favicon.svg static/favicon.png static/icon.png
 var staticFS embed.FS
 
 // Deps are the server's collaborators.
@@ -126,6 +126,17 @@ var funcs = template.FuncMap{
 		}
 		return fmt.Sprintf("%d %ss", n, word)
 	},
+	// statusLabel shows a proposal status as words: "delivery failed".
+	"statusLabel": func(status string) string { return strings.ReplaceAll(status, "_", " ") },
+	// tab is a navigation link of the layout, current when it is the
+	// requested page.
+	"tab": func(path, href, label string) navTab { return navTab{Href: href, Label: label, Current: path == href} },
+}
+
+// navTab is one link of the layout's navigation.
+type navTab struct {
+	Href, Label string
+	Current     bool
 }
 
 // Handler returns the page handler. Order: security headers, the gate
@@ -185,8 +196,11 @@ func limitBody(next http.Handler) http.Handler {
 // staticTypes lists the embedded assets with fixed content types, so they do
 // not depend on the host's MIME tables.
 var staticTypes = map[string]string{
-	"app.js":  "text/javascript; charset=utf-8",
-	"app.css": "text/css; charset=utf-8",
+	"app.js":      "text/javascript; charset=utf-8",
+	"app.css":     "text/css; charset=utf-8",
+	"favicon.svg": "image/svg+xml", // the logo on a white tile, for browser tabs
+	"favicon.png": "image/png",     // the same, for browsers without SVG icons
+	"icon.png":    "image/png",     // the home-screen icon
 }
 
 // static serves the embedded assets, cacheable for an hour.
@@ -223,6 +237,9 @@ type errorPage struct {
 // view is what every page template gets: the layout's state plus the page data.
 type view struct {
 	SignedIn bool
+	Builtin  bool   // builtin mode: the layout links Connected apps
+	Name     string // the page template, for page-specific layout
+	Path     string // the request path, to mark the current navigation link
 	Page     any
 }
 
@@ -236,7 +253,7 @@ func (s *Server) render(w http.ResponseWriter, r *http.Request, status int, name
 	}
 	_, signedIn := s.session(r)
 	var buf bytes.Buffer
-	if err := t.ExecuteTemplate(&buf, "layout", view{SignedIn: signedIn, Page: data}); err != nil {
+	if err := t.ExecuteTemplate(&buf, "layout", view{SignedIn: signedIn, Builtin: s.d.Builtin, Name: name, Path: r.URL.Path, Page: data}); err != nil {
 		s.internalError(w, r, err, false)
 		return
 	}

@@ -1,6 +1,9 @@
 {{define "title"}}Connect an app{{end}}
 {{define "content"}}{{with .Page}}
+<div class="card auth consent">
+<div class="auth-icon">{{template "i-apps"}}</div>
 <h1>Connect an app</h1>
+<div class="identity">
 {{- if .Host}}
 <p>The app's web address: <strong>{{.HostDomain}}</strong>{{if ne .Host .HostDomain}} ({{.Host}}){{end}}</p>
 {{- else}}
@@ -8,28 +11,30 @@
 {{- end}}
 <p>Its name: <strong>{{.Name}}</strong> <span class="hint">(name given by the app)</span></p>
 <p>When you approve, your browser goes on to <strong>{{.RedirectHost}}</strong>.</p>
+</div>
 {{- if .LoopbackOnly}}
 <p class="banner warning">Any program on this computer can claim to be this app. Approve only if you just started the connection yourself.</p>
 {{- else if .DomainMismatch}}
 <p class="banner warning">The return address is on a different site than the app's web address.</p>
 {{- end}}
 <form>
-<fieldset>
+<fieldset class="scopes">
 <legend>What the app may do</legend>
 {{- if .HasRead}}
-<p>Read: your Garmin data, summaries, goal and notes.</p>
+<p class="scope">{{template "i-check"}}<span>Read: your Garmin data, summaries, goal and notes.</span></p>
 {{- end}}
 {{- if .HasWrite}}
-<p><label><input type="checkbox" name="write"{{if .WriteDefault}} checked{{end}}> Write: set your goal and notes, and propose workouts. <strong>Workouts still need your passkey to approve.</strong></label></p>
+<p class="scope"><label><input type="checkbox" name="write"{{if .WriteDefault}} checked{{end}}> <span>Write: set your goal and notes, and propose workouts. <strong>Workouts still need your passkey to approve.</strong></span></label></p>
 {{- end}}
 <p class="hint">A read-only grant cannot be widened later; to widen it, revoke and reconnect.</p>
 {{- if .RequireRecognise}}
-<p><label><input type="checkbox" name="recognise"> I recognise {{.RedirectHost}}.</label></p>
+<p class="scope"><label><input type="checkbox" name="recognise"> <span>I recognise {{.RedirectHost}}.</span></label></p>
 {{- end}}
 </fieldset>
-<p>
-<button type="button" class="primary" data-action="consent-approve" data-request="{{.Request}}">Approve with passkey</button>
+<div class="form-actions stretch">
+<button type="button" class="primary" data-action="consent-approve" data-request="{{.Request}}">{{template "i-passkey"}}<span>Approve with passkey</span></button>
 <button type="button" data-action="consent-deny" data-request="{{.Request}}">Deny</button>
-</p>
+</div>
 </form>
+</div>
 {{end}}{{end}}

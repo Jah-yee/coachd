@@ -27,7 +27,6 @@ var (
 // agent-written: the template shows them escaped and labelled.
 type homePage struct {
 	NoPasskey bool
-	Apps      bool // builtin mode: link the Connected apps page
 	Pending   []proposalRow
 	Upcoming  []proposalRow
 	Goal      *goalView
@@ -35,22 +34,49 @@ type homePage struct {
 
 type proposalRow struct {
 	ID, Day, Name, Status string
+	Date                  dateParts
 	Warnings              int
 }
 
 type goalView struct {
 	Name, Day, Sport, Distance, Elevation, Target, Notes string
+	Countdown                                            string
 }
 
+// dateParts splits a date for the pages' calendar badges: "Fri", "23", "Oct".
+type dateParts struct{ Weekday, Day, Month string }
+
+func noon(d civil.Date) time.Time { return time.Date(d.Year, d.Month, d.Day, 12, 0, 0, 0, time.UTC) }
+
 // day formats a date as "Fri 23 Oct".
-func day(d civil.Date) string {
-	return time.Date(d.Year, d.Month, d.Day, 12, 0, 0, 0, time.UTC).Format("Mon 2 Jan")
+func day(d civil.Date) string { return noon(d).Format("Mon 2 Jan") }
+
+func partsOf(d civil.Date) dateParts {
+	t := noon(d)
+	return dateParts{Weekday: t.Format("Mon"), Day: t.Format("2"), Month: t.Format("Jan")}
+}
+
+// countdown describes how far date is from today: "today", "tomorrow",
+// "in 12 days", "yesterday" or "3 days ago".
+func countdown(today, date civil.Date) string {
+	switch n := date.Sub(today); {
+	case n == 0:
+		return "today"
+	case n == 1:
+		return "tomorrow"
+	case n == -1:
+		return "yesterday"
+	case n > 1:
+		return fmt.Sprintf("in %d days", n)
+	default:
+		return fmt.Sprintf("%d days ago", -n)
+	}
 }
 
 func (s *Server) home(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	page, err := func() (homePage, error) {
-		p := homePage{Apps: s.d.Builtin}
+		var p homePage
 		has, err := s.hasPasskey(ctx)
 		if err != nil {
 			return p, err
@@ -79,6 +105,7 @@ func (s *Server) home(w http.ResponseWriter, r *http.Request) {
 			return p, err
 		}
 		p.Goal = newGoalView(g)
+		p.Goal.Countdown = countdown(today, g.Date)
 		return p, nil
 	}()
 	if err != nil {
@@ -97,7 +124,8 @@ func proposalRows(ps []store.Proposal) ([]proposalRow, error) {
 				return nil, fmt.Errorf("web: proposal %s warnings: %w", p.ID, err)
 			}
 		}
-		out = append(out, proposalRow{ID: p.ID, Day: day(p.Date), Name: p.Name, Status: string(p.Status), Warnings: len(warnings)})
+		out = append(out, proposalRow{ID: p.ID, Day: day(p.Date), Date: partsOf(p.Date), Name: p.Name, Status: string(p.Status),
+			Warnings: len(warnings)})
 	}
 	return out, nil
 }
@@ -106,10 +134,10 @@ func newGoalView(g store.Goal) *goalView {
 	v := &goalView{Name: g.Name, Day: day(g.Date) + " " + strconv.Itoa(g.Date.Year),
 		Sport: strings.ReplaceAll(string(g.Sport), "_", " "), Target: g.Target, Notes: g.Notes}
 	if g.DistanceKm != nil {
-		v.Distance = strconv.FormatFloat(*g.DistanceKm, 'f', -1, 64) + " km"
+		v.Distance = strconv.FormatFloat(*g.DistanceKm, 'f', -1, 64) + "\u00a0km" // no-break space: the unit stays with its number
 	}
 	if g.ElevationGainM != nil {
-		v.Elevation = strconv.FormatFloat(*g.ElevationGainM, 'f', 0, 64) + " m climb"
+		v.Elevation = strconv.FormatFloat(*g.ElevationGainM, 'f', 0, 64) + "\u00a0m climb"
 	}
 	return v
 }

@@ -10,9 +10,12 @@ import (
 
 // Line is one line of a described workout. Indent is the nesting level:
 // 0 for a top-level step, 1 inside a repeat, 2 inside a nested repeat; a
-// step's note sits one level below its step.
+// step's note sits one level below its step. Kind is the step kind the page
+// styles the line by: a kindLabels key, "repeat", "note", or "" for a kind
+// it does not know.
 type Line struct {
 	Indent int
+	Kind   string
 	Text   string
 }
 
@@ -44,11 +47,12 @@ func Describe(w workout.Workout) []Line {
 }
 
 func describeStep(out []Line, s workout.StepBase, count, indent int) []Line {
-	text := fmt.Sprintf("Repeat %d×", count)
+	text, kind := fmt.Sprintf("Repeat %d×", count), "repeat"
 	if s.Kind != "repeat" {
 		label, ok := kindLabels[s.Kind]
+		kind = s.Kind
 		if !ok {
-			label = s.Kind
+			label, kind = s.Kind, ""
 		}
 		parts := []string{label}
 		if d := describeDuration(s.Duration); d != "" {
@@ -59,9 +63,9 @@ func describeStep(out []Line, s workout.StepBase, count, indent int) []Line {
 		}
 		text = strings.Join(parts, " · ")
 	}
-	out = append(out, Line{Indent: indent, Text: text})
+	out = append(out, Line{Indent: indent, Kind: kind, Text: text})
 	if s.Notes != "" {
-		out = append(out, Line{Indent: indent + 1, Text: "note: " + s.Notes})
+		out = append(out, Line{Indent: indent + 1, Kind: "note", Text: "note: " + s.Notes})
 	}
 	return out
 }

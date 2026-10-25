@@ -1,5 +1,7 @@
 {{define "title"}}Sign in{{end}}
 {{define "content"}}
+<div class="card auth">
+{{template "mark"}}
 <h1>Sign in</h1>
 {{- if .Page.NoPasskey}}
 {{template "no-passkey"}}
@@ -8,6 +10,7 @@
 <p>You are signed in. Signing in again starts a new session.</p>
 {{- end}}
 <p>Sign in with your passkey: Face ID, fingerprint or the device PIN.</p>
-<p><button type="button" class="primary" data-action="login" data-next="{{.Page.Next}}">Sign in with passkey</button></p>
+<button type="button" class="primary block" data-action="login" data-next="{{.Page.Next}}">{{template "i-passkey"}}<span>Sign in with passkey</span></button>
 {{- end}}
+</div>
 {{end}}
