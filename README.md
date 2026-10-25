@@ -74,6 +74,7 @@ All of these tools exist today:
 - No tool can approve, deliver or withdraw a workout. Only you can, on coachd's approval page with a passkey.
 - The approval page, ntfy notifications and FIT download are available (M2b). A proposal that nobody approves stays `pending` and expires at the end of its date.
 - Agents can edit or delete only notes that agents wrote. Your own notes are read-only to them.
+- A note can carry `valid_until`, its last day ("travelling until 6 Nov"). After that, `get_notes` leaves it out unless the agent asks for expired notes; the page shows it faded until someone deletes it.
 - `get_activity` with detail `laps` shows the planned and executed steps of a structured workout, and `list_workouts` lists the activities that carried out each delivered workout. The link needs the steps the watch recorded to equal the workout coachd delivered, dated within 3 days of it.
 - `send_message` stores up to 300 characters for the watch app, which shows it and, with background checks on, notifies you within about 15 minutes. A message is display-only: it cannot carry or change a workout, and it is sent nowhere else (not to ntfy).
 
