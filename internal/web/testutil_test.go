@@ -401,3 +401,5 @@ func (ts *testServer) addProposal(t *testing.T, name string, date civil.Date, st
 		{StepBase: workout.StepBase{Kind: "warmup", Duration: &workout.Duration{Type: "time", TimeS: &tenMin}}}}}
 	return ts.propose(t, w, proposeOpts{status: status, warnings: warnings})
 }
+
+func ip(v int) *int { return &v }

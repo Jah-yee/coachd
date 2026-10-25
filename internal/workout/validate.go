@@ -162,7 +162,18 @@ func Validate(w Workout, today civil.Date, l Limits) (Plan, error) {
 		return p, bad("steps: estimated total %d s is below the %d s minimum (open and heart-rate-bounded steps count as 0 s)", a.estS, l.MinTotalS)
 	}
 	return Plan{Date: d, Sport: sport, ExpandedSteps: a.steps, EstimatedS: a.estS, DistanceM: a.distM, MaxTargetHR: a.maxHR,
-		EstimatedFromDefaultPace: a.defaultPace}, nil
+		Partial: a.unknown, EstimatedFromDefaultPace: a.defaultPace}, nil
+}
+
+// PlanOf re-derives the plan of a stored workout, which passed Validate when
+// it was proposed. The date window is not checked again: the workout is
+// judged as of its own date.
+func PlanOf(w Workout, l Limits) (Plan, error) {
+	d, err := civil.Parse(w.Date)
+	if err != nil {
+		return Plan{}, bad("date: %q is not a valid YYYY-MM-DD date", clip(w.Date))
+	}
+	return Validate(w, d, l)
 }
 
 // node is the internal recursive form of Step, Step2 and Step3.

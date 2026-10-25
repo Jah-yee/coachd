@@ -549,3 +549,35 @@ func TestCanonicalJSONUnchangedWithoutPower(t *testing.T) {
 		t.Fatalf("canonical JSON\n got %s\nwant %s", b, want)
 	}
 }
+
+func TestPlanPartial(t *testing.T) {
+	if p := ok(t, base(timeStep("warmup", 600), distStep("active", 1000, 300, 330))); p.Partial {
+		t.Fatal("time and distance steps only: not partial")
+	}
+	open := sb("active", &Duration{Type: "open"}, nil)
+	if p := ok(t, base(timeStep("warmup", 600), open)); !p.Partial || p.EstimatedS != 600 {
+		t.Fatalf("open step: got %+v", p)
+	}
+	hr := sb("active", &Duration{Type: "hr_below", HRBpm: ip(130)}, nil)
+	if p := ok(t, base(timeStep("warmup", 600), hr)); !p.Partial {
+		t.Fatalf("heart-rate step: got %+v", p)
+	}
+}
+
+// PlanOf judges a stored workout as of its own date, so a past date (one
+// Validate would now refuse) still yields its plan.
+func TestPlanOf(t *testing.T) {
+	w := base(timeStep("warmup", 600), distStep("active", 2000, 300, 330))
+	w.Date = "2020-01-01"
+	p, err := PlanOf(w, DefaultLimits)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.EstimatedS != 600+660 || p.DistanceM != 2000 || p.Date.String() != "2020-01-01" {
+		t.Fatalf("got %+v", p)
+	}
+	w.Date = "nope"
+	if _, err := PlanOf(w, DefaultLimits); err == nil {
+		t.Fatal("bad date: want error")
+	}
+}

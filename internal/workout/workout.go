@@ -91,6 +91,9 @@ type Plan struct {
 	EstimatedS    int // the known part: open and heart-rate-bounded steps count as 0 s
 	DistanceM     int
 	MaxTargetHR   *int
+	// Partial is set when some step is open or heart-rate-bounded, so the
+	// real duration is longer than EstimatedS by an unknown amount.
+	Partial bool
 	// EstimatedFromDefaultPace is set when some distance step has no pace
 	// target, so its share of EstimatedS uses the sport's default pace.
 	EstimatedFromDefaultPace bool
