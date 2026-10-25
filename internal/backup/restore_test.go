@@ -478,7 +478,7 @@ func TestRestoreOlderSchema(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := odb.Exec(`ALTER TABLE activity_detail DROP COLUMN workout_fp;
+	if _, err := odb.Exec(`ALTER TABLE notes DROP COLUMN valid_until; ALTER TABLE activity_detail DROP COLUMN workout_fp;
 		ALTER TABLE activity_detail DROP COLUMN workout_json; DROP TABLE messages;
 		DROP TABLE oauth_tokens; DROP TABLE oauth_codes; DROP TABLE oauth_grants; DROP TABLE oauth_clients;
 		DROP TABLE deliveries; DROP TABLE device_pairings; DROP TABLE devices;

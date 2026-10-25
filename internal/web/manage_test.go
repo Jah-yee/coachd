@@ -358,3 +358,30 @@ func TestNoteEditRejectedKeepsTypedText(t *testing.T) {
 		t.Fatalf("note = %q", got)
 	}
 }
+
+func TestNotesValidUntilShown(t *testing.T) {
+	ts := newTestServer(t)
+	ctx := context.Background()
+	soon, past := ts.today().AddDays(3), ts.today().AddDays(-1)
+	for _, n := range []store.Note{
+		{Category: store.NoteAvailability, Text: "trip ended", CreatedBy: "agent:public:claude", ValidUntil: &past},
+		{Category: store.NoteAvailability, Text: "travelling", CreatedBy: "agent:public:claude", ValidUntil: &soon},
+		{Category: store.NoteAvailability, Text: "no Tuesdays", CreatedBy: "runner"},
+	} {
+		n.CreatedAt, n.UpdatedAt = ts.clock.Now(), ts.clock.Now()
+		if _, err := ts.db.InsertNote(ctx, n, store.MaxNotes); err != nil {
+			t.Fatal(err)
+		}
+	}
+	body := ts.do(t, "GET", "/notes", nil, nil).Body.String()
+	if !strings.Contains(body, "until "+day(soon)) || !strings.Contains(body, "until "+day(past)) {
+		t.Fatalf("notes page lacks the dates: %s", body)
+	}
+	if strings.Count(body, `<span class="pill">expired</span>`) != 1 || strings.Count(body, `class="card expired"`) != 1 {
+		t.Fatalf("expected one expired note: %s", body)
+	}
+	// The expired note sorts after the live ones of its category.
+	if i, j := strings.Index(body, "trip ended"), strings.Index(body, "no Tuesdays"); i < j {
+		t.Fatal("the expired note is listed before a live one")
+	}
+}

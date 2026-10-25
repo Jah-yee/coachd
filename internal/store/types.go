@@ -145,6 +145,14 @@ type Note struct {
 	Category             NoteCategory
 	Text, CreatedBy      string
 	CreatedAt, UpdatedAt time.Time
+	// ValidUntil is the last day the note holds, in the runner's timezone;
+	// nil for a durable note.
+	ValidUntil *civil.Date
+}
+
+// Expired reports whether the note's last day is before today.
+func (n Note) Expired(today civil.Date) bool {
+	return n.ValidUntil != nil && n.ValidUntil.Before(today)
 }
 
 type ProposalStatus string
