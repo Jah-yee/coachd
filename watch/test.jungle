@@ -1,3 +1,0 @@
-# Added by "build.sh test" after monkey.jungle: compiles test/ (helpers and
-# the (:test) suite) into the test build only.
-base.sourcePath = $(base.sourcePath);test

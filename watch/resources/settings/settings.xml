@@ -1,0 +1,5 @@
+<settings>
+    <setting propertyKey="@Properties.serverUrl" title="@Strings.SettingUrlTitle" prompt="@Strings.SettingUrlPrompt">
+        <settingConfig type="url"/>
+    </setting>
+</settings>

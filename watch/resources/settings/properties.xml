@@ -1,0 +1,5 @@
+<!-- coachd's public URL, set in the Connect IQ phone app (Store installs).
+     Empty here: a sideloaded build falls back to Config.DEFAULT_URL. -->
+<properties>
+    <property id="serverUrl" type="string"></property>
+</properties>

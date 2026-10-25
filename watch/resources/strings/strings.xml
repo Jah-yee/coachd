@@ -1,11 +1,18 @@
 <strings>
     <string id="AppName">coachd</string>
+    <string id="AppNameDev">coachd dev</string>
+
+    <!-- Settings (Connect IQ phone app) and the setup view -->
+    <string id="SettingUrlTitle">coachd URL</string>
+    <string id="SettingUrlPrompt">https://coachd.example.com</string>
+    <string id="SetupUrl">Set the coachd URL in the Connect IQ app</string>
 
     <!-- Pairing view -->
     <string id="PairTitle">Pair with coachd</string>
     <string id="PairConfirm">Confirm it on coachd's Devices page</string>
     <string id="PairExpired">Pairing expired — press START to retry</string>
     <string id="PairTooMany">Too many pairing attempts, try again later</string>
+    <string id="PairWrongUrl">Not coachd's device API ($1$): check the URL</string>
     <string id="PairFailed">Pairing failed ($1$)</string>
 
     <!-- Status view; $1$ is filled in by the app -->

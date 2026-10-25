@@ -15,9 +15,16 @@ import Toybox.WatchUi;
 // relaunch the view resumes polling it while it is unexpired instead of
 // starting another; it is cleared once paired or expired.
 //
+// A pairing is bound to the coachd URL it was started with (Store.server()):
+// polls go only there, and an answer that arrives after the URL changed is
+// ignored, so a token is never stored for another server. The screen shows
+// that server's host.
+//
 // The pairing id is the claim secret and the token is the device credential:
 // neither is printed or drawn.
 class PairingView extends WatchUi.View {
+    // The server this view's pairing belongs to.
+    private var _server as String or Null = null;
     private var _pairingId as String or Null = null;
     private var _code as String or Null = null;
     // An error to show instead of the instructions (no phone, rate limit...).
@@ -42,7 +49,8 @@ class PairingView extends WatchUi.View {
             return;
         }
         var stored = Store.pairing(Time.now().value());
-        if (stored != null) {
+        if (stored != null && Store.server() != null) {
+            _server = Store.server();
             _pairingId = stored["id"] as String;
             _code = stored["code"] as String or Null;
             WatchUi.requestUpdate();
@@ -67,20 +75,38 @@ class PairingView extends WatchUi.View {
         return true;
     }
 
-    // Asks coachd for a new pairing code.
+    // Asks coachd at the current URL for a new pairing code, binding the
+    // pairing to that URL.
     function begin() as Void {
         if (_inFlight || !_visible) {
             return;
         }
+        var url = Server.current();
+        if (url == null) {
+            getApp().showStart();
+            return;
+        }
+        Store.setServer(url);
+        _server = url;
         _inFlight = true;
         _expired = false;
         _code = null;
         WatchUi.requestUpdate();
-        Api.startPairing(System.getDeviceSettings().partNumber, method(:onStarted));
+        Api.startPairing(url, System.getDeviceSettings().partNumber, method(:onStarted));
+    }
+
+    // Whether an answer belongs to the server this view's pairing is bound
+    // to; false after the URL changed (reconcile forgot or rebound it).
+    private function current() as Boolean {
+        var server = _server;
+        return server != null && server.equals(Store.server());
     }
 
     function onStarted(code as Number, data as Dictionary or String or Null) as Void {
         _inFlight = false;
+        if (!current()) {
+            return;
+        }
         // coachd answers 201 Created; 200 is accepted as well.
         if ((code == 201 || code == 200) && data instanceof Dictionary) {
             var id = data["pairing_id"];
@@ -107,15 +133,19 @@ class PairingView extends WatchUi.View {
 
     function poll() as Void {
         var id = _pairingId;
-        if (id == null || _inFlight || !_visible) {
+        var server = _server;
+        if (id == null || server == null || _inFlight || !_visible) {
             return;
         }
         _inFlight = true;
-        Api.pollPairing(id, method(:onPolled));
+        Api.pollPairing(server, id, method(:onPolled));
     }
 
     function onPolled(code as Number, data as Dictionary or String or Null) as Void {
         _inFlight = false;
+        if (!current()) {
+            return;
+        }
         if (code == 200 && data instanceof Dictionary) {
             var status = data["status"] as Object or Null;
             if ("pending".equals(status)) {
@@ -165,6 +195,12 @@ class PairingView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
         Ui.drawWrapped(dc, h / 5, Graphics.FONT_SMALL, Ui.text(Rez.Strings.PairTitle), (w * 3) / 4);
+        var server = _server;
+        if (server != null) {
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            Ui.drawWrapped(dc, (h * 7) / 20, Graphics.FONT_XTINY, ServerModel.host(server), (w * 3) / 4);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        }
         var code = _code;
         if (code != null) {
             dc.drawText(w / 2, h / 2, Graphics.FONT_NUMBER_MEDIUM, code, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);

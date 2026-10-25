@@ -1,6 +1,6 @@
-// Run No Evil tests for SyncModel. build.sh test compiles them (test.jungle
-// adds this directory to the source path); running them needs the simulator:
-// monkeydo bin/coachd-test.prg <device> -t
+// Run No Evil tests for SyncModel, PairingModel and ServerModel. build.sh test
+// compiles them (its bin/dev.jungle adds this directory to the source path);
+// running them needs the simulator: monkeydo bin/coachd-test.prg <device> -t
 import Toybox.Lang;
 import Toybox.Test;
 
@@ -212,4 +212,75 @@ function pairingExpiry(logger as Logger) as Boolean {
         }
     }
     return ok;
+}
+
+(:test)
+function serverNormalizeAccepts(logger as Logger) as Boolean {
+    var cases = [
+        ["https://coachd.example.com", "https://coachd.example.com"],
+        ["https://coachd.example.com/", "https://coachd.example.com"],
+        ["  Https://Coachd.Example.com//  ", "https://coachd.example.com"],
+        ["coachd.example.com", "https://coachd.example.com"],
+        ["HTTPS://coachd.example.com:8443/base/", "https://coachd.example.com:8443/base"],
+        ["https://coachd.example.com/Base_1.x~y-z", "https://coachd.example.com/Base_1.x~y-z"]
+    ];
+    var ok = true;
+    for (var i = 0; i < cases.size(); i++) {
+        var got = ServerModel.normalize(cases[i][0]);
+        if (got == null || !got.equals(cases[i][1])) {
+            logger.error("normalize(" + cases[i][0] + "): got " + got + ", want " + cases[i][1]);
+            ok = false;
+        }
+    }
+    return ok;
+}
+
+(:test)
+function serverNormalizeRejects(logger as Logger) as Boolean {
+    var bad = [null, 42, "", "   ", "http://coachd.example.com", "ftp://coachd.example.com",
+        "https://", "https:///path", "https://coachd example.com", "https://coachd.example.com:port",
+        "https://coachd.example.com:123456", "https://coachd.example.com/a?b=c",
+        "https://user@coachd.example.com", "https://coachd.example.com/#x"];
+    var ok = true;
+    for (var i = 0; i < bad.size(); i++) {
+        var got = ServerModel.normalize(bad[i]);
+        if (got != null) {
+            logger.error("normalize(" + bad[i] + "): got " + got + ", want null");
+            ok = false;
+        }
+    }
+    return ok;
+}
+
+(:test)
+function serverMustForget(logger as Logger) as Boolean {
+    var a = "https://a.example.com";
+    var b = "https://b.example.com";
+    var ok = true;
+    // [current, bound, hasState, want]
+    var cases = [
+        [a, a, true, false],     // same server: keep
+        [b, a, true, true],      // changed server: forget
+        [a, null, true, true],   // token from an older build, no stored server: forget
+        [null, null, true, true],
+        [a, 42, true, true],     // stored server of the wrong type: forget
+        [null, a, true, false],  // setting cleared: keep, no request is made
+        [b, a, false, false],    // nothing stored: nothing to forget
+        [a, null, false, false]
+    ];
+    for (var i = 0; i < cases.size(); i++) {
+        var c = cases[i];
+        var got = ServerModel.mustForget(c[0] as String or Null, c[1], c[2] as Boolean);
+        if (got != c[3]) {
+            logger.error("mustForget case " + i + ": got " + got);
+            ok = false;
+        }
+    }
+    return ok;
+}
+
+(:test)
+function serverHost(logger as Logger) as Boolean {
+    return ServerModel.host("https://coachd.example.com").equals("coachd.example.com")
+        && ServerModel.host("https://coachd.example.com:8443/base").equals("coachd.example.com:8443");
 }

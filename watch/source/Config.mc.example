@@ -3,6 +3,7 @@
 import Toybox.Lang;
 
 module Config {
-    // coachd's public base URL: https, no trailing slash.
-    const SERVER_URL as String = "https://coachd.example.com";
+    // The coachd URL setting's default: COACHD_PUBLIC_URL in sideloaded
+    // builds (they get no phone settings); empty in Store builds.
+    const DEFAULT_URL as String = "https://coachd.example.com";
 }
