@@ -6,6 +6,10 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+### Fixed
+
+- Proposals that expired were not logged when the stale-delivery check after them failed, for example during shutdown. This also made a release test flaky.
+
 ## [0.3.0] - 2026-10-25
 
 ### Added

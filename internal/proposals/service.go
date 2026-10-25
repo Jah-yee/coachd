@@ -283,6 +283,20 @@ func (s *Service) ExpireDue(ctx context.Context) (int, error) {
 	return n, nil
 }
 
+// expireTick runs ExpireDue once and logs the outcome. ExpireDue reports
+// expired proposals only once their transition is committed, so they are
+// logged even when the later stale-delivery step fails (for example on a
+// context cancelled at shutdown).
+func (s *Service) expireTick(ctx context.Context) {
+	n, err := s.ExpireDue(ctx)
+	if n > 0 {
+		s.log.Info("proposals expired", "component", "proposals", "count", n, "outcome", "ok")
+	}
+	if err != nil && ctx.Err() == nil {
+		s.log.Warn("proposal expiry failed", "component", "proposals", "outcome", "error", "error_class", fmt.Sprintf("%T", err))
+	}
+}
+
 // RunExpiry runs ExpireDue at start and every `every` until ctx is done. It
 // first adds 0 to Deliveries{outcome=failed} so the series exists before the
 // first failure (an increase() alert cannot see a series that starts at 1).
@@ -293,15 +307,7 @@ func (s *Service) RunExpiry(ctx context.Context, every time.Duration) {
 	t := time.NewTicker(every)
 	defer t.Stop()
 	for {
-		n, err := s.ExpireDue(ctx)
-		switch {
-		case err != nil:
-			if ctx.Err() == nil {
-				s.log.Warn("proposal expiry failed", "component", "proposals", "outcome", "error", "error_class", fmt.Sprintf("%T", err))
-			}
-		case n > 0:
-			s.log.Info("proposals expired", "component", "proposals", "count", n, "outcome", "ok")
-		}
+		s.expireTick(ctx)
 		select {
 		case <-ctx.Done():
 			return
