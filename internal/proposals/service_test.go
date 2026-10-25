@@ -855,3 +855,43 @@ func TestRunExpiryZeroesFailedDeliveries(t *testing.T) {
 		t.Fatalf("failed series = %v, want one point at 0", points)
 	}
 }
+
+// Only a cycling workout coachd cannot write as a Zwift file gets the
+// warning; the reason comes from zwiftworkout.
+func TestProposeZwiftWarning(t *testing.T) {
+	f := newFixture(t)
+	ctx := context.Background()
+	at := f.now.Add(-time.Hour)
+	if err := f.db.PutSyncState(ctx, store.SyncState{DataType: "activities", LastSuccessAt: &at, LastOutcome: "ok"}); err != nil {
+		t.Fatal(err)
+	}
+	ten, km := 600, 5000
+	timeStep := workout.Step{StepBase: workout.StepBase{Kind: "active", Duration: &workout.Duration{Type: "time", TimeS: &ten}}}
+	distStep := workout.Step{StepBase: workout.StepBase{Kind: "active", Duration: &workout.Duration{Type: "distance", DistanceM: &km}}}
+	codes := func(sport string, steps ...workout.Step) []guidance.Warning {
+		t.Helper()
+		w := wk("2026-10-25")
+		w.Sport, w.Steps = sport, steps
+		r, err := f.svc.Propose(ctx, w, "why", nil, actor)
+		if err != nil || r.Verdict != "pending" {
+			t.Fatalf("r = %+v, %v", r, err)
+		}
+		var out []guidance.Warning
+		for _, x := range r.Warnings {
+			if x.Code == "zwift_not_exportable" {
+				out = append(out, x)
+			}
+		}
+		return out
+	}
+	got := codes("cycling", timeStep, distStep)
+	if len(got) != 1 || got[0].Message != "not exportable to Zwift: steps[1].duration: distance durations have no Zwift equivalent" {
+		t.Fatalf("cycling with a distance step: %+v", got)
+	}
+	if got := codes("cycling", timeStep); len(got) != 0 {
+		t.Fatalf("all-time cycling: %+v", got)
+	}
+	if got := codes("running", timeStep, distStep); len(got) != 0 {
+		t.Fatalf("running: %+v", got)
+	}
+}

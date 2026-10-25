@@ -216,8 +216,9 @@ func TestStaleAndThin(t *testing.T) {
 func TestWarningsDeterministicOrder(t *testing.T) {
 	_, now := fresh()
 	hi, mx := 200, 180
-	in := WarningInputs{Plan: workout.Plan{Sport: store.SportRunning, DistanceM: 30000, EstimatedS: 9000, MaxTargetHR: &hi}, LongestRun30dM: 10000, LongestRun30dS: 3000, MaxHR90d: &mx, SameDay: 2, Now: now, WeeksOfHistory: 1}
-	want := []string{"spike_distance", "spike_duration", "same_day", "above_max_hr", "stale_data", "thin_history"}
+	in := WarningInputs{Plan: workout.Plan{Sport: store.SportRunning, DistanceM: 30000, EstimatedS: 9000, MaxTargetHR: &hi}, LongestRun30dM: 10000, LongestRun30dS: 3000, MaxHR90d: &mx, SameDay: 2, Now: now, WeeksOfHistory: 1,
+		ZwiftUnsupported: "steps[0].duration: distance durations have no Zwift equivalent"}
+	want := []string{"spike_distance", "spike_duration", "same_day", "above_max_hr", "zwift_not_exportable", "stale_data", "thin_history"}
 	for i := 0; i < 3; i++ {
 		ws := Warnings(in)
 		if len(ws) != len(want) {
@@ -234,7 +235,8 @@ func TestWarningsDeterministicOrder(t *testing.T) {
 func TestNoVerdictWords(t *testing.T) {
 	_, now := fresh()
 	hi, mx := 200, 180
-	in := WarningInputs{Plan: workout.Plan{Sport: store.SportRunning, DistanceM: 30000, EstimatedS: 9000, MaxTargetHR: &hi}, LongestRun30dM: 10000, LongestRun30dS: 3000, MaxHR90d: &mx, SameDay: 2, Now: now, WeeksOfHistory: 1}
+	in := WarningInputs{Plan: workout.Plan{Sport: store.SportRunning, DistanceM: 30000, EstimatedS: 9000, MaxTargetHR: &hi}, LongestRun30dM: 10000, LongestRun30dS: 3000, MaxHR90d: &mx, SameDay: 2, Now: now, WeeksOfHistory: 1,
+		ZwiftUnsupported: "steps[1].steps[0].duration: open durations have no Zwift equivalent"}
 	all := Warnings(in)
 	in.Plan.EstimatedFromDefaultPace = true
 	all = append(all, Warnings(in)...)
@@ -316,5 +318,20 @@ func TestSpikeDurationBoundary(t *testing.T) {
 	ws := Warnings(in)
 	if len(ws) != 1 || ws[0].Code != "spike_duration" || !strings.Contains(ws[0].Message, "110.1% of") {
 		t.Fatalf("%+v", ws)
+	}
+}
+
+func TestZwiftNotExportable(t *testing.T) {
+	ls, now := fresh()
+	in := WarningInputs{Plan: workout.Plan{Sport: store.SportCycling}, LastSyncAt: ls, Now: now, WeeksOfHistory: 10,
+		ZwiftUnsupported: "steps[2].duration: distance durations have no Zwift equivalent"}
+	ws := Warnings(in)
+	if len(ws) != 1 || ws[0].Code != "zwift_not_exportable" ||
+		ws[0].Message != "not exportable to Zwift: steps[2].duration: distance durations have no Zwift equivalent" {
+		t.Fatalf("%+v", ws)
+	}
+	in.ZwiftUnsupported = ""
+	if ws := Warnings(in); len(ws) != 0 {
+		t.Fatalf("exportable: %+v", ws)
 	}
 }
