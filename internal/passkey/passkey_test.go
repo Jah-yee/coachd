@@ -293,6 +293,15 @@ func TestSignerRequiresBinding(t *testing.T) {
 		"no challenge":             {Purpose: passkey.PurposeLogin, Expires: exp},
 		"consent without request":  {Purpose: passkey.PurposeConsent, Session: sess, Scopes: []string{"coach:read"}, Expires: exp},
 		"consent without scopes":   {Purpose: passkey.PurposeConsent, Session: sess, Request: "rq", Expires: exp},
+		"approve all without set":  {Purpose: passkey.PurposeApproveAll, Session: sess, Expires: exp},
+		"approve all, item without id": {Purpose: passkey.PurposeApproveAll, Session: sess, Expires: exp,
+			Proposals: []passkey.Bound{{ID: "a", ContentHash: "h"}, {ContentHash: "h"}}},
+		"approve all, item without hash": {Purpose: passkey.PurposeApproveAll, Session: sess, Expires: exp,
+			Proposals: []passkey.Bound{{ID: "a"}}},
+		"approve all with a single binding": {Purpose: passkey.PurposeApproveAll, Session: sess, Expires: exp,
+			ProposalID: "p", ContentHash: "h", Proposals: []passkey.Bound{{ID: "a", ContentHash: "h"}}},
+		"approve with a set": {Purpose: passkey.PurposeApprove, Session: sess, Expires: exp,
+			ProposalID: "p", ContentHash: "h", Proposals: []passkey.Bound{{ID: "a", ContentHash: "h"}}},
 	} {
 		tok, err := s.Sign(c)
 		if err != nil {
@@ -928,5 +937,65 @@ func TestConsentCeremony(t *testing.T) {
 	}
 	if _, _, err := svc.BeginAssert(ctx, passkey.PurposeConsent, "", "", exp); err == nil {
 		t.Error("BeginAssert(consent) succeeded; consent begins with BeginConsent")
+	}
+}
+
+func TestApproveAllCeremony(t *testing.T) {
+	svc, db, clk := setup(t)
+	ctx := context.Background()
+	exp := clk.Now().Add(10 * time.Minute)
+	set := []passkey.Bound{{ID: "p1", ContentHash: "h1"}, {ID: "p2", ContentHash: "h2"}}
+	if _, _, err := svc.BeginApproveAll(ctx, set, exp); !errors.Is(err, passkey.ErrNoPasskeys) {
+		t.Fatalf("no passkey: err = %v", err)
+	}
+	a := passkeytest.New(testOrigin)
+	id := enroll(t, svc, db, clk, a, "phone")
+
+	opts, tok, err := svc.BeginApproveAll(ctx, set, exp)
+	if err != nil {
+		t.Fatalf("BeginApproveAll: %v", err)
+	}
+	cred, err := a.Get(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// An approve-all token is for approve-all only.
+	for _, p := range []passkey.Purpose{passkey.PurposeLogin, passkey.PurposeApprove, passkey.PurposeConsent} {
+		if _, err := svc.FinishAssert(ctx, tok, p, cred); !errors.Is(err, passkey.ErrCeremony) {
+			t.Errorf("FinishAssert(%s) with an approve-all token: err = %v", p, err)
+		}
+	}
+	as, err := svc.FinishAssert(ctx, tok, passkey.PurposeApproveAll, cred)
+	if err != nil {
+		t.Fatalf("FinishAssert(approve_all): %v", err)
+	}
+	c := as.Ceremony
+	if as.PasskeyID != id || c.Purpose != passkey.PurposeApproveAll || !reflect.DeepEqual(c.Proposals, set) ||
+		c.ProposalID != "" || !c.Expires.Equal(exp) || c.Nonce() == "" {
+		t.Fatalf("assertion = %+v", as)
+	}
+
+	// A single approval token is not an approve-all token.
+	sopts, stok, err := svc.BeginAssert(ctx, passkey.PurposeApprove, "p1", "h1", exp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	scred, err := a.Get(sopts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := svc.FinishAssert(ctx, stok, passkey.PurposeApproveAll, scred); !errors.Is(err, passkey.ErrCeremony) {
+		t.Errorf("FinishAssert(approve_all) with an approve token: err = %v", err)
+	}
+
+	for name, bad := range map[string][]passkey.Bound{
+		"empty": {}, "nil": nil, "no id": {{ContentHash: "h"}}, "no hash": {{ID: "p"}},
+	} {
+		if _, _, err := svc.BeginApproveAll(ctx, bad, exp); err == nil {
+			t.Errorf("%s: BeginApproveAll succeeded", name)
+		}
+	}
+	if _, _, err := svc.BeginAssert(ctx, passkey.PurposeApproveAll, "p1", "h1", exp); err == nil {
+		t.Error("BeginAssert(approve_all) succeeded; it begins with BeginApproveAll")
 	}
 }

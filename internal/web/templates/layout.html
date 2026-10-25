@@ -88,3 +88,51 @@
 {{define "i-plus"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>{{end}}
 {{define "i-link"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg>{{end}}
 {{define "i-info"}}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5h.01"/></svg>{{end}}
+
+{{/* proposal-detail is what the runner reviews before approving: the
+     workout, what it replaces, the agent's rationale and coachd's warnings.
+     The proposal page and the review page both show it. */}}
+{{define "proposal-detail"}}<div class="compare{{if .Replaces}} two{{end}}">
+<section class="card">
+<h2>Workout</h2>
+{{template "lines" .Lines}}
+{{- with .Notes}}
+<div class="quote"><h3>Notes</h3>{{template "agent" .}}</div>
+{{- end}}
+</section>
+{{- with .Replaces}}
+<section class="card replaced">
+<h2>Replaces</h2>
+<p class="replaced-link"><a href="/p/{{.ID}}">{{.Day}}</a> {{template "status" .Status}}</p>
+<p class="replaced-name">{{template "agent" .Name}}</p>
+{{template "lines" .Lines}}
+{{- if .WatchHint}}
+<p class="banner">If you copied it to the watch, delete it there too. The watch app removes its own copy on the next sync.</p>
+{{- end}}
+</section>
+{{- end}}
+</div>
+<section class="card">
+<h2>What the agent said it is for</h2>
+<div class="quote">{{template "agent" .Rationale}}</div>
+</section>
+{{- if .Warnings}}
+<section class="callout warn">
+<h2>{{template "i-alert"}}Warnings</h2>
+<ul>
+{{- range .Warnings}}
+<li>{{.}}</li>
+{{- end}}
+</ul>
+</section>
+{{- end}}{{end}}
+
+{{/* lines shows Describe's lines: agent-written cues and notes, so the
+     whole list is one labelled block. */}}
+{{define "lines"}}<div class="agent agent-block"><span class="agent-label">written by the agent</span>
+<ol class="steps">
+{{- range .}}
+<li class="indent-{{.Indent}}{{with .Kind}} kind-{{.}}{{end}}">{{.Text}}</li>
+{{- end}}
+</ol>
+</div>{{end}}

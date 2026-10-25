@@ -201,6 +201,17 @@ func (s *Service) BeginAssert(ctx context.Context, p Purpose, proposalID, conten
 	return s.beginAssert(ctx, Ceremony{Purpose: p, ProposalID: proposalID, ContentHash: contentHash, Expires: expires})
 }
 
+// BeginApproveAll starts the assertion that approves every proposal in set,
+// each bound by ID and content hash, with one nonce. The finish acts on the
+// signed set, never on IDs posted alongside the assertion. It returns
+// ErrNoPasskeys when none is active.
+func (s *Service) BeginApproveAll(ctx context.Context, set []Bound, expires time.Time) (options []byte, token string, err error) {
+	if !validSet(set) {
+		return nil, "", errors.New("passkey: approve all needs proposals bound by ID and content hash")
+	}
+	return s.beginAssert(ctx, Ceremony{Purpose: PurposeApproveAll, Proposals: append([]Bound(nil), set...), Expires: expires})
+}
+
 // BeginConsent starts the assertion that approves an OAuth connection. The
 // ceremony binds request, the signed authorization request token, and the
 // scopes the runner chose, so the finish takes neither from the browser. It
@@ -243,7 +254,8 @@ type Assertion struct {
 // caller must, in the one transaction that acts on it:
 //   - check the binding: an approval's Ceremony.ProposalID and ContentHash
 //     against the proposal it acts on (store.ApproveProposal takes the
-//     ceremony's ContentHash and compares it with the stored one); a
+//     ceremony's ContentHash and compares it with the stored one); an
+//     approve-all acts on Ceremony.Proposals and nothing else; a
 //     consent acts on Ceremony.Request and Ceremony.Scopes themselves, never
 //     on a request or scopes posted alongside the assertion;
 //   - consume Ceremony.Nonce(), so the assertion authorises one action only.
@@ -255,7 +267,7 @@ type Assertion struct {
 // credential that does not decode) is ErrInternal; any other error is a
 // failed check.
 func (s *Service) FinishAssert(ctx context.Context, token string, want Purpose, credential []byte) (Assertion, error) {
-	if want != PurposeLogin && want != PurposeApprove && want != PurposeConsent {
+	if want != PurposeLogin && want != PurposeApprove && want != PurposeConsent && want != PurposeApproveAll {
 		return Assertion{}, fmt.Errorf("passkey: cannot assert for purpose %q", want)
 	}
 	c, err := s.signer.Verify(token, want, s.now())

@@ -30,15 +30,26 @@ const (
 	PurposeLogin   Purpose = "login"
 	PurposeApprove Purpose = "approve"
 	PurposeConsent Purpose = "consent" // approve an OAuth connection
+	// PurposeApproveAll approves a set of proposals with one assertion.
+	PurposeApproveAll Purpose = "approve_all"
 )
+
+// Bound is one proposal an approve-all ceremony binds: its ID and the
+// content hash the runner saw.
+type Bound struct {
+	ID          string `json:"id"`
+	ContentHash string `json:"h"`
+}
 
 // Ceremony is the signed state carried between Begin* and Finish*.
 type Ceremony struct {
-	Purpose      Purpose              `json:"p"`
-	Session      webauthn.SessionData `json:"s"`
-	ProposalID   string               `json:"pid,omitempty"`
-	ContentHash  string               `json:"h,omitempty"`
-	EnrollmentID int64                `json:"eid,omitempty"`
+	Purpose     Purpose              `json:"p"`
+	Session     webauthn.SessionData `json:"s"`
+	ProposalID  string               `json:"pid,omitempty"`
+	ContentHash string               `json:"h,omitempty"`
+	// An approve-all binds every proposal it approves, in order.
+	Proposals    []Bound `json:"ps,omitempty"`
+	EnrollmentID int64   `json:"eid,omitempty"`
 	// A consent binds the signed OAuth request token and the scopes the
 	// runner chose, so the assertion approves exactly that request.
 	Request string    `json:"rq,omitempty"`
@@ -165,7 +176,11 @@ func (s *Signer) Verify(token string, want Purpose, now time.Time) (Ceremony, er
 	}
 	switch c.Purpose {
 	case PurposeApprove:
-		if c.ProposalID == "" || c.ContentHash == "" {
+		if c.ProposalID == "" || c.ContentHash == "" || len(c.Proposals) > 0 {
+			return Ceremony{}, ErrCeremony
+		}
+	case PurposeApproveAll:
+		if !validSet(c.Proposals) || c.ProposalID != "" || c.ContentHash != "" {
 			return Ceremony{}, ErrCeremony
 		}
 	case PurposeEnroll:
@@ -181,4 +196,15 @@ func (s *Signer) Verify(token string, want Purpose, now time.Time) (Ceremony, er
 		return Ceremony{}, ErrCeremonyExpired
 	}
 	return c, nil
+}
+
+// validSet reports whether an approve-all binds at least one proposal and
+// every one by ID and content hash.
+func validSet(ps []Bound) bool {
+	for _, p := range ps {
+		if p.ID == "" || p.ContentHash == "" {
+			return false
+		}
+	}
+	return len(ps) > 0
 }

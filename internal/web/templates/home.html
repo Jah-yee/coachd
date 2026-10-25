@@ -6,6 +6,7 @@
 <div class="section-head">
 <h1>Waiting for review</h1>
 {{- if .Pending}}<span class="count">{{len .Pending}}<span class="visually-hidden"> waiting</span></span>{{end}}
+{{- if ge (len .Pending) 2}}<a class="button review-all-link" href="/review">Review all</a>{{end}}
 </div>
 {{- if .Pending}}
 <ul class="rows">

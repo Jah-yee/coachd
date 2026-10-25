@@ -265,3 +265,101 @@ func TestApproveReplacesDelivering(t *testing.T) {
 		}
 	}
 }
+
+func approvalSet(nonce string, ps ...Proposal) ApprovalSet {
+	a := ApprovalSet{Today: rtToday, Nonce: nonce, NonceExpires: rt0.Add(time.Hour), At: rt0, Lane: "public", Client: "passkey:1"}
+	for _, p := range ps {
+		a.Items = append(a.Items, ApprovalItem{ID: p.ID, ContentHash: p.ContentHash})
+	}
+	return a
+}
+
+func TestApproveProposalsAll(t *testing.T) {
+	db := openTest(t)
+	ctx := context.Background()
+	old := mkProp("old", "2026-10-26", rt0.Add(-3*time.Hour), ProposalDelivered)
+	insertProp(t, db, old)
+	a := mkProp("a", "2026-10-25", rt0.Add(-2*time.Hour), ProposalPending)
+	b := mkProp("b", "2026-10-26", rt0.Add(-time.Hour), ProposalPending)
+	b.Replaces = &old.ID
+	insertProp(t, db, a)
+	insertProp(t, db, b)
+
+	res, err := db.ApproveProposals(ctx, approvalSet("n1", a, b))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res) != 2 || res[0].Proposal.ID != "a" || res[1].Proposal.ID != "b" || res[1].Replaced == nil ||
+		res[1].Replaced.Status != ProposalWithdrawn {
+		t.Fatalf("res = %+v", res)
+	}
+	for id, want := range map[string]ProposalStatus{"a": ProposalApproved, "b": ProposalApproved, "old": ProposalWithdrawn} {
+		if got := status(t, db, id); got != want {
+			t.Fatalf("%s = %s, want %s", id, got, want)
+		}
+	}
+	if auditRows(t, db, "proposal_approved", "a") != 1 || auditRows(t, db, "proposal_approved", "b") != 1 ||
+		auditRows(t, db, "proposal_withdrawn", "old") != 1 {
+		t.Fatal("audit rows missing")
+	}
+	if used, err := db.NonceUsed(ctx, "n1"); err != nil || !used {
+		t.Fatalf("nonce used = %v, %v", used, err)
+	}
+	if _, err := db.ApproveProposals(ctx, approvalSet("n1", a)); !errors.Is(err, ErrNonceUsed) {
+		t.Fatalf("replay = %v, want ErrNonceUsed", err)
+	}
+}
+
+// Any conflict rolls back every approval of the set, and the nonce.
+func TestApproveProposalsAllOrNothing(t *testing.T) {
+	for name, tc := range map[string]struct {
+		edit   func(p *Proposal)
+		reason string
+	}{
+		"not pending":     {func(p *Proposal) { p.Status = ProposalDeclined }, "not_pending"},
+		"content changed": {func(p *Proposal) { p.ContentHash = "other" }, "content_changed"},
+		"date passed":     {func(p *Proposal) { p.Date, _ = civil.Parse("2026-10-23") }, "date_passed"},
+		"not found":       {nil, ""},
+	} {
+		t.Run(name, func(t *testing.T) {
+			db := openTest(t)
+			ctx := context.Background()
+			a := mkProp("a", "2026-10-25", rt0.Add(-2*time.Hour), ProposalPending)
+			insertProp(t, db, a)
+			b := mkProp("b", "2026-10-26", rt0.Add(-time.Hour), ProposalPending)
+			stored := b
+			if tc.edit != nil {
+				tc.edit(&stored)
+				insertProp(t, db, stored)
+			}
+			_, err := db.ApproveProposals(ctx, approvalSet("n1", a, b))
+			var sc *SetConflict
+			if !errors.As(err, &sc) || sc.ID != "b" {
+				t.Fatalf("err = %v, want a SetConflict on b", err)
+			}
+			var ac *ApprovalConflict
+			switch {
+			case tc.reason == "" && !errors.Is(err, ErrNotFound):
+				t.Fatalf("err = %v, want ErrNotFound", err)
+			case tc.reason != "" && (!errors.As(err, &ac) || ac.Reason != tc.reason || !errors.Is(err, ErrConflict)):
+				t.Fatalf("err = %v, want reason %s", err, tc.reason)
+			}
+			if got := status(t, db, "a"); got != ProposalPending {
+				t.Fatalf("a = %s, want pending: the set must roll back", got)
+			}
+			if auditRows(t, db, "proposal_approved", "a") != 0 {
+				t.Fatal("audit row kept after rollback")
+			}
+			if used, _ := db.NonceUsed(ctx, "n1"); used {
+				t.Fatal("nonce consumed after rollback")
+			}
+		})
+	}
+}
+
+func TestApproveProposalsEmpty(t *testing.T) {
+	db := openTest(t)
+	if _, err := db.ApproveProposals(context.Background(), approvalSet("n1")); err == nil {
+		t.Fatal("an empty set must be refused")
+	}
+}

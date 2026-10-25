@@ -51,6 +51,8 @@ func (s *Server) routeTable() []route {
 		{"POST /enroll/finish", s.enrollFinish, true},
 		{"GET /p/{id}", s.proposal, false},
 		{"POST /p/{id}/approve", s.approve, false},
+		{"GET /review", s.review, false},
+		{"POST /review/approve", s.approveAll, false},
 		{"POST /p/{id}/decline", s.requireSession(s.transition(store.ProposalDeclined, store.ProposalPending)), false},
 		{"POST /p/{id}/withdraw", s.requireSession(s.transition(store.ProposalWithdrawn, store.ProposalApproved,
 			store.ProposalDelivering, store.ProposalDeliveryFailed, store.ProposalDelivered)), false},

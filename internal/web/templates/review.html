@@ -1,0 +1,46 @@
+{{define "title"}}Review all{{end}}
+{{define "content"}}{{with .Page}}
+<a class="back" href="/">{{template "i-back"}}<span>Home</span></a>
+{{- with .Error}}
+<p class="alert">{{.}}</p>
+{{- end}}
+<header class="page-head">
+<h1>Review all</h1>
+{{- if .Items}}
+<p class="meta">{{plural (len .Items) "workout"}} waiting. Approving approves exactly these, as shown. To leave one out, open it and decline it first.</p>
+{{- end}}
+</header>
+{{- if .NoPasskey}}{{template "no-passkey"}}{{end}}
+{{- if .Items}}
+<ol class="review-all">
+{{- range .Items}}
+<li>
+<article class="review-item">
+<header class="review-item-head">
+<h2><a href="/p/{{.ID}}">{{template "agent" .Name}}</a></h2>
+<p class="chips"><span class="chip">{{template "i-calendar"}}{{.Day}}</span> <span class="chip">{{template "i-sport"}}{{.Sport}}</span></p>
+</header>
+{{template "proposal-detail" .}}
+</article>
+</li>
+{{- end}}
+</ol>
+{{- with .Approve}}
+<section class="actions">
+<button type="button" class="primary" data-action="approve" data-url="{{.URL}}" data-ceremony="{{.Ceremony}}" data-options="{{.Options}}">{{template "i-passkey"}}<span>Approve all {{len $.Page.Items}} with passkey</span></button>
+</section>
+{{- end}}
+{{- else}}
+<div class="empty-state">{{template "i-check"}}<p class="empty">No workout is waiting that can be approved.</p></div>
+{{- end}}
+{{- with .Excluded}}
+<section>
+<h2>Not included</h2>
+<ul class="rows">
+{{- range .}}
+<li>{{template "row" .Row}}<p class="hint">{{.Reason}}</p></li>
+{{- end}}
+</ul>
+</section>
+{{- end}}
+{{end}}{{end}}
