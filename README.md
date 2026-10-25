@@ -66,11 +66,13 @@ All of these tools exist today:
 | `request_sync` | write (local only) | M1 |
 | `get_goal`, `get_notes`, `list_workouts` | read | M2a |
 | `set_goal`, `upsert_note`, `delete_note`, `propose_workout`, `cancel_proposal` | write (local only) | M2a |
+| `send_message` (a short note shown on the watch app) | write (local only) | 0.4 |
 | Approval page (passkey), ntfy notification, FIT download | runner only, not MCP | M2b |
 
 - No tool can approve, deliver or withdraw a workout. Only you can, on coachd's approval page with a passkey.
 - The approval page, ntfy notifications and FIT download are available (M2b). A proposal that nobody approves stays `pending` and expires at the end of its date.
 - Agents can edit or delete only notes that agents wrote. Your own notes are read-only to them.
+- `send_message` stores up to 300 characters for the watch app, which shows it and, with background checks on, notifies you within about 15 minutes. A message is display-only: it cannot carry or change a workout, and it is sent nowhere else (not to ntfy).
 
 ## Approval flow
 
@@ -146,6 +148,7 @@ OpenTelemetry flows to Grafana Alloy, which routes each signal:
   - Goal, notes, workout proposals with warnings, passkey approval, ntfy, FIT download.
   - Power targets for cycling, and Zwift workout downloads.
   - Connect IQ watch app with device pairing and delivery confirmation (Connect IQ Store, your coachd URL set on the phone; opt-in with `COACHD_DEVICE_API=on`).
+  - Watch app v2: the next workout on the main screen, workout details with the agent's rationale, agent messages, background checks with notifications, and a glance (see [`watch/README.md`](watch/README.md)).
   - Backups and restore, a local Grafana profile, dashboards and alerts.
   - Built-in auth, so the public lane works without Cloudflare.
 - **Next:** a smoother first-time install, and wider live testing of AI clients against built-in mode. Changes are listed in [`CHANGELOG.md`](CHANGELOG.md).
