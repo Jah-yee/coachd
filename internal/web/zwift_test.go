@@ -55,7 +55,9 @@ func TestZwoDownload(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("download: status %d, body %s", rec.Code, rec.Body)
 	}
-	if ct := rec.Header().Get("Content-Type"); ct != "application/xml" {
+	// Not an XML type: Safari may append .xml to a name with an extension it
+	// does not know, and Zwift lists only *.zwo.
+	if ct := rec.Header().Get("Content-Type"); ct != "application/octet-stream" {
 		t.Errorf("Content-Type = %q", ct)
 	}
 	wantCD := `attachment; filename="coachd-2026-10-24-` + p.ID[:8] + `.zwo"`

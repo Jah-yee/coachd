@@ -78,7 +78,7 @@ All of these tools exist today:
 2. coachd sends a minimal ntfy notice ("Workout for Tue 28 Oct ready to review") if ntfy is configured.
 3. You open the approval page (behind Cloudflare Access, or signed in with your passkey in built-in mode), and read the workout, warnings and the agent's rationale (labelled as agent text).
 4. You approve with a passkey (Face ID or fingerprint); decline is one tap after a passkey login.
-5. The watch app picks it up on its next sync and confirms delivery. Without the watch app, download the FIT file from the page and copy it to the watch (`GARMIN/NewFiles`). For a cycling workout, **Download for Zwift** gives a `.zwo` file instead (see below). The first download of either file marks it `delivered`.
+5. The watch app picks it up on its next sync and confirms delivery. Without the watch app, download the FIT file from the page and copy it to the watch (`GARMIN/NewFiles`). For a cycling workout whose steps all have a time duration, **Download for Zwift** also offers a `.zwo` file (see below). The first download of either file marks it `delivered`.
 
 ### Enrol a passkey
 

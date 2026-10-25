@@ -19,9 +19,11 @@ import (
 )
 
 const (
-	MaxNameLen  = 50 // <name>, after safeText
-	MaxTextLen  = 80 // each text event, after safeText
-	ContentType = "application/xml"
+	MaxNameLen = 50 // <name>, after safeText
+	MaxTextLen = 80 // each text event, after safeText
+	// ContentType is not an XML type: Safari may append .xml to a file name
+	// whose extension it does not know, and Zwift lists only *.zwo files.
+	ContentType = "application/octet-stream"
 
 	fallbackName = "coachd workout"
 )
