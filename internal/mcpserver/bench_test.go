@@ -64,11 +64,11 @@ func benchHandler(b *testing.B) (http.Handler, civil.Date) {
 		DurationS: 36000, MovingS: 36000}, nil); err != nil {
 		b.Fatal(err)
 	}
-	laps, points, err := fitdata.Decode(bytes.NewReader(fit))
+	fa, err := fitdata.Decode(bytes.NewReader(fit))
 	if err != nil {
 		b.Fatal(err)
 	}
-	detail := store.ActivityDetail{Laps: laps, Series: fitdata.Downsample(points, fitdata.MaxSeriesPoints)}
+	detail := store.NewActivityDetail(fa)
 	if err := db.PutActivityDetail(ctx, 42, detail); err != nil {
 		b.Fatal(err)
 	}

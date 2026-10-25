@@ -62,7 +62,10 @@ func (s *svc) register(srv *mcp.Server) {
 	addTool(s, srv, &mcp.Tool{Name: "get_activity", Annotations: read(), Description: "One activity by ID. " +
 		"detail summary (default) returns the summary; laps adds per-lap splits; series adds laps plus a heart " +
 		"rate, pace, distance and altitude series reduced to at most 600 points. laps and series are empty when " +
-		"no FIT file is stored (has_fit false). start_local is the start instant in the runner's timezone, so its " +
+		"no FIT file is stored (has_fit false). For an activity recorded from a structured workout on the watch, " +
+		"laps and series also add workout: the steps the watch followed; the steps as executed, with seconds " +
+		"inside, below and above each heart-rate or pace range; and proposal_id, the delivered proposal it " +
+		"carried out. start_local is the start instant in the runner's timezone, so its " +
 		"date can differ from date for activities recorded in another timezone." + descSuffix},
 		auth.ScopeRead, s.getActivity)
 
@@ -215,8 +218,9 @@ type listActivitiesOut struct {
 
 type getActivityOut struct {
 	activityOut
-	Laps   []lapOut   `json:"laps,omitzero" jsonschema:"Per-lap splits; present for detail laps and series"`
-	Series []pointOut `json:"series,omitzero" jsonschema:"At most 600 evenly spaced samples; present for detail series"`
+	Laps    []lapOut            `json:"laps,omitzero" jsonschema:"Per-lap splits; present for detail laps and series"`
+	Series  []pointOut          `json:"series,omitzero" jsonschema:"At most 600 evenly spaced samples; present for detail series"`
+	Workout *activityWorkoutOut `json:"workout,omitempty" jsonschema:"The structured workout the activity recorded; present for detail laps and series when it recorded one"`
 }
 
 type lapOut struct {
@@ -437,10 +441,15 @@ func (s *svc) getActivity(ctx context.Context, in getActivityInput) (getActivity
 				HRBpm: p.HRBpm, PaceSPerKm: roundPtr(p.PaceSPerKm, 2), AltitudeM: roundPtr(p.AltitudeM, 1)})
 		}
 	}
+	if d.Workout != nil {
+		if out.Workout, err = s.activityWorkout(ctx, a, d.Workout); err != nil {
+			return getActivityOut{}, err
+		}
+	}
 	return out, nil
 }
 
-// activityDetail returns the precomputed laps and series, or on a miss decodes
+// activityDetail returns the precomputed detail, or on a miss decodes
 // the stored FIT and caches the result. A cache read or write failure never
 // changes the response: the former falls back to decoding, the latter is logged.
 func (s *svc) activityDetail(ctx context.Context, a store.Activity) (store.ActivityDetail, error) {
@@ -451,11 +460,11 @@ func (s *svc) activityDetail(ctx context.Context, a store.Activity) (store.Activ
 	if !errors.Is(err, store.ErrNotFound) {
 		s.Log.WarnContext(ctx, "activity detail read failed", "activity_id", a.ID, "error_class", "store")
 	}
-	laps, points, err := s.decodeFIT(a.FITPath)
+	fa, err := s.decodeFIT(a.FITPath)
 	if err != nil {
 		return store.ActivityDetail{}, err
 	}
-	d = store.ActivityDetail{Laps: laps, Series: fitdata.Downsample(points, fitdata.MaxSeriesPoints)}
+	d = store.NewActivityDetail(fa)
 	// A concurrent drain may write the same row; the upsert makes that benign.
 	if perr := s.DB.PutActivityDetail(context.WithoutCancel(ctx), a.ID, d); perr != nil {
 		s.Log.WarnContext(ctx, "activity detail cache write failed", "activity_id", a.ID, "error_class", "store")
@@ -464,10 +473,10 @@ func (s *svc) activityDetail(ctx context.Context, a store.Activity) (store.Activ
 }
 
 // decodeFIT reads a stored FIT file; rel is relative to DataDir.
-func (s *svc) decodeFIT(rel string) ([]fitdata.Lap, []fitdata.Point, error) {
+func (s *svc) decodeFIT(rel string) (fitdata.Activity, error) {
 	f, err := os.Open(filepath.Join(s.DataDir, rel))
 	if err != nil {
-		return nil, nil, err
+		return fitdata.Activity{}, err
 	}
 	defer f.Close()
 	return fitdata.Decode(f)

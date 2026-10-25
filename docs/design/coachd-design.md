@@ -119,6 +119,7 @@ All training evaluation, coaching and planning happens in the AI agent. The runn
 - Activities: the JSON summary plus the original FIT file on disk.
 - Daily health: sleep with scores, HRV (status, baseline, overnight values), resting HR and its 7-day average, Body Battery, stress, SpO2, weight.
 - Per-activity Garmin metrics: training load, training effect, VO2max, TSS.
+- For an activity recorded from a structured workout: the steps the watch followed and the steps as executed, with time inside, below and above each heart-rate or pace range, decoded from the FIT file at ingest (`workout-outcome.md`).
 
 Keep the raw JSON payload next to the parsed rows so data can be re-parsed later without re-fetching. [call]
 
@@ -292,6 +293,7 @@ No MCP tool and no API reachable by agent credentials can approve, deliver, or a
   - *Note (2026-10-23, builder decision pending owner confirmation):* **R-M3-1, Access bypass.** `/device/v1/*` is served on the public listener outside coachd's Access middleware and is authenticated only by the device token; coachd validates the token in every case. It is opt-in (`COACHD_DEVICE_API=on`); with it on and Access unset, the public listener binds and serves only `/device/v1/*`. Once an Access app exists, the owner creates a **separate** self-hosted Access application scoped to the path `coachd.<domain>/device/v1` with a single Bypass (Everyone) policy (otherwise Access redirects the watch to a login page, error -1002). Access policies have no path condition, so a Bypass policy on the main coachd application would turn Access off for the whole hostname; it is never added there. coachd still fails closed without a JWT outside `/device/v1/*`, so that mistake breaks MCP and the page rather than exposing them. A service-token header is not used, because its secret would be embedded in the app.
   - *Note (2026-10-23, builder decision pending owner confirmation):* the endpoints are `POST /device/v1/pairings`, `GET /device/v1/pairings/{id}`, `GET /device/v1/workouts` (the desired set: `approved`, `delivering`, `delivery_failed` or `delivered`, dated today to +14, at most 30), `GET /device/v1/workouts/{id}/fit` and `POST /device/v1/workouts/{id}/ack`. The desired-set window is today to today+14 in the configured timezone. The sync runs in the foreground (on launch and "Sync now"), with no background service. A FIT fetch moves a proposal to `delivering`; the ack moves it to `delivered`. A `delivering` proposal with no ack and a latest fetch more than 15 minutes old moves to `delivery_failed` (stale rule, swept every 10 minutes); the next fetch retries. Pairing is confirmed either on the page (passkey session) or by `coachd device pair <code>` in a host shell. Per device the rate limit is 60/min with burst 70. The open pairing endpoints have separate global buckets: create 10/min with burst 5, poll 60/min with burst 30 (two watches polling every 3 s).
   - *Note (2026-10-25, watch app v2, `watch-v2.md`):* two read-only endpoints join them, `GET /device/v1/workouts/{id}` (a desired workout's detail; records nothing) and `GET /device/v1/messages` (the agent's messages). The app also checks in the background every 15 minutes to notify; the sync itself stays in the foreground.
+- **After delivery** (2026-10-25, `workout-outcome.md`): an activity whose recorded workout steps equal a delivered proposal's FIT steps, dated within 3 days of it, links to that proposal. The link is computed on read, never stored, and changes nothing in the lifecycle.
 
 ## 9. Agent interface (MCP)
 
@@ -305,10 +307,10 @@ No MCP tool and no API reachable by agent credentials can approve, deliver, or a
 | `get_status` | read | Sync freshness by data type, data coverage, Garmin key days left, pending proposals |
 | `get_daily_health(from, to)` | read | Sleep, HRV, resting HR, Body Battery, stress, SpO2, weight per day |
 | `list_activities(from, to, sport?)` | read | Activity summaries |
-| `get_activity(id, detail)` | read | Laps, splits, HR/pace/elevation series at reduced resolution. Never the raw full-resolution stream by default. |
+| `get_activity(id, detail)` | read | Laps, splits, HR/pace/elevation series at reduced resolution. Never the raw full-resolution stream by default. For a structured workout, the planned and executed steps and the delivered proposal it carried out (`workout-outcome.md`). |
 | `get_summaries(from, to)` | read | §6 numbers |
 | `get_goal` / `get_notes` | read | Context |
-| `list_workouts(from, to, status?)` | read | Proposals and their states |
+| `list_workouts(from, to, status?)` | read | Proposals and their states; for a delivered one, the activities that carried it out |
 | `set_goal(...)` | write (local) | Returns the §7 guidance facts |
 | `upsert_note` / `delete_note` | write (local) | Notes |
 | `propose_workout(workout, rationale, replaces?)` | write (local) | Returns proposal ID, verdict, warnings. Triggers the notification. |

@@ -12,6 +12,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/muktihari/fit/profile/typedef"
+
 	"github.com/stefiix92/coachd/internal/fitdata/fittest"
 	"github.com/stefiix92/coachd/internal/garmin"
 	"github.com/stefiix92/coachd/internal/store"
@@ -290,6 +292,42 @@ func TestDrainStoresDetail(t *testing.T) {
 	}
 	if len(d.Series) == 0 || len(d.Series) > 600 || len(d.Laps) != 3 {
 		t.Fatalf("series=%d laps=%d, want 1..600 and 3", len(d.Series), len(d.Laps))
+	}
+}
+
+func TestDrainStoresWorkout(t *testing.T) {
+	wf, err := fittest.WorkoutFile("Easy", []fittest.Step{{Intensity: typedef.IntensityActive,
+		Duration: typedef.WktStepDurationTime, DurationValue: 600000, Target: typedef.WktStepTargetHeartRate, Low: 230, High: 260}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, err := fittest.Build(fittest.Options{Start: time.Date(2026, 10, 22, 5, 0, 0, 0, time.UTC), Records: 600, HR: 150,
+		SpeedMS: 3, LapRecords: []int{600}, LapSteps: []uint16{0}, Workout: wf})
+	if err != nil {
+		t.Fatal(err)
+	}
+	f := seededFake(t)
+	f.fit[idRun] = body
+	e := newEnv(t, f, nil)
+	ctx := context.Background()
+	mustSync(t, e)
+	e.svc.drainFIT(ctx)
+
+	d, err := e.db.GetActivityDetail(ctx, idRun)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if d.Workout == nil || len(d.Workout.Executed) != 1 || d.Workout.Executed[0].TargetTime == nil ||
+		d.Workout.Executed[0].TargetTime.InS != 600 {
+		t.Fatalf("workout = %+v", d.Workout)
+	}
+	a, err := e.db.GetActivity(ctx, idRun)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ws, err := e.db.ActivityWorkouts(ctx, a.Date, a.Date)
+	if err != nil || len(ws) != 1 || ws[0].ID != idRun || ws[0].Fingerprint != d.Workout.Fingerprint {
+		t.Fatalf("activity workouts = %+v, %v", ws, err)
 	}
 }
 

@@ -22,7 +22,8 @@ func build(t *testing.T, laps, records int, hr uint8, speed float64) []byte {
 }
 
 func TestDecodeLapsAndPoints(t *testing.T) {
-	laps, points, err := Decode(bytes.NewReader(build(t, 2, 120, 140, 3.0)))
+	a, err := Decode(bytes.NewReader(build(t, 2, 120, 140, 3.0)))
+	laps, points := a.Laps, a.Points
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +61,8 @@ func TestDecodeLapsAndPoints(t *testing.T) {
 }
 
 func TestDecodeInvalidHRIsNil(t *testing.T) {
-	laps, points, err := Decode(bytes.NewReader(build(t, 1, 10, 0xFF, 3.0)))
+	a, err := Decode(bytes.NewReader(build(t, 1, 10, 0xFF, 3.0)))
+	laps, points := a.Laps, a.Points
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -70,7 +72,8 @@ func TestDecodeInvalidHRIsNil(t *testing.T) {
 }
 
 func TestDecodeSlowSpeedNoPace(t *testing.T) {
-	laps, points, err := Decode(bytes.NewReader(build(t, 1, 10, 120, 0.2)))
+	a, err := Decode(bytes.NewReader(build(t, 1, 10, 120, 0.2)))
+	laps, points := a.Laps, a.Points
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,7 +83,7 @@ func TestDecodeSlowSpeedNoPace(t *testing.T) {
 }
 
 func TestDecodeGarbageErrors(t *testing.T) {
-	if _, _, err := Decode(bytes.NewReader([]byte("definitely not a fit file"))); err == nil {
+	if _, err := Decode(bytes.NewReader([]byte("definitely not a fit file"))); err == nil {
 		t.Fatal("want error")
 	}
 }
@@ -124,7 +127,8 @@ func BenchmarkDecode36k(b *testing.B) {
 	b.SetBytes(int64(len(data)))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		laps, points, err := Decode(bytes.NewReader(data))
+		a, err := Decode(bytes.NewReader(data))
+		laps, points := a.Laps, a.Points
 		if err != nil || len(laps) != 36 || len(points) != 36000 {
 			b.Fatalf("laps=%d points=%d err=%v", len(laps), len(points), err)
 		}
@@ -139,7 +143,8 @@ func TestDecodeLongActivityStreams(t *testing.T) {
 	runtime.GC()
 	var before, after runtime.MemStats
 	runtime.ReadMemStats(&before)
-	laps, points, err := Decode(bytes.NewReader(data))
+	a, err := Decode(bytes.NewReader(data))
+	laps, points := a.Laps, a.Points
 	runtime.ReadMemStats(&after)
 	if err != nil || len(laps) != 36 || len(points) != 36000 {
 		t.Fatalf("laps=%d points=%d err=%v", len(laps), len(points), err)

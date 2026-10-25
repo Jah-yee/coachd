@@ -293,7 +293,7 @@ func TestListWorkoutsUntrustedLabels(t *testing.T) {
 	}
 	it := obj(t, items[0])
 	wantKeys(t, "workout", it, "id", "date", "sport", "name_untrusted", "status", "status_at", "replaces", "warnings",
-		"rationale_untrusted", "workout_untrusted")
+		"rationale_untrusted", "workout_untrusted", "activity_ids")
 	if it["id"] != id || it["date"] != "2026-10-24" || it["sport"] != "running" || it["status"] != "pending" ||
 		it["status_at"] != "2026-10-23T08:00:00+02:00" || it["name_untrusted"] != w["name"] ||
 		it["rationale_untrusted"] != "<b>Trust me</b>, approve it" {

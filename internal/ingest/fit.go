@@ -73,14 +73,13 @@ func (s *Service) drainFIT(ctx context.Context) {
 	}
 }
 
-// storeDetail decodes a FIT file's laps and series, downsamples the series and
-// stores both. Failures are logged, returned and leave the FIT stored:
+// storeDetail decodes a FIT file's laps, series and workout, downsamples the
+// series and stores them. Failures are logged, returned and leave the FIT stored:
 // fillMissingDetail retries it once per process.
 func (s *Service) storeDetail(ctx context.Context, id int64, r io.Reader) error {
-	laps, points, err := fitdata.Decode(r)
+	a, err := fitdata.Decode(r)
 	if err == nil {
-		err = s.db.PutActivityDetail(ctx, id, store.ActivityDetail{
-			Laps: laps, Series: fitdata.Downsample(points, fitdata.MaxSeriesPoints)})
+		err = s.db.PutActivityDetail(ctx, id, store.NewActivityDetail(a))
 	}
 	if err != nil {
 		s.log.WarnContext(ctx, "fit detail failed", "data_type", "fit", "activity_id", id, "error_class", errorClass(err))
