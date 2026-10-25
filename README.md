@@ -54,6 +54,7 @@ There is no chat UI and no built-in LLM. You talk to Claude (or Claude Duet, Cha
     - **Access mode:** Cloudflare Access does the login and MFA, and its Managed OAuth signs in the AI apps.
     - **Built-in mode** (`COACHD_PUBLIC_AUTH=builtin`): coachd does it itself, with your passkey for the page and its own OAuth 2.1 server for the AI apps. No Cloudflare account needed.
 - Garmin keys expire (30 days to 1 year). Renew yours on coachd's **Garmin key** page: paste the new key, and coachd checks it and switches without a restart.
+- **Optional:** a post-run webhook (`COACHD_WEBHOOK_URL`) that tells your own automation (n8n, Home Assistant, an agent trigger) when a run arrives, with IDs only, so the agent can review it without waiting for the morning chat.
 - **Optional:** a fēnix or Forerunner watch for the watch app (from the Connect IQ Store), and an ntfy topic for phone notifications.
 
 Start with [`deploy/README.md`](deploy/README.md).

@@ -340,6 +340,41 @@ token only at start.
 section 9) and `COACHD_PUBLIC_URL`; the notification's "Review" action opens
 `<COACHD_PUBLIC_URL>/p/<id>`.
 
+### Post-run webhook (optional)
+
+Set `COACHD_WEBHOOK_URL` in `.env` to have coachd POST a small JSON event to your own automation
+when a recent activity (started in the last 48 hours) is stored, after its FIT file and per-step
+numbers are in. It carries IDs, a date and a sport only:
+
+```json
+{"event":"activity.stored","activity_id":24745625144,"date":"2026-10-26","sport":"running","proposal_id":"cc7b5c9c..."}
+```
+
+`proposal_id` is the delivered workout the activity carried out, or `null`. Point it at an n8n or
+Home Assistant webhook, or anything that can start your agent: the agent then calls `get_activity`
+with detail `laps` to review the run and can `send_message` to the watch. coachd retries 5xx and
+network errors twice (after 5 s and 25 s) and gives up on other 4xx; `coachd_webhook_sends_total`
+counts outcomes. It does not poll Garmin any more often: an activity reaches coachd on the next
+hourly sync, or sooner with `request_sync`.
+
+Treat the URL as a secret (an unguessable path). For a bearer token as well, put it in a secret
+file and add a compose override, since compose does not mount it by default:
+
+```yaml
+# compose.override.yaml
+services:
+  coachd:
+    environment:
+      COACHD_WEBHOOK_TOKEN_FILE: /run/secrets/webhook_token
+    secrets: [webhook_token]
+secrets:
+  webhook_token:
+    file: ./secrets/webhook_token   # chown 65532:65532, chmod 0400, as for ntfy_token
+```
+
+Plain `http://` works for a receiver on your LAN; coachd logs a warning because a token would
+travel in clear text.
+
 ## 9. Built-in auth (no Cloudflare Access)
 
 In builtin mode coachd does its own login and OAuth instead of Cloudflare Access. You sign in to

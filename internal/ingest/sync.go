@@ -48,7 +48,21 @@ type Options struct {
 	BackfillDays                                 int
 	BackfillDelay, SyncMinInterval, PollInterval time.Duration
 	Now                                          func() time.Time // defaults to time.Now
+	// Events hears about recent activities once their FIT file is handled;
+	// nil hears nothing.
+	Events Events
 }
+
+// Events is told about an activity once its FIT file is stored (with its
+// detail) or confirmed unavailable, when the activity started within
+// recentActivity: a backfill of old activities tells it nothing. It must not
+// block.
+type Events interface {
+	ActivityStored(ctx context.Context, a store.Activity)
+}
+
+// recentActivity is how old an activity may be for Events to hear of it.
+const recentActivity = 48 * time.Hour
 
 // Data types, in sync order. They are also the sync_state keys and the
 // raw_payloads sources for daily types.

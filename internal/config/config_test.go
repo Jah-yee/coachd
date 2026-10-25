@@ -397,3 +397,34 @@ func TestPublicAuthModes(t *testing.T) {
 		})
 	}
 }
+
+func TestWebhookConfig(t *testing.T) {
+	base := map[string]string{"COACHD_TIMEZONE": "UTC"}
+	c, err := Load(env(base))
+	if err != nil || c.WebhookURL != "" {
+		t.Fatalf("unset: %v %q", err, c.WebhookURL)
+	}
+	dir := t.TempDir()
+	tok := filepath.Join(dir, "webhook_token")
+	if err := os.WriteFile(tok, []byte("secret-token\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, u := range []string{"https://n8n.example.com/webhook/abc", "http://homeassistant.local:8123/api/webhook/xyz"} {
+		c, err := Load(env(map[string]string{"COACHD_TIMEZONE": "UTC", "COACHD_WEBHOOK_URL": u, "COACHD_WEBHOOK_TOKEN_FILE": tok}))
+		if err != nil || c.WebhookURL != u || c.WebhookToken != "secret-token" {
+			t.Fatalf("%s: %v %q %q", u, err, c.WebhookURL, c.WebhookToken)
+		}
+	}
+	for _, u := range []string{"ftp://x.example.com/h", "/relative", "https://user:pw@x.example.com/h", "https://"} {
+		_, err := Load(env(map[string]string{"COACHD_TIMEZONE": "UTC", "COACHD_WEBHOOK_URL": u}))
+		if err == nil || !strings.Contains(err.Error(), "COACHD_WEBHOOK_URL") {
+			t.Errorf("%q: err = %v", u, err)
+		} else if strings.Contains(err.Error(), "pw") {
+			t.Errorf("%q: the error quotes the URL: %v", u, err)
+		}
+	}
+	// A token file without a URL is ignored, as compose may set the path.
+	if c, err := Load(env(map[string]string{"COACHD_TIMEZONE": "UTC", "COACHD_WEBHOOK_TOKEN_FILE": "/missing"})); err != nil || c.WebhookToken != "" {
+		t.Fatalf("token without URL: %v", err)
+	}
+}

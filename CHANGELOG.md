@@ -31,6 +31,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 - **Notes that expire** (`docs/design/expiring-notes.md`): `upsert_note` takes an optional `valid_until` (today up to 366 days ahead) for facts that stop being true. After that day `get_notes` leaves the note out unless `include_expired` is true, and reports `expired_count`; each note shows `valid_until` and `expired`. Expired notes are never deleted automatically and still count toward the 50-note cap; the "notes full" error says how many agent notes are expired. The notes page shows the date and fades expired notes.
 
+- **Post-run webhook** (`docs/design/post-run-webhook.md`): with `COACHD_WEBHOOK_URL` set, coachd POSTs `{"event":"activity.stored","activity_id",...,"date","sport","proposal_id"}` (IDs only) when an activity that started in the last 48 hours is stored, after its FIT file and per-step numbers are in, so your own automation can wake the agent for a post-run review. Optional bearer token from `COACHD_WEBHOOK_TOKEN_FILE`; retries like ntfy; new metric `coachd_webhook_sends_total{outcome}`.
+
 ### Changed
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.

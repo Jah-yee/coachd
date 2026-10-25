@@ -74,16 +74,19 @@ func NewNtfy(topicURL, token, publicURL string, client *http.Client,
 		topicURL: topicURL, token: token, publicURL: strings.TrimRight(publicURL, "/"),
 		client: client, m: m, log: log, tracer: tracer,
 		queue: make(chan notice, queueSize),
-		sleep: func(ctx context.Context, d time.Duration) error {
-			t := time.NewTimer(d)
-			defer t.Stop()
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			case <-t.C:
-				return nil
-			}
-		},
+		sleep: sleepCtx,
+	}
+}
+
+// sleepCtx waits d or until ctx ends.
+func sleepCtx(ctx context.Context, d time.Duration) error {
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-t.C:
+		return nil
 	}
 }
 
@@ -152,30 +155,40 @@ func (n *Ntfy) deliver(ctx context.Context, nt notice) {
 		span.SetAttributes(attribute.String("proposal_id", nt.id))
 	}
 
-	var status int
-	var errClass string
+	outcome, status, errClass := retry(ctx, n.sleep, func(ctx context.Context) (int, string) { return n.send(ctx, nt) })
+	if outcome == "" {
+		return
+	}
+	n.finish(ctx, span, outcome)
+	if outcome != "sent" {
+		n.fail(nt, outcome, status, errClass)
+	}
+}
+
+// retry makes up to 1+len(backoff) attempts of send, which returns the HTTP
+// status (0 on a network error) and an error class. A 2xx is "sent"; a 4xx
+// other than 429 is "rejected" at once; anything else is retried, then
+// "error". The outcome is empty when ctx ended first.
+func retry(ctx context.Context, sleep func(context.Context, time.Duration) error,
+	send func(context.Context) (int, string)) (outcome string, status int, errClass string) {
 	for attempt := 0; attempt <= len(backoff); attempt++ {
 		if attempt > 0 {
-			if n.sleep(ctx, backoff[attempt-1]) != nil {
-				return
+			if sleep(ctx, backoff[attempt-1]) != nil {
+				return "", status, errClass
 			}
 		}
-		status, errClass = n.send(ctx, nt)
+		status, errClass = send(ctx)
 		if ctx.Err() != nil {
-			return
+			return "", status, errClass
 		}
 		switch {
 		case status >= 200 && status < 300:
-			n.finish(ctx, span, "sent")
-			return
+			return "sent", status, errClass
 		case status >= 400 && status < 500 && status != http.StatusTooManyRequests:
-			n.finish(ctx, span, "rejected")
-			n.fail(nt, "rejected", status, errClass)
-			return
+			return "rejected", status, errClass
 		}
 	}
-	n.finish(ctx, span, "error")
-	n.fail(nt, "error", status, errClass)
+	return "error", status, errClass
 }
 
 // finish counts the outcome and records it on the span, marking the span as

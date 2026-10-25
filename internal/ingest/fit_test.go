@@ -8,7 +8,9 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strconv"
+	"sync"
 	"testing"
 	"time"
 
@@ -628,5 +630,68 @@ func TestDrainFITSoftDeletedMidDownloadKeepsFile(t *testing.T) {
 	}
 	if l := logs.lines(t, "fit file not removed"); len(l) != 0 {
 		t.Fatalf("orphan removal attempted: %v", l)
+	}
+}
+
+// recordEvents records ActivityStored calls.
+type recordEvents struct {
+	mu  sync.Mutex
+	ids []int64
+	// detail is whether the activity's detail was stored when it was told.
+	detail []bool
+	db     *store.DB
+}
+
+func (r *recordEvents) ActivityStored(ctx context.Context, a store.Activity) {
+	_, err := r.db.GetActivityDetail(ctx, a.ID)
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.ids = append(r.ids, a.ID)
+	r.detail = append(r.detail, err == nil)
+}
+
+func TestDrainTellsEventsOfRecentActivities(t *testing.T) {
+	f := seededFake(t) // idRun started 27 h before testNow; idGone 65 h before, and its FIT is gone (404)
+	f.fit[idRun] = buildFIT(t, 600)
+	e := newEnv(t, f, nil)
+	ev := &recordEvents{db: e.db}
+	e.svc.opts.Events = ev
+	ctx := context.Background()
+	mustSync(t, e)
+	e.svc.drainFIT(ctx)
+	if len(ev.ids) != 1 || ev.ids[0] != idRun || !ev.detail[0] {
+		t.Fatalf("events %v (detail stored: %v), want only the recent run, after its detail", ev.ids, ev.detail)
+	}
+	// A later drain does not tell it again.
+	e.svc.drainFIT(ctx)
+	if len(ev.ids) != 1 {
+		t.Fatalf("events after a second drain: %v", ev.ids)
+	}
+}
+
+func TestDrainTellsEventsOfUnavailableFIT(t *testing.T) {
+	f := seededFake(t)
+	f.fit[idRun] = buildFIT(t, 600)
+	e := newEnv(t, f, nil)
+	e.clock.Set(time.Date(2026, 10, 21, 18, 0, 0, 0, time.UTC)) // idGone (404) is 3 h old
+	ev := &recordEvents{db: e.db}
+	e.svc.opts.Events = ev
+	mustSync(t, e)
+	e.svc.drainFIT(context.Background())
+	if !slices.Contains(ev.ids, idGone) {
+		t.Fatalf("events %v, want the activity whose FIT is unavailable", ev.ids)
+	}
+}
+
+func TestDrainFailedFITTellsNothing(t *testing.T) {
+	f := seededFake(t)
+	f.fitErr[idRun] = &garmin.StatusError{Endpoint: "activity_file", Status: 500}
+	e := newEnv(t, f, nil)
+	ev := &recordEvents{db: e.db}
+	e.svc.opts.Events = ev
+	mustSync(t, e)
+	e.svc.drainFIT(context.Background())
+	if slices.Contains(ev.ids, idRun) {
+		t.Fatalf("events %v: a failed download must not be told", ev.ids)
 	}
 }
