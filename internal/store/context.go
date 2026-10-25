@@ -73,16 +73,24 @@ func (db *DB) ActiveGoal(ctx context.Context) (Goal, error) {
 	return g, nil
 }
 
-const noteCols = `id, category, text, created_by, created_at, updated_at`
+const noteCols = `id, category, text, created_by, created_at, updated_at, valid_until`
 
 func scanNote(s scanner) (Note, error) {
 	var n Note
 	var cat, created, updated string
-	if err := s.Scan(&n.ID, &cat, &n.Text, &n.CreatedBy, &created, &updated); err != nil {
+	var until sql.NullString
+	if err := s.Scan(&n.ID, &cat, &n.Text, &n.CreatedBy, &created, &updated, &until); err != nil {
 		return n, err
 	}
 	n.Category = NoteCategory(cat)
 	var err error
+	if until.Valid {
+		d, err := civil.Parse(until.String)
+		if err != nil {
+			return n, err
+		}
+		n.ValidUntil = &d
+	}
 	if n.CreatedAt, err = parseTime(created); err != nil {
 		return n, err
 	}
@@ -108,8 +116,8 @@ func (db *DB) InsertNote(ctx context.Context, n Note, maxNotes int) (Note, error
 	if count >= maxNotes {
 		return Note{}, ErrNotesFull
 	}
-	res, err := tx.ExecContext(ctx, `INSERT INTO notes (category, text, created_by, created_at, updated_at) VALUES (?,?,?,?,?)`,
-		string(n.Category), n.Text, n.CreatedBy, fmtTime(n.CreatedAt), fmtTime(n.UpdatedAt))
+	res, err := tx.ExecContext(ctx, `INSERT INTO notes (category, text, created_by, created_at, updated_at, valid_until) VALUES (?,?,?,?,?,?)`,
+		string(n.Category), n.Text, n.CreatedBy, fmtTime(n.CreatedAt), fmtTime(n.UpdatedAt), dateOrNull(n.ValidUntil))
 	if err != nil {
 		return Note{}, fmt.Errorf("store: insert note: %w", err)
 	}
@@ -130,8 +138,8 @@ func (db *DB) InsertNote(ctx context.Context, n Note, maxNotes int) (Note, error
 // agentAuthored matches notes whose created_by is an agent's, "agent:<lane>:<client>".
 const agentAuthored = `created_by LIKE 'agent:%'`
 
-// UpdateAgentNote sets category, text, created_by and updated_at of a note an
-// agent wrote; n.CreatedBy must be an agent's ("agent:..."), so an agent edit
+// UpdateAgentNote sets category, text, valid_until, created_by and updated_at
+// of a note an agent wrote; n.CreatedBy must be an agent's ("agent:..."), so an agent edit
 // can never relabel a note as the runner's. It returns ErrNotFound when the
 // note is absent and ErrNotOwned when someone other than an agent wrote it,
 // decided in the update's own transaction.
@@ -144,8 +152,8 @@ func (db *DB) UpdateAgentNote(ctx context.Context, n Note) (Note, error) {
 		return Note{}, fmt.Errorf("store: update agent note: %w", err)
 	}
 	defer tx.Rollback()
-	res, err := tx.ExecContext(ctx, `UPDATE notes SET category=?, text=?, created_by=?, updated_at=? WHERE id=? AND `+agentAuthored,
-		string(n.Category), n.Text, n.CreatedBy, fmtTime(n.UpdatedAt), n.ID)
+	res, err := tx.ExecContext(ctx, `UPDATE notes SET category=?, text=?, valid_until=?, created_by=?, updated_at=? WHERE id=? AND `+agentAuthored,
+		string(n.Category), n.Text, dateOrNull(n.ValidUntil), n.CreatedBy, fmtTime(n.UpdatedAt), n.ID)
 	if err != nil {
 		return Note{}, fmt.Errorf("store: update agent note: %w", err)
 	}
@@ -234,4 +242,12 @@ func (db *DB) ListNotes(ctx context.Context) ([]Note, error) {
 		out = append(out, n)
 	}
 	return out, rows.Err()
+}
+
+// dateOrNull is d as a date column value: NULL when nil.
+func dateOrNull(d *civil.Date) any {
+	if d == nil {
+		return nil
+	}
+	return d.String()
 }

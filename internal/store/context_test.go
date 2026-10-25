@@ -146,3 +146,39 @@ func TestAgentNoteOwnership(t *testing.T) {
 		t.Fatalf("notes after delete %+v", notes)
 	}
 }
+
+func TestNoteValidUntil(t *testing.T) {
+	db := openTest(t)
+	ctx := context.Background()
+	t1 := time.Date(2026, 10, 24, 18, 0, 0, 0, time.UTC)
+	end := d("2026-10-31")
+	n, err := db.InsertNote(ctx, Note{Category: "availability", Text: "travelling", CreatedBy: "agent:public:claude",
+		CreatedAt: t1, UpdatedAt: t1, ValidUntil: &end}, 50)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := db.ListNotes(ctx)
+	if err != nil || len(got) != 1 || got[0].ValidUntil == nil || *got[0].ValidUntil != end || n.ValidUntil == nil {
+		t.Fatalf("notes = %+v, %v", got, err)
+	}
+	if got[0].Expired(end) || !got[0].Expired(end.AddDays(1)) {
+		t.Fatal("a note holds through its last day and expires the day after")
+	}
+	// The runner editing it keeps the date.
+	if r, err := db.UpdateRunnerNote(ctx, Note{ID: n.ID, Category: "availability", Text: "travelling to Rome", UpdatedAt: t1}); err != nil ||
+		r.ValidUntil == nil || *r.ValidUntil != end {
+		t.Fatalf("runner update = %+v, %v", r, err)
+	}
+	// An agent replacing a note replaces its date too; none makes it durable.
+	a, err := db.InsertNote(ctx, Note{Category: "other", Text: "x", CreatedBy: "agent:public:claude", CreatedAt: t1, UpdatedAt: t1, ValidUntil: &end}, 50)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := db.UpdateAgentNote(ctx, Note{ID: a.ID, Category: "other", Text: "y", CreatedBy: "agent:public:claude", UpdatedAt: t1})
+	if err != nil || u.ValidUntil != nil {
+		t.Fatalf("agent update = %+v, %v", u, err)
+	}
+	if (Note{}).Expired(end) {
+		t.Fatal("a durable note never expires")
+	}
+}

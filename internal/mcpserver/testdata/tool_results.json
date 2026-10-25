@@ -1288,7 +1288,7 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"notes\":[{\"id\":2,\"category\":\"availability\",\"text\":\"no runs on Tuesdays\",\"created_by\":\"runner\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\"},{\"id\":1,\"category\":\"injury\",\"text\":\"achilles \\u003cb\\u003etight\\u003c/b\\u003e\",\"created_by\":\"agent\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\"}]}"
+          "text": "{\"notes\":[{\"id\":2,\"category\":\"availability\",\"text\":\"no runs on Tuesdays\",\"created_by\":\"runner\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\",\"valid_until\":null,\"expired\":false},{\"id\":1,\"category\":\"injury\",\"text\":\"achilles \\u003cb\\u003etight\\u003c/b\\u003e\",\"created_by\":\"agent\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\",\"valid_until\":null,\"expired\":false}],\"expired_count\":0}"
         }
       ],
       "structuredContent": {
@@ -1299,7 +1299,9 @@
             "text": "no runs on Tuesdays",
             "created_by": "runner",
             "created_at": "2026-10-21T08:00:00+02:00",
-            "updated_at": "2026-10-22T08:00:00+02:00"
+            "updated_at": "2026-10-22T08:00:00+02:00",
+            "valid_until": null,
+            "expired": false
           },
           {
             "id": 1,
@@ -1307,20 +1309,24 @@
             "text": "achilles \u003cb\u003etight\u003c/b\u003e",
             "created_by": "agent",
             "created_at": "2026-10-21T08:00:00+02:00",
-            "updated_at": "2026-10-22T08:00:00+02:00"
+            "updated_at": "2026-10-22T08:00:00+02:00",
+            "valid_until": null,
+            "expired": false
           }
-        ]
+        ],
+        "expired_count": 0
       }
     },
     "get_notes_empty": {
       "content": [
         {
           "type": "text",
-          "text": "{\"notes\":[]}"
+          "text": "{\"notes\":[],\"expired_count\":0}"
         }
       ],
       "structuredContent": {
-        "notes": []
+        "notes": [],
+        "expired_count": 0
       }
     },
     "get_status": {
@@ -2191,7 +2197,7 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"note\":{\"id\":1,\"category\":\"preference\",\"text\":\"prefers trails\",\"created_by\":\"agent\",\"created_at\":\"2026-10-23T07:00:00+02:00\",\"updated_at\":\"2026-10-23T08:00:00+02:00\"}}"
+          "text": "{\"note\":{\"id\":1,\"category\":\"preference\",\"text\":\"prefers trails\",\"created_by\":\"agent\",\"created_at\":\"2026-10-23T07:00:00+02:00\",\"updated_at\":\"2026-10-23T08:00:00+02:00\",\"valid_until\":null,\"expired\":false}}"
         }
       ],
       "structuredContent": {
@@ -2201,7 +2207,9 @@
           "text": "prefers trails",
           "created_by": "agent",
           "created_at": "2026-10-23T07:00:00+02:00",
-          "updated_at": "2026-10-23T08:00:00+02:00"
+          "updated_at": "2026-10-23T08:00:00+02:00",
+          "valid_until": null,
+          "expired": false
         }
       }
     }
@@ -3634,7 +3642,7 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"notes\":[{\"id\":2,\"category\":\"availability\",\"text\":\"no runs on Tuesdays\",\"created_by\":\"runner\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\"},{\"id\":1,\"category\":\"injury\",\"text\":\"achilles \\u003cb\\u003etight\\u003c/b\\u003e\",\"created_by\":\"agent\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\"}]}"
+          "text": "{\"notes\":[{\"id\":2,\"category\":\"availability\",\"text\":\"no runs on Tuesdays\",\"created_by\":\"runner\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\",\"valid_until\":null,\"expired\":false},{\"id\":1,\"category\":\"injury\",\"text\":\"achilles \\u003cb\\u003etight\\u003c/b\\u003e\",\"created_by\":\"agent\",\"created_at\":\"2026-10-21T08:00:00+02:00\",\"updated_at\":\"2026-10-22T08:00:00+02:00\",\"valid_until\":null,\"expired\":false}],\"expired_count\":0}"
         }
       ],
       "structuredContent": {
@@ -3645,7 +3653,9 @@
             "text": "no runs on Tuesdays",
             "created_by": "runner",
             "created_at": "2026-10-21T08:00:00+02:00",
-            "updated_at": "2026-10-22T08:00:00+02:00"
+            "updated_at": "2026-10-22T08:00:00+02:00",
+            "valid_until": null,
+            "expired": false
           },
           {
             "id": 1,
@@ -3653,9 +3663,12 @@
             "text": "achilles \u003cb\u003etight\u003c/b\u003e",
             "created_by": "agent",
             "created_at": "2026-10-21T08:00:00+02:00",
-            "updated_at": "2026-10-22T08:00:00+02:00"
+            "updated_at": "2026-10-22T08:00:00+02:00",
+            "valid_until": null,
+            "expired": false
           }
-        ]
+        ],
+        "expired_count": 0
       },
       "resultType": "complete"
     },
@@ -3669,11 +3682,12 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"notes\":[]}"
+          "text": "{\"notes\":[],\"expired_count\":0}"
         }
       ],
       "structuredContent": {
-        "notes": []
+        "notes": [],
+        "expired_count": 0
       },
       "resultType": "complete"
     },
@@ -4859,7 +4873,7 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"note\":{\"id\":1,\"category\":\"preference\",\"text\":\"prefers trails\",\"created_by\":\"agent\",\"created_at\":\"2026-10-23T07:00:00+02:00\",\"updated_at\":\"2026-10-23T08:00:00+02:00\"}}"
+          "text": "{\"note\":{\"id\":1,\"category\":\"preference\",\"text\":\"prefers trails\",\"created_by\":\"agent\",\"created_at\":\"2026-10-23T07:00:00+02:00\",\"updated_at\":\"2026-10-23T08:00:00+02:00\",\"valid_until\":null,\"expired\":false}}"
         }
       ],
       "structuredContent": {
@@ -4869,7 +4883,9 @@
           "text": "prefers trails",
           "created_by": "agent",
           "created_at": "2026-10-23T07:00:00+02:00",
-          "updated_at": "2026-10-23T08:00:00+02:00"
+          "updated_at": "2026-10-23T08:00:00+02:00",
+          "valid_until": null,
+          "expired": false
         }
       },
       "resultType": "complete"

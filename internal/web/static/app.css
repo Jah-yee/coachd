@@ -1565,3 +1565,8 @@ table.audit td {
 .review-item-head p {
   margin: 0 0 0.35rem;
 }
+
+/* An expired note: kept until deleted, shown faded. */
+.card.expired {
+  opacity: 0.65;
+}

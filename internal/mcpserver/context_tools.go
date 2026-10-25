@@ -46,14 +46,17 @@ func (s *svc) registerContext(srv *mcp.Server) {
 
 	addTool(s, srv, &mcp.Tool{Name: "get_notes", Annotations: read, Description: "Durable notes about the runner " +
 		"(injury, availability, preference or other), by category then id. created_by says whether an agent or " +
-		"the runner wrote each note." + descSuffix},
+		"the runner wrote each note. A note with valid_until holds through that day; after it the note is " +
+		"expired and left out unless include_expired is true. expired_count says how many are expired." + descSuffix},
 		auth.ScopeRead, s.getNotes)
 
 	addTool(s, srv, &mcp.Tool{Name: "upsert_note", Annotations: writeAnnotations(false), Description: "Create a " +
 		"note, or with id replace that note's category and text (repeating such an update has no further effect). " +
 		"Agents can only edit notes written by agents (created_by agent); the runner's notes are read-only here, so " +
-		"add a new note instead. text is 1 to 500 characters. At most 50 notes are kept: when full, update or " +
-		"delete one first." + localWrite + descSuffix},
+		"add a new note instead. text is 1 to 500 characters. valid_until is the last day the note holds " +
+		"(today up to 366 days ahead): use it for a fact that stops being true, such as an illness this week or " +
+		"travel until a date, and omit it for a durable fact; an update replaces it too. At most 50 notes are " +
+		"kept, expired ones included: when full, update or delete one first." + localWrite + descSuffix},
 		auth.ScopeWrite, s.upsertNote)
 
 	addTool(s, srv, &mcp.Tool{Name: "delete_note", Annotations: writeAnnotations(true), Description: "Delete the " +
@@ -74,9 +77,14 @@ type setGoalInput struct {
 }
 
 type upsertNoteInput struct {
-	ID       int64  `json:"id,omitempty" jsonschema:"Note to update, as returned by get_notes; omit to create a note"`
-	Category string `json:"category" jsonschema:"injury, availability, preference or other"`
-	Text     string `json:"text" jsonschema:"Note text, 1 to 500 characters"`
+	ID         int64  `json:"id,omitempty" jsonschema:"Note to update, as returned by get_notes; omit to create a note"`
+	Category   string `json:"category" jsonschema:"injury, availability, preference or other"`
+	Text       string `json:"text" jsonschema:"Note text, 1 to 500 characters"`
+	ValidUntil string `json:"valid_until,omitempty" jsonschema:"Last day the note holds, YYYY-MM-DD in the runner's timezone, today up to 366 days ahead; omit for a durable note"`
+}
+
+type getNotesInput struct {
+	IncludeExpired bool `json:"include_expired,omitempty" jsonschema:"Also list notes past their valid_until (default false)"`
 }
 
 type deleteNoteInput struct {
@@ -115,16 +123,19 @@ type setGoalOut struct {
 }
 
 type noteOut struct {
-	ID        int64  `json:"id" jsonschema:"Note ID"`
-	Category  string `json:"category" jsonschema:"injury, availability, preference or other"`
-	Text      string `json:"text" jsonschema:"Note text"`
-	CreatedBy string `json:"created_by" jsonschema:"Who wrote the note: agent or runner"`
-	CreatedAt string `json:"created_at" jsonschema:"When the note was created, RFC 3339 in the runner's timezone"`
-	UpdatedAt string `json:"updated_at" jsonschema:"When the note was last changed, RFC 3339 in the runner's timezone"`
+	ID         int64   `json:"id" jsonschema:"Note ID"`
+	Category   string  `json:"category" jsonschema:"injury, availability, preference or other"`
+	Text       string  `json:"text" jsonschema:"Note text"`
+	CreatedBy  string  `json:"created_by" jsonschema:"Who wrote the note: agent or runner"`
+	CreatedAt  string  `json:"created_at" jsonschema:"When the note was created, RFC 3339 in the runner's timezone"`
+	UpdatedAt  string  `json:"updated_at" jsonschema:"When the note was last changed, RFC 3339 in the runner's timezone"`
+	ValidUntil *string `json:"valid_until" jsonschema:"Last day the note holds, YYYY-MM-DD; null for a durable note"`
+	Expired    bool    `json:"expired" jsonschema:"Whether today is after valid_until"`
 }
 
 type notesOut struct {
-	Notes []noteOut `json:"notes" jsonschema:"All notes, by category then id"`
+	Notes        []noteOut `json:"notes" jsonschema:"Notes by category then id: the live ones, and the expired ones too with include_expired"`
+	ExpiredCount int       `json:"expired_count" jsonschema:"How many notes are past their valid_until"`
 }
 
 type noteResultOut struct {
@@ -227,16 +238,42 @@ func (s *svc) goalFacts(ctx context.Context, today, goalDate civil.Date) (guidan
 	return guidance.ComputeGoalFacts(today, goalDate, weeks, &longest, cov), nil
 }
 
-func (s *svc) getNotes(ctx context.Context, _ noInput) (notesOut, error) {
+func (s *svc) getNotes(ctx context.Context, in getNotesInput) (notesOut, error) {
 	notes, err := s.DB.ListNotes(ctx)
 	if err != nil {
 		return notesOut{}, err
 	}
+	today := civil.Of(s.Now(), s.TZ)
 	out := notesOut{Notes: make([]noteOut, 0, len(notes))}
 	for _, n := range notes {
-		out.Notes = append(out.Notes, s.note(n))
+		if n.Expired(today) {
+			out.ExpiredCount++
+			if !in.IncludeExpired {
+				continue
+			}
+		}
+		out.Notes = append(out.Notes, s.note(n, today))
 	}
 	return out, nil
+}
+
+// maxNoteDays is how far ahead a note's valid_until may be.
+const maxNoteDays = 366
+
+// parseValidUntil checks an upsert_note valid_until: empty, or a date from
+// today up to maxNoteDays ahead.
+func parseValidUntil(v string, today civil.Date) (*civil.Date, error) {
+	if v == "" {
+		return nil, nil
+	}
+	d, err := civil.Parse(v)
+	if err != nil {
+		return nil, invalidf("valid_until: %q is not a date (YYYY-MM-DD)", clip(v))
+	}
+	if d.Before(today) || today.AddDays(maxNoteDays).Before(d) {
+		return nil, invalidf("valid_until: %s is outside today (%s) to %d days ahead", d, today, maxNoteDays)
+	}
+	return &d, nil
 }
 
 func (s *svc) upsertNote(ctx context.Context, in upsertNoteInput) (noteResultOut, error) {
@@ -254,10 +291,14 @@ func (s *svc) upsertNote(ctx context.Context, in upsertNoteInput) (noteResultOut
 	if err := checkText("text", in.Text, store.MaxNoteRunes); err != nil {
 		return noteResultOut{}, err
 	}
+	today := civil.Of(s.Now(), s.TZ)
+	until, err := parseValidUntil(in.ValidUntil, today)
+	if err != nil {
+		return noteResultOut{}, err
+	}
 	id, _ := auth.IdentityFrom(ctx)
 	now := s.Now().UTC()
-	n := store.Note{Category: cat, Text: in.Text, CreatedBy: agentCreator(id), CreatedAt: now, UpdatedAt: now}
-	var err error
+	n := store.Note{Category: cat, Text: in.Text, CreatedBy: agentCreator(id), CreatedAt: now, UpdatedAt: now, ValidUntil: until}
 	if in.ID == 0 {
 		n, err = s.DB.InsertNote(ctx, n, store.MaxNotes) // ID 0: insert
 	} else {
@@ -270,7 +311,7 @@ func (s *svc) upsertNote(ctx context.Context, in upsertNoteInput) (noteResultOut
 	if err := noteError(err, in.ID); err != nil {
 		return noteResultOut{}, err
 	}
-	return noteResultOut{Note: s.note(n)}, nil
+	return noteResultOut{Note: s.note(n, today)}, nil
 }
 
 // notesFull is the error for a new note when the cap is reached. Agents can
@@ -282,10 +323,22 @@ func (s *svc) notesFull(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	today := civil.Of(s.Now(), s.TZ)
+	agent, expired := 0, 0
 	for _, n := range notes {
 		if strings.HasPrefix(n.CreatedBy, "agent:") {
-			return invalidf("notes are full (%d of %d); update or delete an existing note first", store.MaxNotes, store.MaxNotes)
+			agent++
+			if n.Expired(today) {
+				expired++
+			}
 		}
+	}
+	if expired > 0 {
+		return invalidf("notes are full (%d of %d); %d agent notes are expired: get_notes with include_expired lists them, "+
+			"delete or update one first", store.MaxNotes, store.MaxNotes, expired)
+	}
+	if agent > 0 {
+		return invalidf("notes are full (%d of %d); update or delete an existing note first", store.MaxNotes, store.MaxNotes)
 	}
 	return invalidf("notes are full (%d) and all are runner-written; the runner can remove notes on coachd's page", store.MaxNotes)
 }
@@ -315,9 +368,13 @@ func (s *svc) goal(g store.Goal) goalOut {
 		CreatedAt: s.ts(g.CreatedAt)}
 }
 
-func (s *svc) note(n store.Note) noteOut {
-	return noteOut{ID: n.ID, Category: string(n.Category), Text: n.Text, CreatedBy: creatorLabel(n.CreatedBy),
-		CreatedAt: s.ts(n.CreatedAt), UpdatedAt: s.ts(n.UpdatedAt)}
+func (s *svc) note(n store.Note, today civil.Date) noteOut {
+	out := noteOut{ID: n.ID, Category: string(n.Category), Text: n.Text, CreatedBy: creatorLabel(n.CreatedBy),
+		CreatedAt: s.ts(n.CreatedAt), UpdatedAt: s.ts(n.UpdatedAt), Expired: n.Expired(today)}
+	if n.ValidUntil != nil {
+		out.ValidUntil = ptr(n.ValidUntil.String())
+	}
+	return out
 }
 
 func validNoteCategory(c store.NoteCategory) bool {

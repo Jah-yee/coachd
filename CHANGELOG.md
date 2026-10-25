@@ -29,6 +29,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 - **Renew the Garmin key on the page** (`docs/design/garmin-key-renewal.md`): **Garmin key** (`/garmin`, linked from the home page, which warns 14 days before expiry) takes a new key and its validity (30, 90 or 180 days, or 1 year). coachd checks it with Garmin, stores it in the data directory (`garmin-key.json`, mode 0600) and switches at once, without a restart; `get_status` and the key-expiry metric follow. If Garmin refuses the key, nothing changes. The key is never shown, logged or backed up, and the audit log records `garmin_key_renewed` with its outcome.
 
+- **Notes that expire** (`docs/design/expiring-notes.md`): `upsert_note` takes an optional `valid_until` (today up to 366 days ahead) for facts that stop being true. After that day `get_notes` leaves the note out unless `include_expired` is true, and reports `expired_count`; each note shows `valid_until` and `expired`. Expired notes are never deleted automatically and still count toward the 50-note cap; the "notes full" error says how many agent notes are expired. The notes page shows the date and fades expired notes.
+
 ### Changed
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.

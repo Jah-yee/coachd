@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stefiix92/coachd/internal/civil"
 	"github.com/stefiix92/coachd/internal/store"
 )
 
@@ -204,7 +205,7 @@ func TestNotesToolsCRUDAndCap(t *testing.T) {
 	e := newEnv(t, fullIdentity(), func(d *Deps) { d.Now = func() time.Time { return now } })
 	ctx := context.Background()
 
-	if r := e.call(t, "get_notes", nil); r.isError || r.text != `{"notes":[]}` {
+	if r := e.call(t, "get_notes", nil); r.isError || r.text != `{"notes":[],"expired_count":0}` {
 		t.Fatalf("get_notes on empty store = %+v", r)
 	}
 
@@ -212,7 +213,7 @@ func TestNotesToolsCRUDAndCap(t *testing.T) {
 	wantKeys(t, "upsert_note", got, "note")
 	note := obj(t, got["note"])
 	want := map[string]any{"id": 1.0, "category": "injury", "text": "left achilles\ttight\nafter hills", "created_by": "agent",
-		"created_at": "2026-10-23T08:00:00+02:00", "updated_at": "2026-10-23T08:00:00+02:00"}
+		"created_at": "2026-10-23T08:00:00+02:00", "updated_at": "2026-10-23T08:00:00+02:00", "valid_until": nil, "expired": false}
 	if !mapsEqual(note, want) {
 		t.Fatalf("note\n got %v\nwant %v", note, want)
 	}
@@ -231,7 +232,7 @@ func TestNotesToolsCRUDAndCap(t *testing.T) {
 		t.Fatalf("notes %v", notes)
 	}
 	first, second := obj(t, notes[0]), obj(t, notes[1])
-	wantKeys(t, "get_notes item", first, "id", "category", "text", "created_by", "created_at", "updated_at")
+	wantKeys(t, "get_notes item", first, "id", "category", "text", "created_by", "created_at", "updated_at", "valid_until", "expired")
 	if first["category"] != "availability" || first["created_by"] != "runner" || second["category"] != "injury" ||
 		second["created_by"] != "agent" {
 		t.Fatalf("notes %v", notes)
@@ -241,7 +242,7 @@ func TestNotesToolsCRUDAndCap(t *testing.T) {
 	now = testNow.Add(time.Hour)
 	note = obj(t, e.call(t, "upsert_note", map[string]any{"id": 1, "category": "preference", "text": "prefers trails"}).object(t)["note"])
 	want = map[string]any{"id": 1.0, "category": "preference", "text": "prefers trails", "created_by": "agent",
-		"created_at": "2026-10-23T08:00:00+02:00", "updated_at": "2026-10-23T09:00:00+02:00"}
+		"created_at": "2026-10-23T08:00:00+02:00", "updated_at": "2026-10-23T09:00:00+02:00", "valid_until": nil, "expired": false}
 	if !mapsEqual(note, want) {
 		t.Fatalf("updated note\n got %v\nwant %v", note, want)
 	}
@@ -363,4 +364,75 @@ func TestCreatorLabelPrefixOnly(t *testing.T) {
 			t.Errorf("creatorLabel(%q) = %q, want %q", stored, got, want)
 		}
 	}
+}
+
+func TestNotesValidUntil(t *testing.T) {
+	now := testNow // 2026-10-23
+	e := newEnv(t, fullIdentity(), func(d *Deps) { d.Now = func() time.Time { return now } })
+	travel := obj(t, e.call(t, "upsert_note", map[string]any{"category": "availability", "text": "travelling",
+		"valid_until": "2026-10-25"}).object(t)["note"])
+	if travel["valid_until"] != "2026-10-25" || travel["expired"] != false {
+		t.Fatalf("note %v", travel)
+	}
+	e.call(t, "upsert_note", map[string]any{"category": "preference", "text": "two runs a week"})
+
+	notes := func(args map[string]any) ([]any, float64) {
+		t.Helper()
+		got := e.call(t, "get_notes", args).object(t)
+		return arr(t, got["notes"]), got["expired_count"].(float64)
+	}
+	// The note holds through its last day.
+	now = now.Add(48 * time.Hour)
+	if ns, n := notes(nil); len(ns) != 2 || n != 0 {
+		t.Fatalf("on the last day: %v, expired %v", ns, n)
+	}
+	now = now.Add(24 * time.Hour)
+	ns, n := notes(nil)
+	if len(ns) != 1 || n != 1 || obj(t, ns[0])["text"] != "two runs a week" {
+		t.Fatalf("the day after: %v, expired %v", ns, n)
+	}
+	ns, n = notes(map[string]any{"include_expired": true})
+	if len(ns) != 2 || n != 1 || obj(t, ns[0])["expired"] != true || obj(t, ns[1])["expired"] != false {
+		t.Fatalf("include_expired: %v, expired %v", ns, n)
+	}
+
+	// An update replaces valid_until; omitting it makes the note durable.
+	id := travel["id"]
+	upd := obj(t, e.call(t, "upsert_note", map[string]any{"id": id, "category": "availability", "text": "home again"}).object(t)["note"])
+	if upd["valid_until"] != nil || upd["expired"] != false {
+		t.Fatalf("updated %v", upd)
+	}
+}
+
+func TestNotesValidUntilBounds(t *testing.T) {
+	e := newEnv(t, fullIdentity()) // today is 2026-10-23
+	for v, want := range map[string]string{
+		"2026-10-22": "valid_until: 2026-10-22 is outside today (2026-10-23) to 366 days ahead",
+		"2027-10-25": "valid_until: 2027-10-25 is outside today (2026-10-23) to 366 days ahead",
+		"next week":  `valid_until: "next week" is not a date (YYYY-MM-DD)`,
+	} {
+		e.call(t, "upsert_note", map[string]any{"category": "other", "text": "x", "valid_until": v}).wantError(t, want)
+	}
+	for _, v := range []string{"2026-10-23", "2027-10-24"} {
+		e.call(t, "upsert_note", map[string]any{"category": "other", "text": "x", "valid_until": v}).object(t)
+	}
+}
+
+func TestNotesFullNamesExpired(t *testing.T) {
+	now := testNow
+	e := newEnv(t, fullIdentity(), func(d *Deps) { d.Now = func() time.Time { return now } })
+	ctx := context.Background()
+	end, _ := civil.Parse("2026-10-23")
+	for i := 0; i < 50; i++ {
+		n := store.Note{Category: store.NoteOther, Text: "fact", CreatedBy: "agent:private:claude", CreatedAt: testNow, UpdatedAt: testNow}
+		if i < 3 {
+			n.ValidUntil = &end
+		}
+		if _, err := e.db.InsertNote(ctx, n, 50); err != nil {
+			t.Fatal(err)
+		}
+	}
+	now = now.Add(24 * time.Hour)
+	e.call(t, "upsert_note", map[string]any{"category": "other", "text": "one too many"}).wantError(t,
+		"notes are full (50 of 50); 3 agent notes are expired: get_notes with include_expired lists them")
 }

@@ -14,9 +14,9 @@
 {{- if ne $cur .Category}}{{$cur = .Category}}
 <h2 class="group">{{.Category}}</h2>
 {{- end}}
-<div class="card">
+<div class="card{{if .Expired}} expired{{end}}">
 <p{{if .ByAgent}} class="quote"{{end}}>{{if .ByAgent}}{{template "agent" .Text}}{{else}}{{.Text}}{{end}}</p>
-<p class="meta">by {{.Author}} · {{.Updated}}</p>
+<p class="meta">by {{.Author}} · {{.Updated}}{{with .Until}} · until {{.}}{{end}}{{if .Expired}} <span class="pill">expired</span>{{end}}</p>
 {{- with .Error}}
 <p class="alert">{{.}}</p>
 {{- end}}

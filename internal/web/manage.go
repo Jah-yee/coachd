@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 
+	"github.com/stefiix92/coachd/internal/civil"
 	"github.com/stefiix92/coachd/internal/store"
 	"github.com/stefiix92/coachd/internal/workout"
 )
@@ -32,6 +34,8 @@ type noteRow struct {
 	Author                 string
 	ByAgent                bool
 	Updated                string
+	Until                  string // the last day the note holds; empty for a durable note
+	Expired                bool
 	FormCategory, FormText string
 	Error                  string
 }
@@ -69,10 +73,15 @@ func (s *Server) renderNotes(w http.ResponseWriter, r *http.Request, status int,
 		return
 	}
 	p.Categories, p.Count, p.Max, p.MaxRunes = noteCategories, len(ns), store.MaxNotes, store.MaxNoteRunes
+	today := civil.Of(s.d.Now(), s.d.TZ)
 	for _, n := range ns {
 		a, byAgent := author(n.CreatedBy)
 		row := noteRow{ID: n.ID, Category: string(n.Category), Text: n.Text, Author: a, ByAgent: byAgent,
-			Updated: n.UpdatedAt.In(s.d.TZ).Format(auditLayout), FormCategory: string(n.Category), FormText: n.Text}
+			Updated: n.UpdatedAt.In(s.d.TZ).Format(auditLayout), FormCategory: string(n.Category), FormText: n.Text,
+			Expired: n.Expired(today)}
+		if n.ValidUntil != nil {
+			row.Until = day(*n.ValidUntil)
+		}
 		if p.EditID != 0 && n.ID == p.EditID {
 			row.FormText, row.Error = p.DraftText, p.Error
 			if validCategory(store.NoteCategory(p.DraftCategory)) {
@@ -82,6 +91,19 @@ func (s *Server) renderNotes(w http.ResponseWriter, r *http.Request, status int,
 		}
 		p.Notes = append(p.Notes, row)
 	}
+	// Within a category, expired notes follow the live ones.
+	slices.SortStableFunc(p.Notes, func(a, b noteRow) int {
+		if c := strings.Compare(a.Category, b.Category); c != 0 {
+			return c
+		}
+		switch {
+		case a.Expired == b.Expired:
+			return 0
+		case a.Expired:
+			return 1
+		}
+		return -1
+	})
 	s.render(w, r, status, "notes", p)
 }
 

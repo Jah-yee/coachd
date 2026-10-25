@@ -182,6 +182,7 @@ Summaries are pure functions over the store, with unit tests. They never output 
 - **What they hold:** a small set of durable facts the agent should always know.
   - Categories: injury, availability, preference, other.
   - Each note carries text, the creator (agent or runner), and created and updated times.
+  - Optionally `valid_until`, the last day it holds; after that `get_notes` leaves it out unless asked, and counts it (`expiring-notes.md`, 2026-10-25).
 - **Limits:** about 50 notes, about 500 characters each.
 - **Access:** the agent can create, update and delete notes through MCP. The runner can view, edit and delete them on the web page.
   - *Note (2026-10-23, builder decision pending owner confirmation):* agents can edit and delete only notes written by agents. The runner's notes are edited by the runner on coachd's page. This closes an authorship-laundering hole: otherwise an agent could rewrite a runner's note and have its text served as the runner's.
