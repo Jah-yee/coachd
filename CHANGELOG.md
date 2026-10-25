@@ -22,6 +22,11 @@ The release workflow publishes the section whose heading matches the pushed tag 
   - Garmin Coach and Garmin Connect workouts get the steps too, without a link. Zwift-recorded rides do not: their files carry no step index.
   - Not yet checked on a workout delivered by the coachd watch app: if the watch rewrites the steps, the steps still show and only the link is missing.
 
+- **Approve the week** (`docs/design/approve-week.md`): when several workouts are waiting, **Review all** (`/review`) shows each one in full, then approves all of them with one passkey prompt.
+  - The passkey ceremony binds every workout's ID and content hash; the approval is all or nothing in one transaction, and any change since the page was shown refuses it with the day of the workout that changed.
+  - Left out, with the reason: workouts whose date has passed, whose content does not match its hash, or that another waiting workout replaces; at most 20 at a time.
+  - The home page links it when two or more are waiting, and a waiting workout's page says how many more are waiting.
+
 ### Changed
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.
