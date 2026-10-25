@@ -33,6 +33,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 - **Post-run webhook** (`docs/design/post-run-webhook.md`): with `COACHD_WEBHOOK_URL` set, coachd POSTs `{"event":"activity.stored","activity_id",...,"date","sport","proposal_id"}` (IDs only) when an activity that started in the last 48 hours is stored, after its FIT file and per-step numbers are in, so your own automation can wake the agent for a post-run review. Optional bearer token from `COACHD_WEBHOOK_TOKEN_FILE`; retries like ntfy; new metric `coachd_webhook_sends_total{outcome}`.
 
+- **Your post-activity rating** (`docs/design/perceived-effort.md`): `list_activities` and `get_activity` show `perceived: {feel_pct, rpe}`, the "How did you feel?" and RPE answers you give on the watch after a workout, read from the FIT file (the Personal API's JSON does not carry them). Null until the FIT file is read, or when you skipped the questions. Migration 0013 resets the detail cache once more so they fill in.
+
 ### Changed
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.

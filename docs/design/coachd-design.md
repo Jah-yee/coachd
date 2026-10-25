@@ -119,6 +119,7 @@ All training evaluation, coaching and planning happens in the AI agent. The runn
 - Activities: the JSON summary plus the original FIT file on disk.
 - Daily health: sleep with scores, HRV (status, baseline, overnight values), resting HR and its 7-day average, Body Battery, stress, SpO2, weight.
 - Per-activity Garmin metrics: training load, training effect, VO2max, TSS.
+- The runner's post-activity rating from the FIT session (feel 0–100, RPE 0–10), when the watch asked (`perceived-effort.md`).
 - For an activity recorded from a structured workout: the steps the watch followed and the steps as executed, with time inside, below and above each heart-rate or pace range, decoded from the FIT file at ingest (`workout-outcome.md`).
 
 Keep the raw JSON payload next to the parsed rows so data can be re-parsed later without re-fetching. [call]
