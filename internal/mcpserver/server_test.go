@@ -163,7 +163,7 @@ func newEnv(t *testing.T, id *auth.Identity, mods ...func(*Deps)) *env {
 	tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(e.spans))
 	d := Deps{
 		DB: db, Sync: e.sync, TZ: testTZ, Now: func() time.Time { return testNow },
-		KeyExpires: civil.Of(testNow, testTZ).AddDays(30), DataDir: dir, Metrics: m, Audit: e.audit,
+		KeyExpires: fixedDate(civil.Of(testNow, testTZ).AddDays(30)), DataDir: dir, Metrics: m, Audit: e.audit,
 		Log: slog.New(slog.NewJSONHandler(e.logs, nil)), Tracer: tp.Tracer("test"),
 	}
 	for _, mod := range mods {

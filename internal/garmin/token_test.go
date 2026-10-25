@@ -3,6 +3,7 @@ package garmin
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -142,6 +143,86 @@ func TestTokenInvalidBodiesErrorWithoutLeaking(t *testing.T) {
 			}
 			if strings.Contains(err.Error(), "SECRETPART") {
 				t.Fatalf("error leaks body: %v", err)
+			}
+		})
+	}
+}
+
+// keyServer accepts only the keys in ok, answering status for any other, and
+// records the key of each data request's token.
+func keyServer(t *testing.T, ok map[string]string, status int) (*Client, *[]string) {
+	t.Helper()
+	var used []string
+	c, _ := newTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if isToken(r) {
+			key := strings.TrimPrefix(r.Header.Get("Authorization"), "ApiKey ")
+			tok, good := ok[key]
+			if !good {
+				w.WriteHeader(status)
+				return
+			}
+			w.Write([]byte(`{"access_token":"` + tok + `","expires_in":86400}`))
+			return
+		}
+		used = append(used, strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer "))
+		w.Write([]byte(`[]`))
+	}))
+	return c, &used
+}
+
+func TestUseKeySwitchesKeyAndToken(t *testing.T) {
+	c, used := keyServer(t, map[string]string{testKey: "old-token", "new-key": "new-token"}, http.StatusUnauthorized)
+	ctx := context.Background()
+	if _, err := c.SleepRange(ctx, d1, d2); err != nil {
+		t.Fatal(err)
+	}
+	committed := false
+	if err := c.UseKey(ctx, "new-key", func() error { committed = true; return nil }); err != nil || !committed {
+		t.Fatalf("UseKey: %v, committed %v", err, committed)
+	}
+	if _, err := c.SleepRange(ctx, d1, d2); err != nil {
+		t.Fatal(err)
+	}
+	if got := *used; len(got) != 2 || got[0] != "old-token" || got[1] != "new-token" {
+		t.Fatalf("data requests used %v", got)
+	}
+	// The cached token expiring re-exchanges the new key.
+	c.mu.Lock()
+	c.tok = ""
+	c.mu.Unlock()
+	if _, err := c.SleepRange(ctx, d1, d2); err != nil || (*used)[2] != "new-token" {
+		t.Fatalf("after re-exchange: %v, %v", *used, err)
+	}
+}
+
+func TestUseKeyFailureKeepsOldKey(t *testing.T) {
+	for name, tc := range map[string]struct {
+		status int
+		commit error
+		want   func(error) bool
+	}{
+		"refused":       {http.StatusUnauthorized, nil, func(err error) bool { return errors.Is(err, ErrUnauthorized) }},
+		"forbidden":     {http.StatusForbidden, nil, func(err error) bool { return errors.Is(err, ErrUnauthorized) }},
+		"rate limited":  {http.StatusTooManyRequests, nil, func(err error) bool { var rl *RateLimitedError; return errors.As(err, &rl) }},
+		"server error":  {http.StatusBadGateway, nil, func(err error) bool { var se *StatusError; return errors.As(err, &se) }},
+		"commit failed": {0, errors.New("disk full"), func(err error) bool { return err != nil && err.Error() == "disk full" }},
+	} {
+		t.Run(name, func(t *testing.T) {
+			ok := map[string]string{testKey: "old-token"}
+			if tc.status == 0 {
+				ok["new-key"] = "new-token"
+			}
+			c, used := keyServer(t, ok, tc.status)
+			ctx := context.Background()
+			err := c.UseKey(ctx, "new-key", func() error { return tc.commit })
+			if !tc.want(err) {
+				t.Fatalf("UseKey: %v", err)
+			}
+			if _, err := c.SleepRange(ctx, d1, d2); err != nil {
+				t.Fatal(err)
+			}
+			if got := *used; len(got) != 1 || got[0] != "old-token" {
+				t.Fatalf("data requests used %v, want the old key's token", got)
 			}
 		})
 	}

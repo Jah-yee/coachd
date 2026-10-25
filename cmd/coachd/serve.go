@@ -27,6 +27,7 @@ import (
 	"github.com/stefiix92/coachd/internal/config"
 	"github.com/stefiix92/coachd/internal/deviceapi"
 	"github.com/stefiix92/coachd/internal/garmin"
+	"github.com/stefiix92/coachd/internal/garminkey"
 	"github.com/stefiix92/coachd/internal/ingest"
 	"github.com/stefiix92/coachd/internal/mcpserver"
 	"github.com/stefiix92/coachd/internal/notify"
@@ -78,12 +79,19 @@ func serveMain() int {
 		fmt.Fprintln(os.Stderr, "coachd serve: telemetry setup failed")
 		return 1
 	}
-	if today := civil.Of(time.Now(), cfg.TZ); cfg.GarminKeyExpires.Before(today) {
-		tel.Logger.Warn("garmin api key expired", "component", "serve", "calendar_date", cfg.GarminKeyExpires.String())
+	// The key in use: the configured one, or one renewed on the page,
+	// whichever expires later.
+	keys, err := garminkey.Load(cfg.DataDir, garminkey.Key{Value: cfg.GarminAPIKey, Expires: cfg.GarminKeyExpires})
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "coachd serve:", err)
+		return 1
 	}
-	g := garmin.New(garmin.DefaultBaseURL, cfg.GarminAPIKey, nil, tel.Metrics)
+	if today := civil.Of(time.Now(), cfg.TZ); keys.Expires().Before(today) {
+		tel.Logger.Warn("garmin api key expired", "component", "serve", "calendar_date", keys.Expires().String())
+	}
+	g := garmin.New(garmin.DefaultBaseURL, keys.Value(), nil, tel.Metrics)
 	code := 0
-	if err := runServe(ctx, cfg, g, tel, nil); err != nil {
+	if err := runServe(ctx, cfg, g, keys, tel, nil); err != nil {
 		tel.Logger.Error("serve failed", "component", "serve", "error_class", fmt.Sprintf("%T", err))
 		fmt.Fprintln(os.Stderr, "coachd serve:", err)
 		code = 1
@@ -108,7 +116,9 @@ func validateServeConfig(cfg *config.Config) error {
 // runServe wires the store, ingest, MCP and listeners and blocks until ctx is
 // cancelled (clean shutdown returns nil) or a listener fails. ready, if
 // non-nil, receives the bound addresses once every listener accepts.
-func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, tel *telemetry.Telemetry, ready func(Addrs)) error {
+// keys holds the Garmin key g uses; the page renews it when g can exchange
+// a new key (garminkey.Exchanger).
+func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, keys *garminkey.Holder, tel *telemetry.Telemetry, ready func(Addrs)) error {
 	log := tel.Logger.With("component", "serve")
 	if err := os.MkdirAll(cfg.DataDir, 0o700); err != nil {
 		return fmt.Errorf("create data dir: %w", err)
@@ -148,7 +158,7 @@ func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, tel *tel
 	defer closeAudit() // runs before db.Close on early returns; Close is idempotent
 
 	if err := telemetry.RegisterGauges(otel.GetMeterProvider(),
-		ingest.NewGauges(db, cfg.GarminKeyExpires, cfg.TZ, cfg.DataDir, time.Now)); err != nil {
+		ingest.NewGauges(db, keys.Expires, cfg.TZ, cfg.DataDir, time.Now)); err != nil {
 		return fmt.Errorf("register gauges: %w", err)
 	}
 
@@ -166,7 +176,7 @@ func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, tel *tel
 	}
 	propSvc := proposals.New(propDeps)
 	mcpHandler := mcpserver.Handler(mcpserver.New(mcpserver.Deps{
-		DB: db, Sync: svc, Proposals: propSvc, TZ: cfg.TZ, Now: time.Now, KeyExpires: cfg.GarminKeyExpires,
+		DB: db, Sync: svc, Proposals: propSvc, TZ: cfg.TZ, Now: time.Now, KeyExpires: keys.Expires,
 		DataDir: cfg.DataDir, Metrics: tel.Metrics, Audit: aq, Log: tel.Logger, Tracer: tel.Tracer,
 	}, version))
 	// The page has its own limiter: Managed OAuth agents share the runner's
@@ -203,6 +213,9 @@ func runServe(ctx context.Context, cfg *config.Config, g ingest.Garmin, tel *tel
 		}
 		webDeps := web.Deps{DB: db, Passkeys: pk, TZ: cfg.TZ, Now: time.Now,
 			Log: tel.Logger, Metrics: tel.Metrics, Tracer: tel.Tracer}
+		if ex, ok := g.(garminkey.Exchanger); ok {
+			webDeps.GarminKey = keyRenewer{keys: keys, g: ex}
+		}
 		if builtin {
 			if strings.HasPrefix(cfg.PublicURL, "http://") {
 				log.Warn("public URL is plain http: development only")
@@ -497,4 +510,17 @@ func backupLoop(ctx context.Context, db *store.DB, dataDir, version string, now 
 		case <-t.C:
 		}
 	}
+}
+
+// keyRenewer is the page's web.GarminKey: the holder, renewing through the
+// Garmin client.
+type keyRenewer struct {
+	keys *garminkey.Holder
+	g    garminkey.Exchanger
+}
+
+func (k keyRenewer) Expires() civil.Date { return k.keys.Expires() }
+
+func (k keyRenewer) Renew(ctx context.Context, key string, expires civil.Date) error {
+	return k.keys.Renew(ctx, k.g, garminkey.Key{Value: key, Expires: expires})
 }

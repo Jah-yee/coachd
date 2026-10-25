@@ -53,5 +53,11 @@
 <div class="empty-state">{{template "i-flag"}}<p class="empty">No active goal.</p></div>
 {{- end}}
 </section>
+{{- with .Key}}
+<section class="garmin-key">
+<div class="section-head"><h2>Garmin key</h2></div>
+<a class="row{{if .Soon}} warn{{end}}" href="/garmin"><span class="row-main"><span class="row-title">{{if .Expired}}Expired {{.Day}}{{else}}Valid until {{.Day}}{{end}}</span><span class="row-sub">{{if .Soon}}<span class="pill warn">{{template "i-alert"}}{{.Countdown}}: renew</span>{{else}}{{.Countdown}}{{end}}</span></span>{{template "i-chevron"}}</a>
+</section>
+{{- end}}
 </div>
 {{end}}{{end}}

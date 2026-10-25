@@ -1,0 +1,39 @@
+{{define "title"}}Garmin key{{end}}
+{{define "content"}}{{with .Page}}{{$page := .}}
+<a class="back" href="/">{{template "i-back"}}<span>Home</span></a>
+<header class="page-head">
+<h1>Garmin key</h1>
+<p class="meta">coachd reads your data with your Garmin Connect Personal API key. The key stays on this server and is never shown again.</p>
+</header>
+{{- if .Renewed}}
+<p class="callout info">{{template "i-check"}}Renewed: coachd now uses the new key. The next sync reads your data with it.</p>
+{{- end}}
+{{- with .Key}}
+<section class="card">
+<h2>Key in use</h2>
+<p class="{{if .Soon}}alert{{else}}meta{{end}}">{{if .Expired}}Expired {{.Day}} ({{.Countdown}}).{{else}}Valid until {{.Day}} ({{.Countdown}}).{{end}}</p>
+</section>
+<section class="card">
+<h2>Renew</h2>
+<ol class="meta">
+<li>Create a new key on Garmin's page: <a href="https://connect.garmin.com/app/settings/personalApiToken" rel="noreferrer noopener" target="_blank">connect.garmin.com › Personal API token</a>.</li>
+<li>Paste it here and choose the validity you chose there.</li>
+</ol>
+{{- with $page.Error}}
+<p class="alert">{{.}}</p>
+{{- end}}
+<form method="post" action="/garmin" class="stack">
+<label class="field"><span>New key</span><input type="password" name="key" autocomplete="off" autocapitalize="off" spellcheck="false" required></label>
+<label class="field"><span>Valid for</span><select name="valid_days" required>
+{{- range $page.Validities}}
+<option value="{{.Days}}">{{.Label}}</option>
+{{- end}}
+</select></label>
+<div class="form-actions"><button type="submit" class="primary">Check with Garmin and save</button></div>
+</form>
+<p class="hint">coachd checks the key with Garmin first. If Garmin refuses it, nothing changes.</p>
+</section>
+{{- else}}
+<div class="empty-state">{{template "i-info"}}<p class="empty">Key renewal is not available on this server.</p></div>
+{{- end}}
+{{end}}{{end}}

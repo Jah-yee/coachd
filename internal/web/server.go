@@ -58,6 +58,9 @@ type Deps struct {
 	Builtin bool
 	// Sampler samples failure audit rows (spec §6); nil audits every failure.
 	Sampler *auth.AuditSampler
+	// GarminKey shows and renews the Garmin key; nil means the page offers
+	// no renewal.
+	GarminKey GarminKey
 }
 
 // Server is the runner's web page.

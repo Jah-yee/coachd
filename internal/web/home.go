@@ -30,6 +30,7 @@ type homePage struct {
 	Pending   []proposalRow
 	Upcoming  []proposalRow
 	Goal      *goalView
+	Key       *keyView // nil without key renewal
 }
 
 type proposalRow struct {
@@ -82,6 +83,7 @@ func (s *Server) home(w http.ResponseWriter, r *http.Request) {
 			return p, err
 		}
 		p.NoPasskey = !has
+		p.Key = s.keyView()
 		pending, err := s.d.DB.ListProposals(ctx, firstDate, lastDate, []store.ProposalStatus{store.ProposalPending})
 		if err != nil {
 			return p, err

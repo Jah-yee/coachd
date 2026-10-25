@@ -301,8 +301,10 @@ func (s *svc) getStatus(ctx context.Context, _ noInput) (statusOut, error) {
 		Coverage: coverageOut{WeeksOfHistory: cov.WeeksOfHistory, DailyHealthGaps90d: cov.DailyHealthGaps90d,
 			Gaps90d: gapsOut{HRV: cov.HRVGaps90d, Sleep: cov.SleepGaps90d, RestingHR: cov.RestingHRGaps90d}},
 	}
-	if s.KeyExpires != (civil.Date{}) {
-		out.GarminKey = garminKeyOut{ExpiresOn: ptr(s.KeyExpires.String()), DaysLeft: ptr(s.KeyExpires.Sub(today))}
+	if s.KeyExpires != nil {
+		if exp := s.KeyExpires(); exp != (civil.Date{}) {
+			out.GarminKey = garminKeyOut{ExpiresOn: ptr(exp.String()), DaysLeft: ptr(exp.Sub(today))}
+		}
 	}
 	if cov.FirstDate != nil {
 		out.Coverage.FirstDate = ptr(cov.FirstDate.String())

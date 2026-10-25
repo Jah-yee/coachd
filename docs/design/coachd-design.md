@@ -105,7 +105,7 @@ All training evaluation, coaching and planning happens in the AI agent. The runn
 **Source: the Garmin Connect Personal API** (launched 2026-10-21). [owner, approved stack]
 - The runner creates a key at `connect.garmin.com/app/settings/personalApiToken`. Access is self-serve.
 - Each day coachd exchanges the key for an OAuth2 access token. Tokens last 24 h and there are no refresh tokens.
-- Keys expire after 30, 90 or 180 days, or 1 year. coachd exposes days remaining:
+- Keys expire after 30, 90 or 180 days, or 1 year. The runner renews the key on coachd's page, without a restart (`garmin-key-renewal.md`, 2026-10-25). coachd exposes days remaining:
   - as a metric, with an alert at 7 days;
   - in `get_status`, so the agent can remind the runner;
   - on the web page.

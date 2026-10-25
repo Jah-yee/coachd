@@ -35,6 +35,7 @@ import (
 	"github.com/stefiix92/coachd/internal/civil"
 	"github.com/stefiix92/coachd/internal/config"
 	"github.com/stefiix92/coachd/internal/garmin"
+	"github.com/stefiix92/coachd/internal/garminkey"
 	"github.com/stefiix92/coachd/internal/store"
 	"github.com/stefiix92/coachd/internal/telemetry"
 )
@@ -119,7 +120,9 @@ func startServeWith(t *testing.T, cfg *config.Config, tel *telemetry.Telemetry) 
 	ctx, cancel := context.WithCancel(context.Background())
 	ready := make(chan Addrs, 1)
 	r := &running{cancel: cancel, done: make(chan error, 1)}
-	go func() { r.done <- runServe(ctx, cfg, emptyGarmin{}, tel, func(a Addrs) { ready <- a }) }()
+	go func() {
+		r.done <- runServe(ctx, cfg, emptyGarmin{}, testKeys(t, cfg), tel, func(a Addrs) { ready <- a })
+	}()
 	select {
 	case r.addrs = <-ready:
 	case err := <-r.done:
@@ -521,7 +524,7 @@ func TestDeviceAPIPairingIDNotLeaked(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	ready := make(chan Addrs, 1)
 	done := make(chan error, 1)
-	go func() { done <- runServe(ctx, cfg, emptyGarmin{}, tel, func(a Addrs) { ready <- a }) }()
+	go func() { done <- runServe(ctx, cfg, emptyGarmin{}, testKeys(t, cfg), tel, func(a Addrs) { ready <- a }) }()
 	var addrs Addrs
 	select {
 	case addrs = <-ready:
@@ -580,7 +583,7 @@ func TestServeRefusesLockedDataDir(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer release()
-	err = runServe(context.Background(), cfg, emptyGarmin{}, testTel(t), nil)
+	err = runServe(context.Background(), cfg, emptyGarmin{}, testKeys(t, cfg), testTel(t), nil)
 	if err == nil || !strings.Contains(err.Error(), "in use by another coachd process") {
 		t.Fatalf("err %v", err)
 	}
@@ -1052,5 +1055,47 @@ func TestHousekeepingPurgesOAuth(t *testing.T) {
 	housekeepingLoop(ctx, db, slog.New(slog.DiscardHandler))
 	if _, _, err := db.AccessGrant(context.Background(), access, time.Now()); !errors.Is(err, store.ErrNotFound) {
 		t.Fatalf("after: %v, want ErrNotFound (purged)", err)
+	}
+}
+
+// testKeys is the key holder serve builds for cfg.
+func testKeys(t *testing.T, cfg *config.Config) *garminkey.Holder {
+	t.Helper()
+	h, err := garminkey.Load(cfg.DataDir, garminkey.Key{Value: cfg.GarminAPIKey, Expires: cfg.GarminKeyExpires})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return h
+}
+
+// acceptAll is a Garmin exchanger that accepts any key.
+type acceptAll struct{ used string }
+
+func (a *acceptAll) UseKey(_ context.Context, key string, commit func() error) error {
+	if err := commit(); err != nil {
+		return err
+	}
+	a.used = key
+	return nil
+}
+
+// A renewal on the page moves the expiry the MCP status and the gauge read,
+// which hold keys.Expires.
+func TestKeyRenewerFollowsRenewal(t *testing.T) {
+	dir := t.TempDir()
+	first, _ := civil.Parse("2026-11-22")
+	keys, err := garminkey.Load(dir, garminkey.Key{Value: "old", Expires: first})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expires := keys.Expires // as serve passes it to mcpserver and the gauges
+	g := &acceptAll{}
+	r := keyRenewer{keys: keys, g: g}
+	next, _ := civil.Parse("2027-02-20")
+	if err := r.Renew(context.Background(), "new", next); err != nil {
+		t.Fatal(err)
+	}
+	if expires() != next || r.Expires() != next || keys.Value() != "new" || g.used != "new" {
+		t.Fatalf("after renewal: expires %v, key %q, client %q", expires(), keys.Value(), g.used)
 	}
 }
