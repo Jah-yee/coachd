@@ -2,8 +2,9 @@
 
 A Connect IQ watch app for fēnix and Forerunner watches (the models in `manifest.xml`). It pairs
 with your coachd once, then copies the workouts you approved onto the watch and tells coachd it
-has them. It only reads coachd's device API (`/device/v1/*`): it cannot approve, change or
-withdraw anything.
+has them. It shows the next workout, each workout's steps and the agent's reasons, and the short
+messages your agent sends with `send_message`, and it notifies you of new ones. It only reads
+coachd's device API (`/device/v1/*`): it cannot approve, change or withdraw anything.
 
 Server setup (`COACHD_DEVICE_API=on`, and in Access mode the separate Cloudflare Access
 application with a Bypass policy for `/device/v1`; pairing and revoking from the host) is in
@@ -61,21 +62,43 @@ URL is valid again, and the same URL picks up where it left off.
 
 ## Using it
 
-The app syncs every time it opens. START opens the menu:
+The app syncs every time it opens. Its main screen shows the next workout (Today, Tomorrow or
+the weekday, its name, and sport, duration and distance), "N new messages" when the agent sent
+something you have not read, and the sync status or "Last sync HH:MM" at the bottom.
 
+START opens the menu:
+
+- **The workouts** from today on, in date order (the name; the day and duration). Selecting one
+  shows its steps, notes and why the agent proposed it (both labelled as agent text); UP and DOWN
+  scroll. START there opens it in the watch's workout player; the watch asks before it leaves the
+  app. A workout not downloaded yet says "Sync now" instead.
+- **Messages** lists the agent's messages from the last 7 days (at most 5), newest first.
+  Opening one marks it and every older one read.
 - **Sync now** syncs again.
-- **Workouts** lists the synced workouts in date order (coachd's name, then the date).
-  Selecting one opens it in the watch's workout player; the watch asks before it leaves the
-  app. The list works without the phone.
 - **Unpair** clears the token and the workout map (which of the app's workouts is which
   coachd workout). The workouts stay on the watch; the first sync after pairing again removes
   them as unmapped and downloads the desired set afresh. Revoke the old device on coachd's
   Devices page too.
 
+Everything on the screens comes from what the last sync stored, so it works without the phone.
+
 A sync fetches the desired set (approved, delivering, delivery_failed and delivered workouts from today to 14 days ahead),
 removes the app's workouts that left it (withdrawn, replaced or past), downloads the missing
-ones one at a time and acknowledges each, which marks it `delivered` in coachd. The app only
-ever removes workouts it downloaded itself.
+ones one at a time and acknowledges each, which marks it `delivered` in coachd. Then it fetches
+the details of workouts it has none for, and the messages. The app only ever removes workouts it
+downloaded itself. With a coachd older than 0.4 there are no details or messages, and the screens
+show names and dates only.
+
+### Notifications
+
+While paired, the app checks coachd in the background every 15 minutes (through the phone, like
+a sync). When the agent sent a new message, or a workout you approved is not on the watch yet,
+the watch tells you: fēnix 7 and later show a notification, older watches ask whether to open
+coachd. One check notifies at most one thing, and never the same thing twice. The check never
+downloads: open the app to sync. Turn it off with **Notifications** in coachd's settings in the
+Connect IQ app.
+
+On fēnix 7 and later, coachd's glance shows the next workout and unread messages.
 
 Pick one delivery path per workout. A FIT file downloaded from the approval page and copied
 over USB is a separate workout on the watch, and the app still downloads its own copy, so the
@@ -88,8 +111,7 @@ copy has to be deleted by hand.
 |---|---|
 | Set the coachd URL in the Connect IQ app | coachd URL is unset or invalid (not `https://`, or odd characters). |
 | Syncing… | A sync is running. |
-| `<N>` workouts / 1 workout | The sync finished: this many workouts from coachd are on the watch. |
-| Last sync `<HH:MM>` | The last sync that brought everything over. |
+| Last sync `<HH:MM>` | The last sync that brought everything over (shown when no other message is). |
 | Connect your phone | No Bluetooth connection to the phone (error -104). Connect it, then Sync now. |
 | Sync paused, try again in a minute | coachd's rate limit (HTTP 429). Whatever synced so far is kept. |
 | Connection problem (`<code>`), try again | A transport or storage error that would hit every later request too: -2 (timed out waiting for the phone), -3 (timed out waiting for the server), -300 (request timed out), -1004 (connection dropped), -1000 (the watch's storage is full: delete some workouts or files first) or -1001 (https required). Whatever synced so far is kept. |
@@ -142,7 +164,9 @@ COACHD_PUBLIC_URL=https://coachd.example.com ./build.sh test   # bin/coachd-test
   git-ignored) as the setting's default; it must be `https://`. Store builds take no URL and
   embed none (`build.sh` refuses a set `COACHD_PUBLIC_URL`).
 - `CIQ_DEVICE` picks the device of a sideload or test build: any product in `manifest.xml`.
-- Builds use strict type checking (`-l 3`) and show warnings (`-w`).
+- Builds use strict type checking (`-l 3`) and show warnings (`-w`). Store builds warn, for each
+  watch without watch-app glances (fēnix 5 and 6, the Forerunners), that the `:glance`
+  annotation is ignored; that is expected.
 - The first build creates the developer key `.secrets/ciq-developer.der` at the repo root
   (RSA 4096, PKCS#8 DER, mode 0600, git-ignored). Every build is signed with it, Store uploads
   included. Keep it and back it up: an update signed with another key is another app.
@@ -178,11 +202,13 @@ approves the beta) are in [`STORE.md`](STORE.md).
 
 ### Tests
 
-The `(:test)` suite covers the pure parts of the sync (`SyncModel`: what to download, remove and
-forget, and which errors stop a sync), `PairingModel` (whether a stored pairing is resumed, and
-its expiry) and `ServerModel` (normalising the URL setting and when to forget a server), plus
-`CoachdApp.reconcile`, the default URL, the 404 message and a stale pairing answer against the
-simulator's storage. It runs only in the Connect IQ simulator, which needs its GUI and the macOS
+The `(:test)` suite covers the pure parts of the sync and the background check (`SyncModel`:
+what to download, remove and forget, which errors stop a sync, parsing coachd's answers, what to
+notify, dates), `PairingModel` (whether a stored pairing is resumed, and its expiry),
+`ServerModel` (normalising the URL setting and when to forget a server) and `Fmt` (durations,
+distances, day labels), plus `CoachdApp.reconcile`, the default URL, the 404 message and a stale
+pairing answer against the simulator's storage. Smoke tests draw every screen and the glance into
+an offscreen bitmap, and run the background check's notification on canned answers. It runs only in the Connect IQ simulator, which needs its GUI and the macOS
 SDK (from the SDK Manager):
 
 ```bash
@@ -192,7 +218,7 @@ COACHD_PUBLIC_URL=https://coachd.example.com ./build.sh test
 "$CIQ_SDK/bin/monkeydo" bin/coachd-test.prg fenix7spro -t      # or the device build.sh printed
 ```
 
-The results list the 24 tests and end with `PASSED`; `monkeydo` exits 1 even then, so read the
+The results list the 40 tests and end with `PASSED`; `monkeydo` exits 1 even then, so read the
 last line.
 
 `build.sh test` adds `test/` to the source path; the app build leaves it out.

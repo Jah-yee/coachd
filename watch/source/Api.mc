@@ -11,7 +11,9 @@ import Toybox.Lang;
 // Every call takes the server's base URL. The device token and the pairing id
 // are secrets: they go only into request headers and URLs for the server they
 // came from (Store.server()), never to another server, System.println or the
-// screen. Only startPairing is given a URL before it is bound.
+// screen. Only startPairing is given a URL before it is bound. The background
+// check uses fetchDesired and fetchMessages.
+(:background, :glance)
 module Api {
     typedef Callback as Method(code as Number, data as Dictionary or String or Null) as Void;
 
@@ -29,6 +31,26 @@ module Api {
     // GET /device/v1/workouts: {"today", "workouts": [{"id", "date", "name"}]}.
     function fetchDesired(base as String, cb as Callback) as Void {
         Communications.makeWebRequest(url(base, "/workouts"), null, {
+            :method => Communications.HTTP_REQUEST_METHOD_GET,
+            :headers => authHeaders(),
+            :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+        }, cb);
+    }
+
+    // GET /device/v1/workouts/{id}: {"id", "date", "name", "sport",
+    // "duration_s", "distance_m", "partial", "steps", "notes", "why"}.
+    function fetchDetail(base as String, id as String, cb as Callback) as Void {
+        Communications.makeWebRequest(url(base, "/workouts/" + id), null, {
+            :method => Communications.HTTP_REQUEST_METHOD_GET,
+            :headers => authHeaders(),
+            :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+        }, cb);
+    }
+
+    // GET /device/v1/messages: {"messages": [{"id", "at", "text"}]}, newest
+    // first.
+    function fetchMessages(base as String, cb as Callback) as Void {
+        Communications.makeWebRequest(url(base, "/messages"), null, {
             :method => Communications.HTTP_REQUEST_METHOD_GET,
             :headers => authHeaders(),
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON

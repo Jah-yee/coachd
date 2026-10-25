@@ -2,4 +2,7 @@
     <setting propertyKey="@Properties.serverUrl" title="@Strings.SettingUrlTitle" prompt="@Strings.SettingUrlPrompt">
         <settingConfig type="url"/>
     </setting>
+    <setting propertyKey="@Properties.notify" title="@Strings.SettingNotifyTitle">
+        <settingConfig type="boolean"/>
+    </setting>
 </settings>

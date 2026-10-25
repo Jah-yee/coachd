@@ -170,7 +170,7 @@ class PairingView extends WatchUi.View {
                 _timer.stop();
                 Store.clearPairing();
                 Store.setToken(token);
-                getApp().showStatus();
+                getApp().showHome();
                 return;
             }
             code = Communications.INVALID_HTTP_BODY_IN_NETWORK_RESPONSE;

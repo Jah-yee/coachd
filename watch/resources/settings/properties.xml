@@ -1,5 +1,7 @@
-<!-- coachd's public URL, set in the Connect IQ phone app (Store installs).
-     Empty here: a sideloaded build falls back to Config.DEFAULT_URL. -->
+<!-- Settings of the Connect IQ phone app (Store installs). Sideloaded builds
+     get no phone settings: an empty serverUrl falls back to
+     Config.DEFAULT_URL, and notify stays on. -->
 <properties>
     <property id="serverUrl" type="string"></property>
+    <property id="notify" type="boolean">true</property>
 </properties>

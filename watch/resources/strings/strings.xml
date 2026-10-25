@@ -1,10 +1,12 @@
 <strings>
-    <string id="AppName">coachd</string>
+    <!-- scope="background": also used by the background check and the glance -->
+    <string id="AppName" scope="background">coachd</string>
     <string id="AppNameDev">coachd dev</string>
 
     <!-- Settings (Connect IQ phone app) and the setup view -->
     <string id="SettingUrlTitle">coachd URL</string>
     <string id="SettingUrlPrompt">https://coachd.example.com</string>
+    <string id="SettingNotifyTitle">Notifications</string>
     <string id="SetupUrl">Set the coachd URL in the Connect IQ app</string>
 
     <!-- Pairing view -->
@@ -15,18 +17,39 @@
     <string id="PairWrongUrl">Not coachd's device API ($1$): check the URL</string>
     <string id="PairFailed">Pairing failed ($1$)</string>
 
-    <!-- Status view; $1$ is filled in by the app -->
+    <!-- Home: the sync status; $1$ is filled in by the app -->
     <string id="Syncing">Syncing…</string>
-    <string id="WorkoutsN">$1$ workouts</string>
-    <string id="WorkoutsOne">1 workout</string>
     <string id="NoPhone">Connect your phone</string>
     <string id="Paused">Sync paused, try again in a minute</string>
     <string id="ConnProblem">Connection problem ($1$), try again</string>
     <string id="Failed">Sync failed ($1$)</string>
     <string id="LastSync">Last sync $1$</string>
 
+    <!-- Workouts and messages, on home, in the menus, the glance and notifications -->
+    <string id="NoWorkouts" scope="background">No workouts planned</string>
+    <string id="Today" scope="background">Today</string>
+    <string id="Tomorrow" scope="background">Tomorrow</string>
+    <string id="SportRun" scope="background">Run</string>
+    <string id="SportTrail" scope="background">Trail run</string>
+    <string id="SportWalk" scope="background">Walk</string>
+    <string id="SportHike" scope="background">Hike</string>
+    <string id="SportRide" scope="background">Ride</string>
+    <string id="SportStrength" scope="background">Strength</string>
+    <string id="SportOther" scope="background">Workout</string>
+    <string id="NewMessageOne" scope="background">1 new message</string>
+    <string id="NewMessagesN" scope="background">$1$ new messages</string>
+    <string id="FromAgent" scope="background">From your agent</string>
+    <string id="NewWorkout" scope="background">New workout</string>
+    <string id="AndMore" scope="background">(+$1$ more)</string>
+    <string id="NotesLabel">Notes (agent)</string>
+    <string id="WhyLabel">Why (agent)</string>
+    <string id="StartHint">START: begin workout</string>
+    <string id="NotOnWatch">Not on the watch yet: Sync now</string>
+    <string id="NoMessages">No messages</string>
+    <string id="NewLabel">New</string>
+
     <!-- Menu -->
+    <string id="MenuMessages">Messages</string>
     <string id="MenuSync">Sync now</string>
-    <string id="MenuWorkouts">Workouts</string>
     <string id="MenuUnpair">Unpair</string>
 </strings>

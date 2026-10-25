@@ -25,12 +25,17 @@ Design: [`docs/design/watch-store.md`](../docs/design/watch-store.md).
 > 3. Open coachd on the watch: it shows your server's name and a 6-digit code.
 > 4. Confirm the code on your coachd's Devices page.
 >
-> The app syncs when you open it, or with Sync now in its menu. It only reads the workouts you
-> approved: it cannot approve, change or withdraw anything.
+> The app syncs when you open it, or with Sync now in its menu. Its main screen shows your next
+> workout; the menu shows each workout's steps and why your agent proposed it, and the short
+> messages your agent sends. Every 15 minutes it checks for new messages and workouts and
+> notifies you (turn this off with Notifications in the app's settings). It only reads the
+> workouts you approved: it cannot approve, change or withdraw anything.
 >
 > **Permissions**
 > - Communications: talks to your coachd through your phone.
 > - Persisted content: stores the workouts on the watch.
+> - Background: checks your coachd every 15 minutes for new messages and workouts.
+> - Notifications: tells you about them.
 >
 > **Privacy:** the app talks only to the URL you set and sends nothing to the developer.
 >
