@@ -75,6 +75,14 @@ Create the Personal API key in the Garmin developer portal and save it as
 `COACHD_GARMIN_KEY_EXPIRES=YYYY-MM-DD`. coachd re-exchanges the key for a 24 h token daily.
 The key stays server-side only.
 
+**Renewing:** create a new key on Garmin's page, then open **Garmin key** on coachd's page (linked
+from the home page, which warns 14 days before expiry), paste it and choose the validity you chose
+on Garmin. coachd checks it with Garmin and switches at once, without a restart. It stores the
+renewed key as `garmin-key.json` (mode 0600) in the data volume and uses whichever key expires
+later: this one or the one in `secrets/garmin_api_key` with `COACHD_GARMIN_KEY_EXPIRES`. Backups do
+not include it, so after restoring on another host the secret file's key applies until you renew
+again.
+
 ## 3. Cloudflare (public lane)
 
 1. Host cloudflared: in the Zero Trust dashboard, add a public hostname for the tunnel:

@@ -27,6 +27,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
   - Left out, with the reason: workouts whose date has passed, whose content does not match its hash, or that another waiting workout replaces; at most 20 at a time.
   - The home page links it when two or more are waiting, and a waiting workout's page says how many more are waiting.
 
+- **Renew the Garmin key on the page** (`docs/design/garmin-key-renewal.md`): **Garmin key** (`/garmin`, linked from the home page, which warns 14 days before expiry) takes a new key and its validity (30, 90 or 180 days, or 1 year). coachd checks it with Garmin, stores it in the data directory (`garmin-key.json`, mode 0600) and switches at once, without a restart; `get_status` and the key-expiry metric follow. If Garmin refuses the key, nothing changes. The key is never shown, logged or backed up, and the audit log records `garmin_key_renewed` with its outcome.
+
 ### Changed
 
 - The watch app's status no longer shows the workout count after a sync; the main screen shows "Last sync HH:MM" instead.
