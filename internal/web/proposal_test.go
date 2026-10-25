@@ -159,7 +159,7 @@ func (ts *testServer) collect(t *testing.T) metricdata.ResourceMetrics {
 	return rm
 }
 
-// deliveries returns coachd.proposals.deliveries by outcome.
+// deliveries returns coachd.proposals.deliveries by "<outcome>/<format>".
 func (ts *testServer) deliveries(t *testing.T) map[string]int64 {
 	t.Helper()
 	out := map[string]int64{}
@@ -169,11 +169,12 @@ func (ts *testServer) deliveries(t *testing.T) map[string]int64 {
 				continue
 			}
 			for _, dp := range m.Data.(metricdata.Sum[int64]).DataPoints {
-				if dp.Attributes.Len() != 1 {
-					t.Errorf("deliveries attributes = %v, want only outcome", dp.Attributes.ToSlice())
+				if dp.Attributes.Len() != 2 {
+					t.Errorf("deliveries attributes = %v, want outcome and format", dp.Attributes.ToSlice())
 				}
-				v, _ := dp.Attributes.Value(attribute.Key("outcome"))
-				out[v.AsString()] += dp.Value
+				o, _ := dp.Attributes.Value(attribute.Key("outcome"))
+				f, _ := dp.Attributes.Value(attribute.Key("format"))
+				out[o.AsString()+"/"+f.AsString()] += dp.Value
 			}
 		}
 	}
@@ -535,6 +536,7 @@ func TestRunnerWritesNeedSession(t *testing.T) {
 			"/p/" + pend.ID + "/decline":  pend,
 			"/p/" + appr.ID + "/withdraw": appr,
 			"/p/" + appr.ID + "/fit":      appr,
+			"/p/" + appr.ID + "/zwo":      appr,
 		} {
 			rec := ts.do(t, "POST", path, url.Values{}, cookie)
 			if rec.Code != http.StatusUnauthorized || !strings.Contains(rec.Body.String(), "sign in with your passkey first") {
@@ -920,12 +922,15 @@ func TestFITDownload(t *testing.T) {
 	if n := len(ts.audit(t, "proposal_delivered")); n != 1 {
 		t.Fatalf("proposal_delivered rows = %d after a second download", n)
 	}
-	if d := ts.deliveries(t); d["delivered"] != 1 || d["redownload"] != 1 || len(d) != 2 {
+	if d := ts.deliveries(t); d["delivered/fit"] != 1 || d["redownload/fit"] != 1 || len(d) != 2 {
 		t.Fatalf("deliveries = %v", d)
 	}
 	spans := ts.spansNamed("proposal.deliver")
 	if len(spans) != 2 {
 		t.Fatalf("proposal.deliver spans = %d", len(spans))
+	}
+	if f := spanFormat(t, ts); len(f) != 2 || f[0] != "fit" || f[1] != "fit" {
+		t.Fatalf("span formats = %v", f)
 	}
 	for _, s := range spans {
 		checkProposalSpan(t, s, p.ID)

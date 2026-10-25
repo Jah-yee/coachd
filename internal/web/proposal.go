@@ -20,6 +20,7 @@ import (
 	"github.com/stefiix92/coachd/internal/passkey"
 	"github.com/stefiix92/coachd/internal/store"
 	"github.com/stefiix92/coachd/internal/workout"
+	"github.com/stefiix92/coachd/internal/zwiftworkout"
 )
 
 const (
@@ -30,10 +31,34 @@ const (
 	msgContentChanged = "content changed; reload the page"
 	msgNoProposal     = "proposal not found"
 	msgEncodeFailed   = "could not encode this workout as FIT"
+	msgZwiftFailed    = "could not encode this workout for Zwift"
 	msgHashApprove    = "stored content does not match its hash; approval disabled"
 	msgHashDownload   = "stored content does not match its hash; download disabled"
 
 	fitContentType = "application/vnd.ant.fit"
+)
+
+// fileFormat is one file a runner can download for an approved workout.
+// name is the telemetry "format" attribute; unsupported, when set, returns
+// the conflict message for a workout this format cannot hold, or "".
+type fileFormat struct {
+	name, contentType, failMsg string
+	fileName                   func(civil.Date, string) string
+	encode                     func(workout.Workout, store.Proposal) ([]byte, error)
+	unsupported                func(workout.Workout) string
+}
+
+var (
+	fitFile = fileFormat{name: "fit", contentType: fitContentType, failMsg: msgEncodeFailed, fileName: fitworkout.FileName,
+		encode: func(w workout.Workout, p store.Proposal) ([]byte, error) { return fitworkout.Encode(w, p.CreatedAt) }}
+	zwoFile = fileFormat{name: "zwo", contentType: zwiftworkout.ContentType, failMsg: msgZwiftFailed, fileName: zwiftworkout.FileName,
+		encode: func(w workout.Workout, _ store.Proposal) ([]byte, error) { return zwiftworkout.Encode(w) },
+		unsupported: func(w workout.Workout) string {
+			if why := zwiftworkout.Unsupported(w); why != "" {
+				return "not exportable to Zwift: " + why
+			}
+			return ""
+		}}
 )
 
 // proposalPage is the data of proposal.html. Name, notes, rationale and the
@@ -51,6 +76,8 @@ type proposalPage struct {
 	Approve                      *approveButton
 	Decline                      bool   // pending, with a session
 	Deliver, Withdraw            bool   // approved, delivering, delivery_failed or delivered, with a session
+	Zwift                        bool   // Deliver, and the workout is one Zwift can take
+	ZwiftNote                    string // Deliver, cycling, and why Zwift cannot take it
 	DeliveryNote                 string // coachd's own status line for the delivery states
 	SignIn                       string // what signing in would offer
 	WatchHint                    bool
@@ -118,7 +145,7 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 	v := proposalPage{ID: p.ID, Name: p.Name, Day: longDay(p.Date), Sport: strings.ReplaceAll(string(p.Sport), "_", " "),
 		Status: string(p.Status), Rationale: p.Rationale}
 	w, hash, err := storedWorkout(p)
-	intact := hash == p.ContentHash
+	intact, decoded := hash == p.ContentHash, err == nil
 	switch {
 	case err == nil:
 		v.Lines, v.Notes = Describe(w), w.Notes
@@ -205,6 +232,13 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 		if signedIn {
 			v.Withdraw = true
 			v.Deliver = intact
+			if intact && decoded && w.Sport == "cycling" {
+				if why := zwiftworkout.Unsupported(w); why == "" {
+					v.Zwift = true
+				} else {
+					v.ZwiftNote = "Not exportable to Zwift: " + why
+				}
+			}
 		} else {
 			v.SignIn = "Sign in to download or withdraw"
 		}
@@ -410,12 +444,18 @@ func (s *Server) transition(to store.ProposalStatus, from ...store.ProposalStatu
 	}
 }
 
-// fit serves POST /p/{id}/fit behind requireSession (R62). It encodes the
-// workout on demand from the stored content; nothing is stored. The first
-// download moves approved, delivering or delivery_failed to delivered (the
-// runner copies it by hand; a later watch ack is a no-op); later ones serve
-// the same bytes.
-func (s *Server) fit(w http.ResponseWriter, r *http.Request) {
+// download serves POST /p/{id}/fit and /p/{id}/zwo behind requireSession
+// (R62). It encodes the workout on demand from the stored content; nothing is
+// stored. The first download of either file moves approved, delivering or
+// delivery_failed to delivered (the runner copies it by hand; a later watch
+// ack is a no-op); later ones serve the same bytes.
+func (s *Server) download(f fileFormat) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.serveDownload(w, r, f)
+	}
+}
+
+func (s *Server) serveDownload(w http.ResponseWriter, r *http.Request, f fileFormat) {
 	p, ok := s.loadProposal(w, r, false)
 	if !ok {
 		return
@@ -426,21 +466,27 @@ func (s *Server) fit(w http.ResponseWriter, r *http.Request) {
 	}
 	wk, hash, err := storedWorkout(p)
 	if hash != p.ContentHash { // the runner approved other bytes
-		s.fitFailed(w, r, p.ID, "integrity", msgHashDownload)
+		s.downloadFailed(w, r, f, p.ID, "integrity", msgHashDownload)
 		return
+	}
+	if err == nil && f.unsupported != nil {
+		if msg := f.unsupported(wk); msg != "" {
+			s.renderProposal(w, r, http.StatusConflict, p, msg)
+			return
+		}
 	}
 	var b []byte
 	if err == nil {
-		b, err = fitworkout.Encode(wk, p.CreatedAt)
+		b, err = f.encode(wk, p)
 	}
 	if err != nil {
-		s.fitFailed(w, r, p.ID, errorClass(err), msgEncodeFailed)
+		s.downloadFailed(w, r, f, p.ID, errorClass(err), f.failMsg)
 		return
 	}
 
 	ctx, span := s.d.Tracer.Start(r.Context(), "proposal.deliver", linkTo(p)...)
 	defer span.End()
-	span.SetAttributes(attribute.String("proposal_id", p.ID))
+	span.SetAttributes(attribute.String("proposal_id", p.ID), attribute.String("format", f.name))
 	outcome := "redownload"
 	if p.Status != store.ProposalDelivered {
 		ws, _ := s.session(r)
@@ -472,11 +518,11 @@ func (s *Server) fit(w http.ResponseWriter, r *http.Request) {
 	}
 	span.SetAttributes(attribute.String("outcome", outcome))
 	if m := s.d.Metrics; m != nil && m.Deliveries != nil {
-		m.Deliveries.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", outcome)))
+		m.Deliveries.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", outcome), attribute.String("format", f.name)))
 	}
 	h := w.Header()
-	h.Set("Content-Type", fitContentType)
-	h.Set("Content-Disposition", `attachment; filename="`+fitworkout.FileName(p.Date, p.ID)+`"`)
+	h.Set("Content-Type", f.contentType)
+	h.Set("Content-Disposition", `attachment; filename="`+f.fileName(p.Date, p.ID)+`"`)
 	h.Set("Content-Length", strconv.Itoa(len(b)))
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(b)
@@ -485,10 +531,10 @@ func (s *Server) fit(w http.ResponseWriter, r *http.Request) {
 // undelivered are the statuses a download moves to delivered.
 var undelivered = []store.ProposalStatus{store.ProposalApproved, store.ProposalDelivering, store.ProposalDeliveryFailed}
 
-// fitFailed answers a download that cannot be served: 500 with msg on the
-// error page, and no transition.
-func (s *Server) fitFailed(w http.ResponseWriter, r *http.Request, id, class, msg string) {
-	s.d.Log.ErrorContext(r.Context(), "FIT download failed", "component", "web", "http.route", r.Pattern,
-		"proposal_id", id, "outcome", "error", "error_class", class)
+// downloadFailed answers a download that cannot be served: 500 with msg on
+// the error page, and no transition.
+func (s *Server) downloadFailed(w http.ResponseWriter, r *http.Request, f fileFormat, id, class, msg string) {
+	s.d.Log.ErrorContext(r.Context(), "workout download failed", "component", "web", "http.route", r.Pattern,
+		"proposal_id", id, "format", f.name, "outcome", "error", "error_class", class)
 	s.render(w, r, http.StatusInternalServerError, "error", errorPage{Title: "Download failed", Message: msg})
 }

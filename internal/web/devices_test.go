@@ -265,7 +265,7 @@ func TestFITDownloadFromDeliveryStates(t *testing.T) {
 			t.Errorf("proposal_delivered row = %+v", r)
 		}
 	}
-	if d := ts.deliveries(t); d["delivered"] != 2 || len(d) != 1 {
+	if d := ts.deliveries(t); d["delivered/fit"] != 2 || len(d) != 1 {
 		t.Fatalf("deliveries = %v", d)
 	}
 	// The watch acks the copy it fetched earlier: no transition, no new row.

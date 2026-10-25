@@ -84,6 +84,12 @@
 {{- if .Deliver}}
 <form method="post" action="/p/{{.ID}}/fit"><button type="submit" class="primary">{{template "i-download"}}<span>Download FIT</span></button></form>
 {{- end}}
+{{- if .Zwift}}
+<form method="post" action="/p/{{.ID}}/zwo"><button type="submit">{{template "i-download"}}<span>Download for Zwift</span></button></form>
+{{- end}}
+{{- with .ZwiftNote}}
+<p class="hint">{{.}}</p>
+{{- end}}
 {{- if .Withdraw}}
 <form method="post" action="/p/{{.ID}}/withdraw"><button type="submit" class="danger">Withdraw</button></form>
 {{- end}}
