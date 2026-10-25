@@ -6,6 +6,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-25
+
 ### Added
 
 - **Power targets for cycling:** `propose_workout` takes a `power` step target in % of FTP (`low_pct_ftp`, `high_pct_ftp`, 20 to 300, cycling only). The approval page shows it, and the FIT file carries it to the watch.
