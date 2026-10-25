@@ -1,0 +1,27 @@
+<workout_file>
+  <author>coachd</author>
+  <name>Text</name>
+  <description></description>
+  <sportType>bike</sportType>
+  <workout>
+    <FreeRide Duration="600">
+      <textevent timeoffset="0" message="HR 120-135 bpm - spin easy"></textevent>
+    </FreeRide>
+    <FreeRide Duration="300">
+      <textevent timeoffset="0" message="pace 2:00-2:30 /km"></textevent>
+    </FreeRide>
+    <FreeRide Duration="300">
+      <textevent timeoffset="0" message="cadence 85-95 rpm"></textevent>
+    </FreeRide>
+    <FreeRide Duration="300">
+      <textevent timeoffset="0" message="Zona 2 lahko"></textevent>
+    </FreeRide>
+    <FreeRide Duration="120">
+      <textevent timeoffset="0" message="relax"></textevent>
+    </FreeRide>
+    <FreeRide Duration="60"></FreeRide>
+    <SteadyState Duration="60" Power="1.05">
+      <textevent timeoffset="0" message="hold it"></textevent>
+    </SteadyState>
+  </workout>
+</workout_file>
