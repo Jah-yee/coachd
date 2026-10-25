@@ -11,11 +11,15 @@ import (
 	"time"
 
 	"github.com/stefiix92/coachd/internal/civil"
+	"github.com/stefiix92/coachd/internal/fitdata"
 )
 
 const activityCols = `id, start_local, start_utc, date, week_start, type_key, sport, name_untrusted,
 	distance_m, duration_s, moving_s, elev_gain_m, elev_loss_m, avg_hr, max_hr, manual,
 	training_load, aerobic_te, anaerobic_te, vo2max, tss, fit_path, fit_status, fit_attempts`
+
+// activityReadCols are activityCols plus the columns only the detail writes.
+const activityReadCols = activityCols + `, perceived_feel, perceived_rpe`
 
 const defaultListLimit = 50
 
@@ -68,12 +72,15 @@ func scanActivity(s scanner) (Activity, error) {
 		manual                  int
 		avgHR, maxHR            sql.NullFloat64
 		tl, ate, nte, vo2, tss  sql.NullFloat64
+		feel                    sql.NullInt64
+		rpe                     sql.NullFloat64
 	)
 	if err := s.Scan(&a.ID, &startLocal, &startUTC, &date, &week, &a.TypeKey, &sport, &a.NameUntrusted,
 		&a.DistanceM, &a.DurationS, &a.MovingS, &a.ElevGainM, &a.ElevLossM, &avgHR, &maxHR, &manual,
-		&tl, &ate, &nte, &vo2, &tss, &a.FITPath, &fits, &a.FITAttempts); err != nil {
+		&tl, &ate, &nte, &vo2, &tss, &a.FITPath, &fits, &a.FITAttempts, &feel, &rpe); err != nil {
 		return a, err
 	}
+	a.Perceived = fitdata.Perceived{FeelPct: iptr(feel), RPE: fptr(rpe)}
 	var err error
 	if a.StartLocal, err = time.Parse(time.RFC3339Nano, startLocal); err != nil {
 		return a, err
@@ -122,7 +129,7 @@ const liveActivity = `deleted_at IS NULL`
 // GetActivity returns a live activity, or ErrNotFound when absent or soft-deleted.
 func (db *DB) GetActivity(ctx context.Context, id int64) (Activity, error) {
 	a, err := scanActivity(db.sql.QueryRowContext(ctx,
-		`SELECT `+activityCols+` FROM activities WHERE id=? AND `+liveActivity, id))
+		`SELECT `+activityReadCols+` FROM activities WHERE id=? AND `+liveActivity, id))
 	if errors.Is(err, sql.ErrNoRows) {
 		return Activity{}, ErrNotFound
 	}
@@ -139,7 +146,7 @@ func (db *DB) queryActivities(ctx context.Context, cond string, args []any, tail
 	if cond != "" {
 		where += ` AND (` + cond + `)`
 	}
-	rows, err := db.sql.QueryContext(ctx, `SELECT `+activityCols+` FROM activities `+where+` `+tail, args...)
+	rows, err := db.sql.QueryContext(ctx, `SELECT `+activityReadCols+` FROM activities `+where+` `+tail, args...)
 	if err != nil {
 		return nil, fmt.Errorf("store: query activities: %w", err)
 	}

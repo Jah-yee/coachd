@@ -58,92 +58,100 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
-        },
-        "has_fit": true,
-        "id": 5,
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+          "vo2max": null,
+          "tss": null
+        }
       }
     },
     "get_activity_laps": {
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"laps\":[{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":0,\"max_hr_bpm\":150,\"start_offset_s\":0},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":1,\"max_hr_bpm\":150,\"start_offset_s\":40},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":2,\"max_hr_bpm\":150,\"start_offset_s\":80}],\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null},\"laps\":[{\"index\":0,\"start_offset_s\":0,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":1,\"start_offset_s\":40,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":2,\"start_offset_s\":80,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5}]}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
+          "vo2max": null,
+          "tss": null
         },
-        "has_fit": true,
-        "id": 5,
         "laps": [
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 0,
+            "start_offset_s": 0,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 0
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 1,
+            "start_offset_s": 40,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 40
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 2,
+            "start_offset_s": 80,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 80
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           }
-        ],
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+        ]
       }
     },
     "get_activity_not_found": {
@@ -159,996 +167,1012 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":null,\"date\":\"2026-10-14\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":3,\"max_hr_bpm\":null,\"moving_time_s\":2950,\"name_untrusted\":\"no strap\",\"sport\":\"running\",\"start_local\":\"2026-10-14T07:15:00+02:00\"}"
+          "text": "{\"id\":3,\"date\":\"2026-10-14\",\"start_local\":\"2026-10-14T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"no strap\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":null,\"max_hr_bpm\":null,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": null,
+        "id": 3,
         "date": "2026-10-14",
+        "start_local": "2026-10-14T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "no strap",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": null,
+        "max_hr_bpm": null,
+        "has_fit": false,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
-        },
-        "has_fit": false,
-        "id": 3,
-        "max_hr_bpm": null,
-        "moving_time_s": 2950,
-        "name_untrusted": "no strap",
-        "sport": "running",
-        "start_local": "2026-10-14T07:15:00+02:00"
+          "vo2max": null,
+          "tss": null
+        }
       }
     },
     "get_activity_series": {
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"laps\":[{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":0,\"max_hr_bpm\":150,\"start_offset_s\":0},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":1,\"max_hr_bpm\":150,\"start_offset_s\":40},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":2,\"max_hr_bpm\":150,\"start_offset_s\":80}],\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"series\":[{\"altitude_m\":200,\"distance_km\":0,\"hr_bpm\":150,\"offset_s\":0,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0,\"hr_bpm\":150,\"offset_s\":1,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.01,\"hr_bpm\":150,\"offset_s\":2,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.01,\"hr_bpm\":150,\"offset_s\":3,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.01,\"hr_bpm\":150,\"offset_s\":4,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":5,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":6,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":7,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":8,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.03,\"hr_bpm\":150,\"offset_s\":9,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.03,\"hr_bpm\":150,\"offset_s\":10,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.03,\"hr_bpm\":150,\"offset_s\":11,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.04,\"hr_bpm\":150,\"offset_s\":12,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.04,\"hr_bpm\":150,\"offset_s\":13,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.04,\"hr_bpm\":150,\"offset_s\":14,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":15,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":16,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":17,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":18,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.06,\"hr_bpm\":150,\"offset_s\":19,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.06,\"hr_bpm\":150,\"offset_s\":20,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.06,\"hr_bpm\":150,\"offset_s\":21,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.07,\"hr_bpm\":150,\"offset_s\":22,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.07,\"hr_bpm\":150,\"offset_s\":23,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.07,\"hr_bpm\":150,\"offset_s\":24,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":25,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":26,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":27,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":28,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.09,\"hr_bpm\":150,\"offset_s\":29,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.09,\"hr_bpm\":150,\"offset_s\":30,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.09,\"hr_bpm\":150,\"offset_s\":31,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.1,\"hr_bpm\":150,\"offset_s\":32,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.1,\"hr_bpm\":150,\"offset_s\":33,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.1,\"hr_bpm\":150,\"offset_s\":34,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":35,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":36,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":37,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":38,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.12,\"hr_bpm\":150,\"offset_s\":39,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.12,\"hr_bpm\":150,\"offset_s\":40,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.12,\"hr_bpm\":150,\"offset_s\":41,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.13,\"hr_bpm\":150,\"offset_s\":42,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.13,\"hr_bpm\":150,\"offset_s\":43,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.13,\"hr_bpm\":150,\"offset_s\":44,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":45,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":46,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":47,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":48,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.15,\"hr_bpm\":150,\"offset_s\":49,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.15,\"hr_bpm\":150,\"offset_s\":50,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.15,\"hr_bpm\":150,\"offset_s\":51,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.16,\"hr_bpm\":150,\"offset_s\":52,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.16,\"hr_bpm\":150,\"offset_s\":53,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.16,\"hr_bpm\":150,\"offset_s\":54,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":55,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":56,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":57,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":58,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.18,\"hr_bpm\":150,\"offset_s\":59,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.18,\"hr_bpm\":150,\"offset_s\":60,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.18,\"hr_bpm\":150,\"offset_s\":61,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.19,\"hr_bpm\":150,\"offset_s\":62,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.19,\"hr_bpm\":150,\"offset_s\":63,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.19,\"hr_bpm\":150,\"offset_s\":64,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":65,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":66,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":67,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":68,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.21,\"hr_bpm\":150,\"offset_s\":69,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.21,\"hr_bpm\":150,\"offset_s\":70,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.21,\"hr_bpm\":150,\"offset_s\":71,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.22,\"hr_bpm\":150,\"offset_s\":72,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.22,\"hr_bpm\":150,\"offset_s\":73,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.22,\"hr_bpm\":150,\"offset_s\":74,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":75,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":76,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":77,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":78,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.24,\"hr_bpm\":150,\"offset_s\":79,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.24,\"hr_bpm\":150,\"offset_s\":80,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.24,\"hr_bpm\":150,\"offset_s\":81,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.25,\"hr_bpm\":150,\"offset_s\":82,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.25,\"hr_bpm\":150,\"offset_s\":83,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.25,\"hr_bpm\":150,\"offset_s\":84,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":85,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":86,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":87,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":88,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.27,\"hr_bpm\":150,\"offset_s\":89,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.27,\"hr_bpm\":150,\"offset_s\":90,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.27,\"hr_bpm\":150,\"offset_s\":91,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":92,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":93,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":94,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":95,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.29,\"hr_bpm\":150,\"offset_s\":96,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.29,\"hr_bpm\":150,\"offset_s\":97,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.29,\"hr_bpm\":150,\"offset_s\":98,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.3,\"hr_bpm\":150,\"offset_s\":99,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.3,\"hr_bpm\":150,\"offset_s\":100,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.3,\"hr_bpm\":150,\"offset_s\":101,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.31,\"hr_bpm\":150,\"offset_s\":102,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.31,\"hr_bpm\":150,\"offset_s\":103,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.31,\"hr_bpm\":150,\"offset_s\":104,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":105,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":106,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":107,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":108,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.33,\"hr_bpm\":150,\"offset_s\":109,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.33,\"hr_bpm\":150,\"offset_s\":110,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.33,\"hr_bpm\":150,\"offset_s\":111,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.34,\"hr_bpm\":150,\"offset_s\":112,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.34,\"hr_bpm\":150,\"offset_s\":113,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.34,\"hr_bpm\":150,\"offset_s\":114,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":115,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":116,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":117,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":118,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.36,\"hr_bpm\":150,\"offset_s\":119,\"pace_s_per_km\":333.33}],\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null},\"laps\":[{\"index\":0,\"start_offset_s\":0,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":1,\"start_offset_s\":40,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":2,\"start_offset_s\":80,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5}],\"series\":[{\"offset_s\":0,\"distance_km\":0,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":1,\"distance_km\":0,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":2,\"distance_km\":0.01,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":3,\"distance_km\":0.01,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":4,\"distance_km\":0.01,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":5,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":6,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":7,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":8,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":9,\"distance_km\":0.03,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":10,\"distance_km\":0.03,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":11,\"distance_km\":0.03,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":12,\"distance_km\":0.04,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":13,\"distance_km\":0.04,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":14,\"distance_km\":0.04,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":15,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":16,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":17,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":18,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":19,\"distance_km\":0.06,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":20,\"distance_km\":0.06,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":21,\"distance_km\":0.06,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":22,\"distance_km\":0.07,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":23,\"distance_km\":0.07,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":24,\"distance_km\":0.07,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":25,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":26,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":27,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":28,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":29,\"distance_km\":0.09,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":30,\"distance_km\":0.09,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":31,\"distance_km\":0.09,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":32,\"distance_km\":0.1,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":33,\"distance_km\":0.1,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":34,\"distance_km\":0.1,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":35,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":36,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":37,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":38,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":39,\"distance_km\":0.12,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":40,\"distance_km\":0.12,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":41,\"distance_km\":0.12,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":42,\"distance_km\":0.13,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":43,\"distance_km\":0.13,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":44,\"distance_km\":0.13,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":45,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":46,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":47,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":48,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":49,\"distance_km\":0.15,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":50,\"distance_km\":0.15,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":51,\"distance_km\":0.15,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":52,\"distance_km\":0.16,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":53,\"distance_km\":0.16,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":54,\"distance_km\":0.16,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":55,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":56,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":57,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":58,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":59,\"distance_km\":0.18,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":60,\"distance_km\":0.18,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":61,\"distance_km\":0.18,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":62,\"distance_km\":0.19,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":63,\"distance_km\":0.19,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":64,\"distance_km\":0.19,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":65,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":66,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":67,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":68,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":69,\"distance_km\":0.21,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":70,\"distance_km\":0.21,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":71,\"distance_km\":0.21,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":72,\"distance_km\":0.22,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":73,\"distance_km\":0.22,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":74,\"distance_km\":0.22,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":75,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":76,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":77,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":78,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":79,\"distance_km\":0.24,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":80,\"distance_km\":0.24,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":81,\"distance_km\":0.24,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":82,\"distance_km\":0.25,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":83,\"distance_km\":0.25,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":84,\"distance_km\":0.25,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":85,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":86,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":87,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":88,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":89,\"distance_km\":0.27,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":90,\"distance_km\":0.27,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":91,\"distance_km\":0.27,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":92,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":93,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":94,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":95,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":96,\"distance_km\":0.29,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":97,\"distance_km\":0.29,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":98,\"distance_km\":0.29,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":99,\"distance_km\":0.3,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":100,\"distance_km\":0.3,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":101,\"distance_km\":0.3,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":102,\"distance_km\":0.31,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":103,\"distance_km\":0.31,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":104,\"distance_km\":0.31,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":105,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":106,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":107,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":108,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":109,\"distance_km\":0.33,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":110,\"distance_km\":0.33,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":111,\"distance_km\":0.33,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":112,\"distance_km\":0.34,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":113,\"distance_km\":0.34,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":114,\"distance_km\":0.34,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":115,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":116,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":117,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":118,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":119,\"distance_km\":0.36,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200}]}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
+          "vo2max": null,
+          "tss": null
         },
-        "has_fit": true,
-        "id": 5,
         "laps": [
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 0,
+            "start_offset_s": 0,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 0
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 1,
+            "start_offset_s": 40,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 40
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 2,
+            "start_offset_s": 80,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 80
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           }
         ],
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
         "series": [
           {
-            "altitude_m": 200,
-            "distance_km": 0,
-            "hr_bpm": 150,
             "offset_s": 0,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 1,
-            "pace_s_per_km": 333.33
+            "distance_km": 0,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.01,
-            "hr_bpm": 150,
             "offset_s": 2,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.01,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 3,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.01,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 4,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.01,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.02,
-            "hr_bpm": 150,
             "offset_s": 5,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.02,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 6,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.02,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 7,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.02,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 8,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.02,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.03,
-            "hr_bpm": 150,
             "offset_s": 9,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.03,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 10,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.03,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 11,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.03,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.04,
-            "hr_bpm": 150,
             "offset_s": 12,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.04,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 13,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.04,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 14,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.04,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.05,
-            "hr_bpm": 150,
             "offset_s": 15,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.05,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 16,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.05,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 17,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.05,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 18,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.05,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.06,
-            "hr_bpm": 150,
             "offset_s": 19,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.06,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 20,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.06,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 21,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.06,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.07,
-            "hr_bpm": 150,
             "offset_s": 22,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.07,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 23,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.07,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 24,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.07,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.08,
-            "hr_bpm": 150,
             "offset_s": 25,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.08,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 26,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.08,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 27,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.08,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 28,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.08,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.09,
-            "hr_bpm": 150,
             "offset_s": 29,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.09,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 30,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.09,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 31,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.09,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.1,
-            "hr_bpm": 150,
             "offset_s": 32,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.1,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 33,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.1,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 34,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.1,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.11,
-            "hr_bpm": 150,
             "offset_s": 35,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.11,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 36,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.11,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 37,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.11,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 38,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.11,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.12,
-            "hr_bpm": 150,
             "offset_s": 39,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.12,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 40,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.12,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 41,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.12,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.13,
-            "hr_bpm": 150,
             "offset_s": 42,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.13,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 43,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.13,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 44,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.13,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.14,
-            "hr_bpm": 150,
             "offset_s": 45,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.14,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 46,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.14,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 47,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.14,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 48,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.14,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.15,
-            "hr_bpm": 150,
             "offset_s": 49,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.15,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 50,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.15,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 51,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.15,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.16,
-            "hr_bpm": 150,
             "offset_s": 52,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.16,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 53,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.16,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 54,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.16,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.17,
-            "hr_bpm": 150,
             "offset_s": 55,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.17,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 56,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.17,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 57,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.17,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 58,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.17,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.18,
-            "hr_bpm": 150,
             "offset_s": 59,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.18,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 60,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.18,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 61,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.18,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.19,
-            "hr_bpm": 150,
             "offset_s": 62,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.19,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 63,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.19,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 64,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.19,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.2,
-            "hr_bpm": 150,
             "offset_s": 65,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.2,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 66,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.2,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 67,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.2,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 68,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.2,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.21,
-            "hr_bpm": 150,
             "offset_s": 69,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.21,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 70,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.21,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 71,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.21,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.22,
-            "hr_bpm": 150,
             "offset_s": 72,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.22,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 73,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.22,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 74,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.22,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.23,
-            "hr_bpm": 150,
             "offset_s": 75,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.23,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 76,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.23,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 77,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.23,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 78,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.23,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.24,
-            "hr_bpm": 150,
             "offset_s": 79,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.24,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 80,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.24,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 81,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.24,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.25,
-            "hr_bpm": 150,
             "offset_s": 82,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.25,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 83,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.25,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 84,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.25,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.26,
-            "hr_bpm": 150,
             "offset_s": 85,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.26,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 86,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.26,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 87,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.26,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 88,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.26,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.27,
-            "hr_bpm": 150,
             "offset_s": 89,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.27,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 90,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.27,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 91,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.27,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.28,
-            "hr_bpm": 150,
             "offset_s": 92,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.28,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 93,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.28,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 94,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.28,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 95,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.28,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.29,
-            "hr_bpm": 150,
             "offset_s": 96,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.29,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 97,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.29,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 98,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.29,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.3,
-            "hr_bpm": 150,
             "offset_s": 99,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.3,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 100,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.3,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 101,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.3,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.31,
-            "hr_bpm": 150,
             "offset_s": 102,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.31,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 103,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.31,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 104,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.31,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.32,
-            "hr_bpm": 150,
             "offset_s": 105,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.32,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 106,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.32,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 107,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.32,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 108,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.32,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.33,
-            "hr_bpm": 150,
             "offset_s": 109,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.33,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 110,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.33,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 111,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.33,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.34,
-            "hr_bpm": 150,
             "offset_s": 112,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.34,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 113,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.34,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 114,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.34,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.35,
-            "hr_bpm": 150,
             "offset_s": 115,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.35,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 116,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.35,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 117,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.35,
             "hr_bpm": 150,
-            "offset_s": 118,
-            "pace_s_per_km": 333.33
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
+            "offset_s": 118,
+            "distance_km": 0.35,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
+            "offset_s": 119,
             "distance_km": 0.36,
             "hr_bpm": 150,
-            "offset_s": 119,
-            "pace_s_per_km": 333.33
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           }
-        ],
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+        ]
       }
     },
     "get_activity_series_no_fit": {
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-22\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":9,\"laps\":[],\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"manual treadmill\",\"series\":[],\"sport\":\"running\",\"start_local\":\"2026-10-22T07:15:00+02:00\"}"
+          "text": "{\"id\":9,\"date\":\"2026-10-22\",\"start_local\":\"2026-10-22T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"manual treadmill\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null},\"laps\":[],\"series\":[]}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 9,
         "date": "2026-10-22",
+        "start_local": "2026-10-22T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "manual treadmill",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": false,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
+          "vo2max": null,
+          "tss": null
         },
-        "has_fit": false,
-        "id": 9,
         "laps": [],
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "manual treadmill",
-        "series": [],
-        "sport": "running",
-        "start_local": "2026-10-22T07:15:00+02:00"
+        "series": []
       }
     },
     "get_activity_summary": {
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
-        },
-        "has_fit": true,
-        "id": 5,
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+          "vo2max": null,
+          "tss": null
+        }
       }
     },
     "get_daily_health": {
@@ -1584,54 +1608,62 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"activities\":[{\"avg_hr_bpm\":150,\"date\":\"2026-10-22\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":9,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"manual treadmill\",\"sport\":\"running\",\"start_local\":\"2026-10-22T07:15:00+02:00\"},{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
+          "text": "{\"activities\":[{\"id\":9,\"date\":\"2026-10-22\",\"start_local\":\"2026-10-22T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"manual treadmill\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}},{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
         }
       ],
       "structuredContent": {
         "activities": [
           {
-            "avg_hr_bpm": 150,
+            "id": 9,
             "date": "2026-10-22",
+            "start_local": "2026-10-22T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "manual treadmill",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": false,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": false,
-            "id": 9,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "manual treadmill",
-            "sport": "running",
-            "start_local": "2026-10-22T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           },
           {
-            "avg_hr_bpm": 150,
+            "id": 5,
             "date": "2026-10-21",
+            "start_local": "2026-10-21T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "intervals",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": true,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": true,
-            "id": 5,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "intervals",
-            "sport": "running",
-            "start_local": "2026-10-21T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           }
         ],
         "next_cursor": "MjAyNi0xMC0yMXw1"
@@ -1641,54 +1673,62 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"activities\":[{\"avg_hr_bpm\":150,\"date\":\"2026-10-22\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":9,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"manual treadmill\",\"sport\":\"running\",\"start_local\":\"2026-10-22T07:15:00+02:00\"},{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
+          "text": "{\"activities\":[{\"id\":9,\"date\":\"2026-10-22\",\"start_local\":\"2026-10-22T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"manual treadmill\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}},{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
         }
       ],
       "structuredContent": {
         "activities": [
           {
-            "avg_hr_bpm": 150,
+            "id": 9,
             "date": "2026-10-22",
+            "start_local": "2026-10-22T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "manual treadmill",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": false,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": false,
-            "id": 9,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "manual treadmill",
-            "sport": "running",
-            "start_local": "2026-10-22T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           },
           {
-            "avg_hr_bpm": 150,
+            "id": 5,
             "date": "2026-10-21",
+            "start_local": "2026-10-21T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "intervals",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": true,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": true,
-            "id": 5,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "intervals",
-            "sport": "running",
-            "start_local": "2026-10-21T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           }
         ],
         "next_cursor": "MjAyNi0xMC0yMXw1"
@@ -1698,32 +1738,36 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"activities\":[{\"avg_hr_bpm\":150,\"date\":\"2026-10-20\",\"distance_km\":40.12,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":2,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"ride\",\"sport\":\"cycling\",\"start_local\":\"2026-10-20T07:15:00+02:00\"}],\"next_cursor\":null}"
+          "text": "{\"activities\":[{\"id\":2,\"date\":\"2026-10-20\",\"start_local\":\"2026-10-20T07:15:00+02:00\",\"sport\":\"cycling\",\"name_untrusted\":\"ride\",\"distance_km\":40.12,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}],\"next_cursor\":null}"
         }
       ],
       "structuredContent": {
         "activities": [
           {
-            "avg_hr_bpm": 150,
+            "id": 2,
             "date": "2026-10-20",
+            "start_local": "2026-10-20T07:15:00+02:00",
+            "sport": "cycling",
+            "name_untrusted": "ride",
             "distance_km": 40.12,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": false,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": false,
-            "id": 2,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "ride",
-            "sport": "cycling",
-            "start_local": "2026-10-20T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           }
         ],
         "next_cursor": null
@@ -1733,7 +1777,7 @@
       "content": [
         {
           "type": "text",
-          "text": "response too large: 329 KiB \u003e 256 KiB; narrow from/to"
+          "text": "response too large: 333 KiB \u003e 256 KiB; narrow from/to"
         }
       ],
       "isError": true
@@ -2321,30 +2365,34 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
-        },
-        "has_fit": true,
-        "id": 5,
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+          "vo2max": null,
+          "tss": null
+        }
       },
       "resultType": "complete"
     },
@@ -2358,62 +2406,66 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"laps\":[{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":0,\"max_hr_bpm\":150,\"start_offset_s\":0},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":1,\"max_hr_bpm\":150,\"start_offset_s\":40},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":2,\"max_hr_bpm\":150,\"start_offset_s\":80}],\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null},\"laps\":[{\"index\":0,\"start_offset_s\":0,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":1,\"start_offset_s\":40,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":2,\"start_offset_s\":80,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5}]}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
+          "vo2max": null,
+          "tss": null
         },
-        "has_fit": true,
-        "id": 5,
         "laps": [
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 0,
+            "start_offset_s": 0,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 0
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 1,
+            "start_offset_s": 40,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 40
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 2,
+            "start_offset_s": 80,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 80
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           }
-        ],
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+        ]
       },
       "resultType": "complete"
     },
@@ -2443,30 +2495,34 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":null,\"date\":\"2026-10-14\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":3,\"max_hr_bpm\":null,\"moving_time_s\":2950,\"name_untrusted\":\"no strap\",\"sport\":\"running\",\"start_local\":\"2026-10-14T07:15:00+02:00\"}"
+          "text": "{\"id\":3,\"date\":\"2026-10-14\",\"start_local\":\"2026-10-14T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"no strap\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":null,\"max_hr_bpm\":null,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": null,
+        "id": 3,
         "date": "2026-10-14",
+        "start_local": "2026-10-14T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "no strap",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": null,
+        "max_hr_bpm": null,
+        "has_fit": false,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
-        },
-        "has_fit": false,
-        "id": 3,
-        "max_hr_bpm": null,
-        "moving_time_s": 2950,
-        "name_untrusted": "no strap",
-        "sport": "running",
-        "start_local": "2026-10-14T07:15:00+02:00"
+          "vo2max": null,
+          "tss": null
+        }
       },
       "resultType": "complete"
     },
@@ -2480,904 +2536,908 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"laps\":[{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":0,\"max_hr_bpm\":150,\"start_offset_s\":0},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":1,\"max_hr_bpm\":150,\"start_offset_s\":40},{\"avg_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"distance_km\":0.12,\"duration_s\":40,\"elevation_gain_m\":5,\"index\":2,\"max_hr_bpm\":150,\"start_offset_s\":80}],\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"series\":[{\"altitude_m\":200,\"distance_km\":0,\"hr_bpm\":150,\"offset_s\":0,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0,\"hr_bpm\":150,\"offset_s\":1,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.01,\"hr_bpm\":150,\"offset_s\":2,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.01,\"hr_bpm\":150,\"offset_s\":3,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.01,\"hr_bpm\":150,\"offset_s\":4,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":5,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":6,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":7,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.02,\"hr_bpm\":150,\"offset_s\":8,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.03,\"hr_bpm\":150,\"offset_s\":9,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.03,\"hr_bpm\":150,\"offset_s\":10,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.03,\"hr_bpm\":150,\"offset_s\":11,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.04,\"hr_bpm\":150,\"offset_s\":12,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.04,\"hr_bpm\":150,\"offset_s\":13,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.04,\"hr_bpm\":150,\"offset_s\":14,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":15,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":16,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":17,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.05,\"hr_bpm\":150,\"offset_s\":18,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.06,\"hr_bpm\":150,\"offset_s\":19,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.06,\"hr_bpm\":150,\"offset_s\":20,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.06,\"hr_bpm\":150,\"offset_s\":21,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.07,\"hr_bpm\":150,\"offset_s\":22,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.07,\"hr_bpm\":150,\"offset_s\":23,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.07,\"hr_bpm\":150,\"offset_s\":24,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":25,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":26,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":27,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.08,\"hr_bpm\":150,\"offset_s\":28,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.09,\"hr_bpm\":150,\"offset_s\":29,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.09,\"hr_bpm\":150,\"offset_s\":30,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.09,\"hr_bpm\":150,\"offset_s\":31,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.1,\"hr_bpm\":150,\"offset_s\":32,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.1,\"hr_bpm\":150,\"offset_s\":33,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.1,\"hr_bpm\":150,\"offset_s\":34,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":35,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":36,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":37,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.11,\"hr_bpm\":150,\"offset_s\":38,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.12,\"hr_bpm\":150,\"offset_s\":39,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.12,\"hr_bpm\":150,\"offset_s\":40,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.12,\"hr_bpm\":150,\"offset_s\":41,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.13,\"hr_bpm\":150,\"offset_s\":42,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.13,\"hr_bpm\":150,\"offset_s\":43,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.13,\"hr_bpm\":150,\"offset_s\":44,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":45,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":46,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":47,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.14,\"hr_bpm\":150,\"offset_s\":48,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.15,\"hr_bpm\":150,\"offset_s\":49,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.15,\"hr_bpm\":150,\"offset_s\":50,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.15,\"hr_bpm\":150,\"offset_s\":51,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.16,\"hr_bpm\":150,\"offset_s\":52,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.16,\"hr_bpm\":150,\"offset_s\":53,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.16,\"hr_bpm\":150,\"offset_s\":54,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":55,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":56,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":57,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.17,\"hr_bpm\":150,\"offset_s\":58,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.18,\"hr_bpm\":150,\"offset_s\":59,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.18,\"hr_bpm\":150,\"offset_s\":60,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.18,\"hr_bpm\":150,\"offset_s\":61,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.19,\"hr_bpm\":150,\"offset_s\":62,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.19,\"hr_bpm\":150,\"offset_s\":63,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.19,\"hr_bpm\":150,\"offset_s\":64,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":65,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":66,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":67,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.2,\"hr_bpm\":150,\"offset_s\":68,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.21,\"hr_bpm\":150,\"offset_s\":69,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.21,\"hr_bpm\":150,\"offset_s\":70,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.21,\"hr_bpm\":150,\"offset_s\":71,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.22,\"hr_bpm\":150,\"offset_s\":72,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.22,\"hr_bpm\":150,\"offset_s\":73,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.22,\"hr_bpm\":150,\"offset_s\":74,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":75,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":76,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":77,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.23,\"hr_bpm\":150,\"offset_s\":78,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.24,\"hr_bpm\":150,\"offset_s\":79,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.24,\"hr_bpm\":150,\"offset_s\":80,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.24,\"hr_bpm\":150,\"offset_s\":81,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.25,\"hr_bpm\":150,\"offset_s\":82,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.25,\"hr_bpm\":150,\"offset_s\":83,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.25,\"hr_bpm\":150,\"offset_s\":84,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":85,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":86,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":87,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.26,\"hr_bpm\":150,\"offset_s\":88,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.27,\"hr_bpm\":150,\"offset_s\":89,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.27,\"hr_bpm\":150,\"offset_s\":90,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.27,\"hr_bpm\":150,\"offset_s\":91,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":92,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":93,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":94,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.28,\"hr_bpm\":150,\"offset_s\":95,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.29,\"hr_bpm\":150,\"offset_s\":96,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.29,\"hr_bpm\":150,\"offset_s\":97,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.29,\"hr_bpm\":150,\"offset_s\":98,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.3,\"hr_bpm\":150,\"offset_s\":99,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.3,\"hr_bpm\":150,\"offset_s\":100,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.3,\"hr_bpm\":150,\"offset_s\":101,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.31,\"hr_bpm\":150,\"offset_s\":102,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.31,\"hr_bpm\":150,\"offset_s\":103,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.31,\"hr_bpm\":150,\"offset_s\":104,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":105,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":106,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":107,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.32,\"hr_bpm\":150,\"offset_s\":108,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.33,\"hr_bpm\":150,\"offset_s\":109,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.33,\"hr_bpm\":150,\"offset_s\":110,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.33,\"hr_bpm\":150,\"offset_s\":111,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.34,\"hr_bpm\":150,\"offset_s\":112,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.34,\"hr_bpm\":150,\"offset_s\":113,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.34,\"hr_bpm\":150,\"offset_s\":114,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":115,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":116,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":117,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.35,\"hr_bpm\":150,\"offset_s\":118,\"pace_s_per_km\":333.33},{\"altitude_m\":200,\"distance_km\":0.36,\"hr_bpm\":150,\"offset_s\":119,\"pace_s_per_km\":333.33}],\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null},\"laps\":[{\"index\":0,\"start_offset_s\":0,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":1,\"start_offset_s\":40,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5},{\"index\":2,\"start_offset_s\":80,\"duration_s\":40,\"distance_km\":0.12,\"avg_hr_bpm\":150,\"max_hr_bpm\":150,\"avg_pace_s_per_km\":333.33,\"elevation_gain_m\":5}],\"series\":[{\"offset_s\":0,\"distance_km\":0,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":1,\"distance_km\":0,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":2,\"distance_km\":0.01,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":3,\"distance_km\":0.01,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":4,\"distance_km\":0.01,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":5,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":6,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":7,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":8,\"distance_km\":0.02,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":9,\"distance_km\":0.03,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":10,\"distance_km\":0.03,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":11,\"distance_km\":0.03,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":12,\"distance_km\":0.04,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":13,\"distance_km\":0.04,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":14,\"distance_km\":0.04,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":15,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":16,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":17,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":18,\"distance_km\":0.05,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":19,\"distance_km\":0.06,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":20,\"distance_km\":0.06,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":21,\"distance_km\":0.06,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":22,\"distance_km\":0.07,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":23,\"distance_km\":0.07,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":24,\"distance_km\":0.07,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":25,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":26,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":27,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":28,\"distance_km\":0.08,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":29,\"distance_km\":0.09,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":30,\"distance_km\":0.09,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":31,\"distance_km\":0.09,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":32,\"distance_km\":0.1,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":33,\"distance_km\":0.1,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":34,\"distance_km\":0.1,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":35,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":36,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":37,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":38,\"distance_km\":0.11,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":39,\"distance_km\":0.12,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":40,\"distance_km\":0.12,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":41,\"distance_km\":0.12,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":42,\"distance_km\":0.13,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":43,\"distance_km\":0.13,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":44,\"distance_km\":0.13,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":45,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":46,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":47,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":48,\"distance_km\":0.14,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":49,\"distance_km\":0.15,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":50,\"distance_km\":0.15,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":51,\"distance_km\":0.15,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":52,\"distance_km\":0.16,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":53,\"distance_km\":0.16,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":54,\"distance_km\":0.16,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":55,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":56,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":57,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":58,\"distance_km\":0.17,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":59,\"distance_km\":0.18,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":60,\"distance_km\":0.18,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":61,\"distance_km\":0.18,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":62,\"distance_km\":0.19,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":63,\"distance_km\":0.19,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":64,\"distance_km\":0.19,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":65,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":66,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":67,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":68,\"distance_km\":0.2,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":69,\"distance_km\":0.21,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":70,\"distance_km\":0.21,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":71,\"distance_km\":0.21,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":72,\"distance_km\":0.22,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":73,\"distance_km\":0.22,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":74,\"distance_km\":0.22,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":75,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":76,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":77,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":78,\"distance_km\":0.23,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":79,\"distance_km\":0.24,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":80,\"distance_km\":0.24,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":81,\"distance_km\":0.24,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":82,\"distance_km\":0.25,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":83,\"distance_km\":0.25,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":84,\"distance_km\":0.25,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":85,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":86,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":87,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":88,\"distance_km\":0.26,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":89,\"distance_km\":0.27,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":90,\"distance_km\":0.27,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":91,\"distance_km\":0.27,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":92,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":93,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":94,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":95,\"distance_km\":0.28,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":96,\"distance_km\":0.29,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":97,\"distance_km\":0.29,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":98,\"distance_km\":0.29,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":99,\"distance_km\":0.3,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":100,\"distance_km\":0.3,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":101,\"distance_km\":0.3,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":102,\"distance_km\":0.31,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":103,\"distance_km\":0.31,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":104,\"distance_km\":0.31,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":105,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":106,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":107,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":108,\"distance_km\":0.32,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":109,\"distance_km\":0.33,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":110,\"distance_km\":0.33,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":111,\"distance_km\":0.33,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":112,\"distance_km\":0.34,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":113,\"distance_km\":0.34,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":114,\"distance_km\":0.34,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":115,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":116,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":117,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":118,\"distance_km\":0.35,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200},{\"offset_s\":119,\"distance_km\":0.36,\"hr_bpm\":150,\"pace_s_per_km\":333.33,\"altitude_m\":200}]}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
+          "vo2max": null,
+          "tss": null
         },
-        "has_fit": true,
-        "id": 5,
         "laps": [
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 0,
+            "start_offset_s": 0,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 0
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 1,
+            "start_offset_s": 40,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 40
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           },
           {
-            "avg_hr_bpm": 150,
-            "avg_pace_s_per_km": 333.33,
-            "distance_km": 0.12,
-            "duration_s": 40,
-            "elevation_gain_m": 5,
             "index": 2,
+            "start_offset_s": 80,
+            "duration_s": 40,
+            "distance_km": 0.12,
+            "avg_hr_bpm": 150,
             "max_hr_bpm": 150,
-            "start_offset_s": 80
+            "avg_pace_s_per_km": 333.33,
+            "elevation_gain_m": 5
           }
         ],
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
         "series": [
           {
-            "altitude_m": 200,
-            "distance_km": 0,
-            "hr_bpm": 150,
             "offset_s": 0,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 1,
-            "pace_s_per_km": 333.33
+            "distance_km": 0,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.01,
-            "hr_bpm": 150,
             "offset_s": 2,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.01,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 3,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.01,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 4,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.01,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.02,
-            "hr_bpm": 150,
             "offset_s": 5,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.02,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 6,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.02,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 7,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.02,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 8,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.02,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.03,
-            "hr_bpm": 150,
             "offset_s": 9,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.03,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 10,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.03,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 11,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.03,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.04,
-            "hr_bpm": 150,
             "offset_s": 12,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.04,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 13,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.04,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 14,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.04,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.05,
-            "hr_bpm": 150,
             "offset_s": 15,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.05,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 16,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.05,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 17,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.05,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 18,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.05,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.06,
-            "hr_bpm": 150,
             "offset_s": 19,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.06,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 20,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.06,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 21,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.06,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.07,
-            "hr_bpm": 150,
             "offset_s": 22,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.07,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 23,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.07,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 24,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.07,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.08,
-            "hr_bpm": 150,
             "offset_s": 25,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.08,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 26,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.08,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 27,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.08,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 28,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.08,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.09,
-            "hr_bpm": 150,
             "offset_s": 29,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.09,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 30,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.09,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 31,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.09,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.1,
-            "hr_bpm": 150,
             "offset_s": 32,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.1,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 33,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.1,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 34,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.1,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.11,
-            "hr_bpm": 150,
             "offset_s": 35,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.11,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 36,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.11,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 37,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.11,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 38,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.11,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.12,
-            "hr_bpm": 150,
             "offset_s": 39,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.12,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 40,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.12,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 41,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.12,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.13,
-            "hr_bpm": 150,
             "offset_s": 42,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.13,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 43,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.13,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 44,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.13,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.14,
-            "hr_bpm": 150,
             "offset_s": 45,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.14,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 46,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.14,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 47,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.14,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 48,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.14,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.15,
-            "hr_bpm": 150,
             "offset_s": 49,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.15,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 50,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.15,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 51,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.15,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.16,
-            "hr_bpm": 150,
             "offset_s": 52,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.16,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 53,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.16,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 54,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.16,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.17,
-            "hr_bpm": 150,
             "offset_s": 55,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.17,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 56,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.17,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 57,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.17,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 58,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.17,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.18,
-            "hr_bpm": 150,
             "offset_s": 59,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.18,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 60,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.18,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 61,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.18,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.19,
-            "hr_bpm": 150,
             "offset_s": 62,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.19,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 63,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.19,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 64,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.19,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.2,
-            "hr_bpm": 150,
             "offset_s": 65,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.2,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 66,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.2,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 67,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.2,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 68,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.2,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.21,
-            "hr_bpm": 150,
             "offset_s": 69,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.21,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 70,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.21,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 71,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.21,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.22,
-            "hr_bpm": 150,
             "offset_s": 72,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.22,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 73,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.22,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 74,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.22,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.23,
-            "hr_bpm": 150,
             "offset_s": 75,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.23,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 76,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.23,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 77,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.23,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 78,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.23,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.24,
-            "hr_bpm": 150,
             "offset_s": 79,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.24,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 80,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.24,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 81,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.24,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.25,
-            "hr_bpm": 150,
             "offset_s": 82,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.25,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 83,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.25,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 84,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.25,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.26,
-            "hr_bpm": 150,
             "offset_s": 85,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.26,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 86,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.26,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 87,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.26,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 88,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.26,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.27,
-            "hr_bpm": 150,
             "offset_s": 89,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.27,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 90,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.27,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 91,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.27,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.28,
-            "hr_bpm": 150,
             "offset_s": 92,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.28,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 93,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.28,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 94,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.28,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 95,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.28,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.29,
-            "hr_bpm": 150,
             "offset_s": 96,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.29,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 97,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.29,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 98,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.29,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.3,
-            "hr_bpm": 150,
             "offset_s": 99,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.3,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 100,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.3,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 101,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.3,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.31,
-            "hr_bpm": 150,
             "offset_s": 102,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.31,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 103,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.31,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 104,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.31,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.32,
-            "hr_bpm": 150,
             "offset_s": 105,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.32,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 106,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.32,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 107,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.32,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 108,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.32,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.33,
-            "hr_bpm": 150,
             "offset_s": 109,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.33,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 110,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.33,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 111,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.33,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.34,
-            "hr_bpm": 150,
             "offset_s": 112,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.34,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 113,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.34,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 114,
-            "pace_s_per_km": 333.33
+            "distance_km": 0.34,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
-            "distance_km": 0.35,
-            "hr_bpm": 150,
             "offset_s": 115,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.35,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 116,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.35,
             "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
             "offset_s": 117,
-            "pace_s_per_km": 333.33
-          },
-          {
-            "altitude_m": 200,
             "distance_km": 0.35,
             "hr_bpm": 150,
-            "offset_s": 118,
-            "pace_s_per_km": 333.33
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           },
           {
-            "altitude_m": 200,
+            "offset_s": 118,
+            "distance_km": 0.35,
+            "hr_bpm": 150,
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
+          },
+          {
+            "offset_s": 119,
             "distance_km": 0.36,
             "hr_bpm": 150,
-            "offset_s": 119,
-            "pace_s_per_km": 333.33
+            "pace_s_per_km": 333.33,
+            "altitude_m": 200
           }
-        ],
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+        ]
       },
       "resultType": "complete"
     },
@@ -3391,32 +3451,36 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-22\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":9,\"laps\":[],\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"manual treadmill\",\"series\":[],\"sport\":\"running\",\"start_local\":\"2026-10-22T07:15:00+02:00\"}"
+          "text": "{\"id\":9,\"date\":\"2026-10-22\",\"start_local\":\"2026-10-22T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"manual treadmill\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null},\"laps\":[],\"series\":[]}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 9,
         "date": "2026-10-22",
+        "start_local": "2026-10-22T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "manual treadmill",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": false,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
+          "vo2max": null,
+          "tss": null
         },
-        "has_fit": false,
-        "id": 9,
         "laps": [],
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "manual treadmill",
-        "series": [],
-        "sport": "running",
-        "start_local": "2026-10-22T07:15:00+02:00"
+        "series": []
       },
       "resultType": "complete"
     },
@@ -3430,30 +3494,34 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}"
+          "text": "{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}"
         }
       ],
       "structuredContent": {
-        "avg_hr_bpm": 150,
+        "id": 5,
         "date": "2026-10-21",
+        "start_local": "2026-10-21T07:15:00+02:00",
+        "sport": "running",
+        "name_untrusted": "intervals",
         "distance_km": 10,
         "duration_s": 3000,
+        "moving_time_s": 2950,
         "elevation_gain_m": 50,
         "elevation_loss_m": 48,
+        "avg_hr_bpm": 150,
+        "max_hr_bpm": 170,
+        "has_fit": true,
+        "perceived": {
+          "feel_pct": null,
+          "rpe": null
+        },
         "garmin_derived": {
+          "training_load": null,
           "aerobic_te": null,
           "anaerobic_te": null,
-          "training_load": null,
-          "tss": null,
-          "vo2max": null
-        },
-        "has_fit": true,
-        "id": 5,
-        "max_hr_bpm": 170,
-        "moving_time_s": 2950,
-        "name_untrusted": "intervals",
-        "sport": "running",
-        "start_local": "2026-10-21T07:15:00+02:00"
+          "vo2max": null,
+          "tss": null
+        }
       },
       "resultType": "complete"
     },
@@ -4001,54 +4069,62 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"activities\":[{\"avg_hr_bpm\":150,\"date\":\"2026-10-22\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":9,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"manual treadmill\",\"sport\":\"running\",\"start_local\":\"2026-10-22T07:15:00+02:00\"},{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
+          "text": "{\"activities\":[{\"id\":9,\"date\":\"2026-10-22\",\"start_local\":\"2026-10-22T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"manual treadmill\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}},{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
         }
       ],
       "structuredContent": {
         "activities": [
           {
-            "avg_hr_bpm": 150,
+            "id": 9,
             "date": "2026-10-22",
+            "start_local": "2026-10-22T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "manual treadmill",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": false,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": false,
-            "id": 9,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "manual treadmill",
-            "sport": "running",
-            "start_local": "2026-10-22T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           },
           {
-            "avg_hr_bpm": 150,
+            "id": 5,
             "date": "2026-10-21",
+            "start_local": "2026-10-21T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "intervals",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": true,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": true,
-            "id": 5,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "intervals",
-            "sport": "running",
-            "start_local": "2026-10-21T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           }
         ],
         "next_cursor": "MjAyNi0xMC0yMXw1"
@@ -4065,54 +4141,62 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"activities\":[{\"avg_hr_bpm\":150,\"date\":\"2026-10-22\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":9,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"manual treadmill\",\"sport\":\"running\",\"start_local\":\"2026-10-22T07:15:00+02:00\"},{\"avg_hr_bpm\":150,\"date\":\"2026-10-21\",\"distance_km\":10,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":true,\"id\":5,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"intervals\",\"sport\":\"running\",\"start_local\":\"2026-10-21T07:15:00+02:00\"}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
+          "text": "{\"activities\":[{\"id\":9,\"date\":\"2026-10-22\",\"start_local\":\"2026-10-22T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"manual treadmill\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}},{\"id\":5,\"date\":\"2026-10-21\",\"start_local\":\"2026-10-21T07:15:00+02:00\",\"sport\":\"running\",\"name_untrusted\":\"intervals\",\"distance_km\":10,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":true,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}],\"next_cursor\":\"MjAyNi0xMC0yMXw1\"}"
         }
       ],
       "structuredContent": {
         "activities": [
           {
-            "avg_hr_bpm": 150,
+            "id": 9,
             "date": "2026-10-22",
+            "start_local": "2026-10-22T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "manual treadmill",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": false,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": false,
-            "id": 9,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "manual treadmill",
-            "sport": "running",
-            "start_local": "2026-10-22T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           },
           {
-            "avg_hr_bpm": 150,
+            "id": 5,
             "date": "2026-10-21",
+            "start_local": "2026-10-21T07:15:00+02:00",
+            "sport": "running",
+            "name_untrusted": "intervals",
             "distance_km": 10,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": true,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": true,
-            "id": 5,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "intervals",
-            "sport": "running",
-            "start_local": "2026-10-21T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           }
         ],
         "next_cursor": "MjAyNi0xMC0yMXw1"
@@ -4129,32 +4213,36 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"activities\":[{\"avg_hr_bpm\":150,\"date\":\"2026-10-20\",\"distance_km\":40.12,\"duration_s\":3000,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"garmin_derived\":{\"aerobic_te\":null,\"anaerobic_te\":null,\"training_load\":null,\"tss\":null,\"vo2max\":null},\"has_fit\":false,\"id\":2,\"max_hr_bpm\":170,\"moving_time_s\":2950,\"name_untrusted\":\"ride\",\"sport\":\"cycling\",\"start_local\":\"2026-10-20T07:15:00+02:00\"}],\"next_cursor\":null}"
+          "text": "{\"activities\":[{\"id\":2,\"date\":\"2026-10-20\",\"start_local\":\"2026-10-20T07:15:00+02:00\",\"sport\":\"cycling\",\"name_untrusted\":\"ride\",\"distance_km\":40.12,\"duration_s\":3000,\"moving_time_s\":2950,\"elevation_gain_m\":50,\"elevation_loss_m\":48,\"avg_hr_bpm\":150,\"max_hr_bpm\":170,\"has_fit\":false,\"perceived\":{\"feel_pct\":null,\"rpe\":null},\"garmin_derived\":{\"training_load\":null,\"aerobic_te\":null,\"anaerobic_te\":null,\"vo2max\":null,\"tss\":null}}],\"next_cursor\":null}"
         }
       ],
       "structuredContent": {
         "activities": [
           {
-            "avg_hr_bpm": 150,
+            "id": 2,
             "date": "2026-10-20",
+            "start_local": "2026-10-20T07:15:00+02:00",
+            "sport": "cycling",
+            "name_untrusted": "ride",
             "distance_km": 40.12,
             "duration_s": 3000,
+            "moving_time_s": 2950,
             "elevation_gain_m": 50,
             "elevation_loss_m": 48,
+            "avg_hr_bpm": 150,
+            "max_hr_bpm": 170,
+            "has_fit": false,
+            "perceived": {
+              "feel_pct": null,
+              "rpe": null
+            },
             "garmin_derived": {
+              "training_load": null,
               "aerobic_te": null,
               "anaerobic_te": null,
-              "training_load": null,
-              "tss": null,
-              "vo2max": null
-            },
-            "has_fit": false,
-            "id": 2,
-            "max_hr_bpm": 170,
-            "moving_time_s": 2950,
-            "name_untrusted": "ride",
-            "sport": "cycling",
-            "start_local": "2026-10-20T07:15:00+02:00"
+              "vo2max": null,
+              "tss": null
+            }
           }
         ],
         "next_cursor": null
@@ -4171,7 +4259,7 @@
       "content": [
         {
           "type": "text",
-          "text": "response too large: 329 KiB \u003e 256 KiB; narrow from/to"
+          "text": "response too large: 333 KiB \u003e 256 KiB; narrow from/to"
         }
       ],
       "isError": true,
