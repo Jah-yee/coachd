@@ -198,7 +198,7 @@ Modelled on the FIT workout structure so encoding is lossless:
 |---|---|
 | Kind | warmup, active, recovery, rest, cooldown, repeat (with child steps and a count) |
 | Duration | time, distance, open (lap button), or heart rate above/below a value |
-| Target | none, heart-rate range (bpm), pace range, cadence range, or a free-text effort cue |
+| Target | none, heart-rate range (bpm), pace range, cadence range, power range (% of FTP, cycling only), or a free-text effort cue |
 | Notes | optional |
 
 The JSON Schema is defined once and used both as the MCP tool input schema and for server-side validation.
@@ -210,6 +210,7 @@ These are integrity checks, not coaching:
   - total duration 1 min–10 h;
   - pace 2:30–25:00 min/km;
   - heart rate 40–230 bpm;
+  - power 20–300 % of FTP, cycling only (`zwift-workouts.md`, 2026-10-25);
   - at most 100 steps after expanding repeats.
 - The date is today or up to 14 days ahead.
 - *Note (2026-10-23, builder decision pending owner confirmation):*
@@ -224,6 +225,7 @@ Warnings are returned to the agent and shown on the approval page.
 - **Above max HR:** a heart-rate target is above the highest HR recorded in 90 days.
 - **Stale data:** the last successful Garmin sync is more than 24 h old.
 - **Thin history:** less than 6 weeks of data.
+- **Not exportable to Zwift:** a cycling workout has a step without a time duration, so it cannot be a Zwift workout (`zwift-workouts.md`).
 
 Warnings are deterministic code, not LLM text. Final say rests with the runner and the agent. [owner]
 
@@ -247,7 +249,7 @@ propose ─▶ invalid (rejected, reason returned)
 - A proposal stores a hash of its content.
 - After `pending`, the content is immutable. Any change is a new proposal.
 - Every transition is written to the audit log with a timestamp and actor: the agent's client ID, the runner, or the system.
-- *Note (2026-10-23, builder decision pending owner confirmation):* with the watch app's delivery states (M3), the runner can withdraw a workout from `approved`, `delivering`, `delivery_failed` and `delivered`. Approving a replacement withdraws a replaced proposal in any of those states (a pending one is still superseded). Agents may propose a replacement for a proposal that is `pending` or in any of those states, and the same-day warning counts workouts in those states. The FIT download on the page works in all four: it moves `approved`, `delivering` and `delivery_failed` to `delivered` and serves a `delivered` workout again.
+- *Note (2026-10-23, builder decision pending owner confirmation):* with the watch app's delivery states (M3), the runner can withdraw a workout from `approved`, `delivering`, `delivery_failed` and `delivered`. Approving a replacement withdraws a replaced proposal in any of those states (a pending one is still superseded). Agents may propose a replacement for a proposal that is `pending` or in any of those states, and the same-day warning counts workouts in those states. The FIT download on the page works in all four: it moves `approved`, `delivering` and `delivery_failed` to `delivered` and serves a `delivered` workout again. The Zwift download (`.zwo`, cycling only, `zwift-workouts.md`) follows the same rules; the first download of either file delivers.
 
 ### Approval [owner: notification, then the runner approves; mechanism is a call]
 1. **Notification via ntfy** [call]:

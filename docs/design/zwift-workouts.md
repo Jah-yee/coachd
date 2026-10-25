@@ -81,7 +81,7 @@ approval page and the warning (§7) use that one answer. **[call]**
 
 **Exportable** when the sport is `cycling` and every leaf step has a `time` duration. Distance, open
 and heart-rate-bounded durations have no Zwift equivalent. The reason names the first such step in
-the same path style as validation errors, e.g. `steps[2].duration: Zwift needs a time duration`.
+the same path style as validation errors, e.g. `steps[2].duration: distance durations have no Zwift equivalent`.
 
 **Document**
 - `<workout_file>` with `<author>coachd</author>`, `<name>` (the workout name), `<description>` (the
@@ -141,8 +141,8 @@ the same path style as validation errors, e.g. `steps[2].duration: Zwift needs a
 ## 7. Warning
 
 A new deterministic warning on `propose_workout` for a cycling workout that is not exportable,
-e.g. code `zwift_not_exportable`, message `not exportable to Zwift: steps[2].duration: Zwift needs a
-time duration`. It never blocks and holds no advice, so the agent can re-propose with time
+code `zwift_not_exportable`, message `not exportable to Zwift: steps[2].duration: distance durations
+have no Zwift equivalent`. It never blocks and holds no advice, so the agent can re-propose with time
 durations if it wants Zwift. **[call]**
 
 ## 8. Docs
