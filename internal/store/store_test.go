@@ -171,12 +171,10 @@ func TestOpenUpgradesFrom0002(t *testing.T) {
 	if err != nil || a.DistanceM != 5000 || a.FITStatus != FITStored || a.FITPath != "fit/2026/5.fit" {
 		t.Fatalf("activity after upgrade = %+v, %v", a, err)
 	}
+	// 0011 resets the detail cache; it rebuilds from the stored FIT file.
 	del, raw, _, details := rawActivity(t, db, 5)
-	if del.Valid || string(raw) != `{"activityId":5}` || details != 1 {
-		t.Fatalf("after upgrade: deleted_at %v raw %q details %d, want NULL, kept, 1", del, raw, details)
-	}
-	if _, err := db.GetActivityDetail(ctx, 5); err != nil {
-		t.Fatalf("detail after upgrade: %v", err)
+	if del.Valid || string(raw) != `{"activityId":5}` || details != 0 {
+		t.Fatalf("after upgrade: deleted_at %v raw %q details %d, want NULL, kept, 0", del, raw, details)
 	}
 }
 

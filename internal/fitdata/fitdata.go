@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"strings"
 	"time"
 
 	"github.com/muktihari/fit/decoder"
@@ -35,17 +36,26 @@ type Point struct {
 	PaceSPerKm, AltitudeM *float64
 }
 
+// Activity is what Decode reads from an activity FIT file.
+type Activity struct {
+	Laps   []Lap
+	Points []Point
+	// Workout is set when the file records a structured workout: a workout
+	// message and at least one lap with a valid wkt_step_index.
+	Workout *Workout
+}
+
 // Decode reads an activity FIT file. Invalid sentinel values become nil.
 // Messages are streamed: only the fields used here are kept as they arrive,
 // so no decoded message outlives the decoder's callback.
-func Decode(r io.Reader) ([]Lap, []Point, error) {
+func Decode(r io.Reader) (Activity, error) {
 	// No FileId message means activity, as in filedef.NewActivity.
 	c := collector{fileType: typedef.FileActivity, points: []Point{}}
-	if _, err := decoder.New(r, decoder.WithMesgListener(&c), decoder.WithBroadcastOnly()).Decode(); err != nil {
-		return nil, nil, fmt.Errorf("fitdata: decode: %w", err)
+	if err := c.decode(r); err != nil {
+		return Activity{}, err
 	}
 	if c.fileType != typedef.FileActivity {
-		return nil, nil, fmt.Errorf("fitdata: not an activity FIT file (type %v)", c.fileType)
+		return Activity{}, fmt.Errorf("fitdata: not an activity FIT file (type %v)", c.fileType)
 	}
 
 	first := c.first
@@ -53,14 +63,35 @@ func Decode(r io.Reader) ([]Lap, []Point, error) {
 		first = c.sessionStart
 	}
 	laps := make([]Lap, 0, len(c.laps))
-	for i, l := range c.laps {
+	for i := range c.laps {
+		l := &c.laps[i]
 		l.Lap.Index = i
 		if !l.start.IsZero() && !first.IsZero() {
 			l.Lap.StartOffsetS = l.start.Sub(first).Seconds()
 		}
 		laps = append(laps, l.Lap)
 	}
-	return laps, c.points, nil
+	return Activity{Laps: laps, Points: c.points, Workout: c.workout()}, nil
+}
+
+// DecodeWorkout reads the steps of a FIT workout file, such as one coachd
+// encodes for the watch, in the form Decode gives an activity's steps.
+func DecodeWorkout(r io.Reader) ([]WorkoutStep, error) {
+	c := collector{fileType: typedef.FileActivity}
+	if err := c.decode(r); err != nil {
+		return nil, err
+	}
+	if c.fileType != typedef.FileWorkout {
+		return nil, fmt.Errorf("fitdata: not a workout FIT file (type %v)", c.fileType)
+	}
+	return c.steps, nil
+}
+
+func (c *collector) decode(r io.Reader) error {
+	if _, err := decoder.New(r, decoder.WithMesgListener(c), decoder.WithBroadcastOnly()).Decode(); err != nil {
+		return fmt.Errorf("fitdata: decode: %w", err)
+	}
+	return nil
 }
 
 // collector is a decoder.MesgListener keeping only the fields Decode needs.
@@ -71,12 +102,19 @@ type collector struct {
 	sessionStart time.Time // first session start, used when no record has a timestamp
 	points       []Point   // offsets from first: the first timestamped record sets it
 	laps         []pendingLap
+	hasWorkout   bool
+	wktName      string
+	steps        []WorkoutStep
 }
 
-// pendingLap is a lap whose StartOffsetS waits for the activity start.
+// pendingLap is a lap whose StartOffsetS waits for the activity start, with
+// the fields only executed steps use.
 type pendingLap struct {
 	Lap
-	start time.Time
+	start     time.Time
+	elapsedS  float64 // total elapsed time, pauses included; NaN when absent
+	stepIndex uint16  // wkt_step_index; 0xFFFF when absent
+	avgPowerW uint16  // 0xFFFF when absent
 }
 
 func (c *collector) OnMesg(m proto.Message) {
@@ -91,6 +129,12 @@ func (c *collector) OnMesg(m proto.Message) {
 		if c.sessionStart.IsZero() {
 			c.sessionStart = datetime.ToTime(value(&m, fieldnum.SessionStartTime).Uint32())
 		}
+	case mesgnum.Workout:
+		c.hasWorkout = true
+		// The decoder reuses the message's storage, so the string is copied.
+		c.wktName = strings.Clone(value(&m, fieldnum.WorkoutWktName).String())
+	case mesgnum.WorkoutStep:
+		c.step(&m)
 	}
 }
 
@@ -136,6 +180,9 @@ func (c *collector) lap(m *proto.Message) {
 	if a := value(m, fieldnum.LapTotalAscent).Uint16(); a != 0xFFFF {
 		l.ElevGainM = ptr(float64(a))
 	}
+	l.elapsedS = scaled(value(m, fieldnum.LapTotalElapsedTime).Uint32(), 1000, 0)
+	l.stepIndex = value(m, fieldnum.LapWktStepIndex).Uint16()
+	l.avgPowerW = value(m, fieldnum.LapAvgPower).Uint16()
 	c.laps = append(c.laps, l)
 }
 

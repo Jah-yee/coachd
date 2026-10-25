@@ -5,6 +5,7 @@ import (
 	"errors"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/stefiix92/coachd/internal/fitdata"
 )
@@ -131,5 +132,103 @@ func TestActivityDetailGoldenJSON(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, d) {
 		t.Fatalf("decoded golden row:\n got %+v\nwant %+v", got, d)
+	}
+}
+
+// The cached workout JSON shape is pinned like the laps and series.
+func TestActivityDetailWorkoutGoldenJSON(t *testing.T) {
+	db := openTest(t)
+	ctx := context.Background()
+	seedActivity(t, db, 9)
+	d := ActivityDetail{Laps: []fitdata.Lap{}, Series: []fitdata.Point{}, Workout: &fitdata.Workout{
+		NameUntrusted: "Easy",
+		Steps: []fitdata.WorkoutStep{{Index: 0, Intensity: 2, DurationType: 0, DurationValue: 600000, TargetType: 1,
+			TargetValue: 0, CustomLow: 210, CustomHigh: 238}},
+		Executed: []fitdata.StepRun{{StepIndex: 0, Iteration: 1, LapCount: 2, StartOffsetS: 0, DurationS: 600, DistanceKm: 1.8,
+			AvgHRBpm: ip(125), MaxHRBpm: ip(140), AvgPaceSPerKm: fp64(333.3), AvgPowerW: ip(205),
+			TargetTime: &fitdata.TargetTime{MeasuredS: 600, InS: 400, BelowS: 100, AboveS: 100}}, {StepIndex: 1, Iteration: 1}},
+		Fingerprint: "abc",
+	}}
+	const wkt = `{"NameUntrusted":"Easy","Steps":[{"Index":0,"Intensity":2,"DurationType":0,"DurationValue":600000,"TargetType":1,` +
+		`"TargetValue":0,"CustomLow":210,"CustomHigh":238}],"Executed":[{"StepIndex":0,"Iteration":1,"LapCount":2,` +
+		`"StartOffsetS":0,"DurationS":600,"DistanceKm":1.8,"AvgHRBpm":125,"MaxHRBpm":140,"AvgPaceSPerKm":333.3,"AvgPowerW":205,` +
+		`"TargetTime":{"MeasuredS":600,"InS":400,"BelowS":100,"AboveS":100}},{"StepIndex":1,"Iteration":1,"LapCount":0,` +
+		`"StartOffsetS":0,"DurationS":0,"DistanceKm":0,"AvgHRBpm":null,"MaxHRBpm":null,"AvgPaceSPerKm":null,"AvgPowerW":null,` +
+		`"TargetTime":null}],"Fingerprint":"abc"}`
+	if err := db.PutActivityDetail(ctx, 9, d); err != nil {
+		t.Fatal(err)
+	}
+	var got, fp string
+	if err := db.sql.QueryRow(`SELECT workout_json, workout_fp FROM activity_detail WHERE activity_id=9`).Scan(&got, &fp); err != nil {
+		t.Fatal(err)
+	}
+	if got != wkt || fp != "abc" {
+		t.Errorf("workout_json =\n%s\nwant\n%s\nworkout_fp = %q", got, wkt, fp)
+	}
+	back, err := db.GetActivityDetail(ctx, 9)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(back, d) {
+		t.Fatalf("round trip:\n got %+v\nwant %+v", back.Workout, d.Workout)
+	}
+}
+
+func TestActivityDetailWithoutWorkout(t *testing.T) {
+	db := openTest(t)
+	ctx := context.Background()
+	seedActivity(t, db, 9)
+	if err := db.PutActivityDetail(ctx, 9, ActivityDetail{}); err != nil {
+		t.Fatal(err)
+	}
+	var n int
+	if err := db.sql.QueryRow(`SELECT count(*) FROM activity_detail WHERE workout_json IS NULL AND workout_fp IS NULL`).Scan(&n); err != nil || n != 1 {
+		t.Fatalf("null workout columns: n=%d err=%v", n, err)
+	}
+	if d, err := db.GetActivityDetail(ctx, 9); err != nil || d.Workout != nil {
+		t.Fatalf("detail = %+v, %v", d, err)
+	}
+}
+
+func TestActivityWorkouts(t *testing.T) {
+	db := openTest(t)
+	ctx := context.Background()
+	put := func(id int64, date, fp string) {
+		t.Helper()
+		if err := db.UpsertActivity(ctx, mkAct(id, date, SportRunning, 5000), nil); err != nil {
+			t.Fatal(err)
+		}
+		d := ActivityDetail{}
+		if fp != "" {
+			d.Workout = &fitdata.Workout{Fingerprint: fp}
+		}
+		if err := db.PutActivityDetail(ctx, id, d); err != nil {
+			t.Fatal(err)
+		}
+	}
+	put(1, "2026-10-20", "a")
+	put(2, "2026-10-21", "")
+	put(3, "2026-10-22", "b")
+	put(4, "2026-10-20", "c")
+	put(5, "2026-10-25", "a")
+	if err := db.MarkActivityDeleted(ctx, 4, time.Now()); err != nil {
+		t.Fatal(err)
+	}
+	got, err := db.ActivityWorkouts(ctx, d("2026-10-20"), d("2026-10-22"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []ActivityWorkout{{1, d("2026-10-20"), "a"}, {3, d("2026-10-22"), "b"}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("got %+v, want %+v", got, want)
+	}
+}
+
+func TestNewActivityDetailDownsamples(t *testing.T) {
+	ps := make([]fitdata.Point, fitdata.MaxSeriesPoints*2)
+	w := &fitdata.Workout{Fingerprint: "x"}
+	d := NewActivityDetail(fitdata.Activity{Laps: []fitdata.Lap{{Index: 0}}, Points: ps, Workout: w})
+	if len(d.Series) != fitdata.MaxSeriesPoints || len(d.Laps) != 1 || d.Workout != w {
+		t.Fatalf("detail = %d points, %d laps, workout %v", len(d.Series), len(d.Laps), d.Workout)
 	}
 }
