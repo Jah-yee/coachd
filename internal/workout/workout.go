@@ -61,14 +61,16 @@ type Duration struct {
 
 // Target is the intensity target of a step.
 type Target struct {
-	Type           string `json:"type" jsonschema:"none|hr|pace|cadence|effort"`
+	Type           string `json:"type" jsonschema:"none|hr|pace|cadence|effort|power"`
 	LowBpm         *int   `json:"low_bpm,omitempty" jsonschema:"Only for type hr: lower bound in bpm"`
 	HighBpm        *int   `json:"high_bpm,omitempty" jsonschema:"Only for type hr: upper bound in bpm"`
 	LowPaceSPerKm  *int   `json:"low_pace_s_per_km,omitempty" jsonschema:"Only for type pace: faster bound in seconds per km (smaller number)"`
 	HighPaceSPerKm *int   `json:"high_pace_s_per_km,omitempty" jsonschema:"Only for type pace: slower bound in seconds per km (larger number)"`
-	LowSpm         *int   `json:"low_spm,omitempty" jsonschema:"Only for type cadence: lower bound in steps per minute"`
-	HighSpm        *int   `json:"high_spm,omitempty" jsonschema:"Only for type cadence: upper bound in steps per minute"`
+	LowSpm         *int   `json:"low_spm,omitempty" jsonschema:"Only for type cadence: lower bound in steps per minute (rpm for cycling)"`
+	HighSpm        *int   `json:"high_spm,omitempty" jsonschema:"Only for type cadence: upper bound in steps per minute (rpm for cycling)"`
 	Cue            string `json:"cue,omitempty" jsonschema:"Only for type effort: free-text effort cue, ≤100 chars"`
+	LowPctFTP      *int   `json:"low_pct_ftp,omitempty" jsonschema:"Only for type power (cycling only): lower bound in % of FTP"`
+	HighPctFTP     *int   `json:"high_pct_ftp,omitempty" jsonschema:"Only for type power (cycling only): upper bound in % of FTP"`
 }
 
 // Limits are the physical-plausibility bounds. The pace bounds are those of

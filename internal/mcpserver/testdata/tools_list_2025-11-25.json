@@ -1446,7 +1446,7 @@
                             "properties": {
                               "type": {
                                 "type": "string",
-                                "description": "none|hr|pace|cadence|effort"
+                                "description": "none|hr|pace|cadence|effort|power"
                               },
                               "low_bpm": {
                                 "type": [
@@ -1481,18 +1481,32 @@
                                   "null",
                                   "integer"
                                 ],
-                                "description": "Only for type cadence: lower bound in steps per minute"
+                                "description": "Only for type cadence: lower bound in steps per minute (rpm for cycling)"
                               },
                               "high_spm": {
                                 "type": [
                                   "null",
                                   "integer"
                                 ],
-                                "description": "Only for type cadence: upper bound in steps per minute"
+                                "description": "Only for type cadence: upper bound in steps per minute (rpm for cycling)"
                               },
                               "cue": {
                                 "type": "string",
                                 "description": "Only for type effort: free-text effort cue, ≤100 chars"
+                              },
+                              "low_pct_ftp": {
+                                "type": [
+                                  "null",
+                                  "integer"
+                                ],
+                                "description": "Only for type power (cycling only): lower bound in % of FTP"
+                              },
+                              "high_pct_ftp": {
+                                "type": [
+                                  "null",
+                                  "integer"
+                                ],
+                                "description": "Only for type power (cycling only): upper bound in % of FTP"
                               }
                             },
                             "description": "Optional intensity target",
@@ -1567,7 +1581,7 @@
                                   "properties": {
                                     "type": {
                                       "type": "string",
-                                      "description": "none|hr|pace|cadence|effort"
+                                      "description": "none|hr|pace|cadence|effort|power"
                                     },
                                     "low_bpm": {
                                       "type": [
@@ -1602,18 +1616,32 @@
                                         "null",
                                         "integer"
                                       ],
-                                      "description": "Only for type cadence: lower bound in steps per minute"
+                                      "description": "Only for type cadence: lower bound in steps per minute (rpm for cycling)"
                                     },
                                     "high_spm": {
                                       "type": [
                                         "null",
                                         "integer"
                                       ],
-                                      "description": "Only for type cadence: upper bound in steps per minute"
+                                      "description": "Only for type cadence: upper bound in steps per minute (rpm for cycling)"
                                     },
                                     "cue": {
                                       "type": "string",
                                       "description": "Only for type effort: free-text effort cue, ≤100 chars"
+                                    },
+                                    "low_pct_ftp": {
+                                      "type": [
+                                        "null",
+                                        "integer"
+                                      ],
+                                      "description": "Only for type power (cycling only): lower bound in % of FTP"
+                                    },
+                                    "high_pct_ftp": {
+                                      "type": [
+                                        "null",
+                                        "integer"
+                                      ],
+                                      "description": "Only for type power (cycling only): upper bound in % of FTP"
                                     }
                                   },
                                   "description": "Optional intensity target",
@@ -1688,7 +1716,7 @@
                                         "properties": {
                                           "type": {
                                             "type": "string",
-                                            "description": "none|hr|pace|cadence|effort"
+                                            "description": "none|hr|pace|cadence|effort|power"
                                           },
                                           "low_bpm": {
                                             "type": [
@@ -1723,18 +1751,32 @@
                                               "null",
                                               "integer"
                                             ],
-                                            "description": "Only for type cadence: lower bound in steps per minute"
+                                            "description": "Only for type cadence: lower bound in steps per minute (rpm for cycling)"
                                           },
                                           "high_spm": {
                                             "type": [
                                               "null",
                                               "integer"
                                             ],
-                                            "description": "Only for type cadence: upper bound in steps per minute"
+                                            "description": "Only for type cadence: upper bound in steps per minute (rpm for cycling)"
                                           },
                                           "cue": {
                                             "type": "string",
                                             "description": "Only for type effort: free-text effort cue, ≤100 chars"
+                                          },
+                                          "low_pct_ftp": {
+                                            "type": [
+                                              "null",
+                                              "integer"
+                                            ],
+                                            "description": "Only for type power (cycling only): lower bound in % of FTP"
+                                          },
+                                          "high_pct_ftp": {
+                                            "type": [
+                                              "null",
+                                              "integer"
+                                            ],
+                                            "description": "Only for type power (cycling only): upper bound in % of FTP"
                                           }
                                         },
                                         "description": "Optional intensity target",
@@ -1892,7 +1934,7 @@
                       "properties": {
                         "type": {
                           "type": "string",
-                          "description": "none|hr|pace|cadence|effort"
+                          "description": "none|hr|pace|cadence|effort|power"
                         },
                         "low_bpm": {
                           "type": [
@@ -1927,18 +1969,32 @@
                             "null",
                             "integer"
                           ],
-                          "description": "Only for type cadence: lower bound in steps per minute"
+                          "description": "Only for type cadence: lower bound in steps per minute (rpm for cycling)"
                         },
                         "high_spm": {
                           "type": [
                             "null",
                             "integer"
                           ],
-                          "description": "Only for type cadence: upper bound in steps per minute"
+                          "description": "Only for type cadence: upper bound in steps per minute (rpm for cycling)"
                         },
                         "cue": {
                           "type": "string",
                           "description": "Only for type effort: free-text effort cue, ≤100 chars"
+                        },
+                        "low_pct_ftp": {
+                          "type": [
+                            "null",
+                            "integer"
+                          ],
+                          "description": "Only for type power (cycling only): lower bound in % of FTP"
+                        },
+                        "high_pct_ftp": {
+                          "type": [
+                            "null",
+                            "integer"
+                          ],
+                          "description": "Only for type power (cycling only): upper bound in % of FTP"
                         }
                       },
                       "description": "Optional intensity target",
@@ -2013,7 +2069,7 @@
                             "properties": {
                               "type": {
                                 "type": "string",
-                                "description": "none|hr|pace|cadence|effort"
+                                "description": "none|hr|pace|cadence|effort|power"
                               },
                               "low_bpm": {
                                 "type": [
@@ -2048,18 +2104,32 @@
                                   "null",
                                   "integer"
                                 ],
-                                "description": "Only for type cadence: lower bound in steps per minute"
+                                "description": "Only for type cadence: lower bound in steps per minute (rpm for cycling)"
                               },
                               "high_spm": {
                                 "type": [
                                   "null",
                                   "integer"
                                 ],
-                                "description": "Only for type cadence: upper bound in steps per minute"
+                                "description": "Only for type cadence: upper bound in steps per minute (rpm for cycling)"
                               },
                               "cue": {
                                 "type": "string",
                                 "description": "Only for type effort: free-text effort cue, ≤100 chars"
+                              },
+                              "low_pct_ftp": {
+                                "type": [
+                                  "null",
+                                  "integer"
+                                ],
+                                "description": "Only for type power (cycling only): lower bound in % of FTP"
+                              },
+                              "high_pct_ftp": {
+                                "type": [
+                                  "null",
+                                  "integer"
+                                ],
+                                "description": "Only for type power (cycling only): upper bound in % of FTP"
                               }
                             },
                             "description": "Optional intensity target",
@@ -2134,7 +2204,7 @@
                                   "properties": {
                                     "type": {
                                       "type": "string",
-                                      "description": "none|hr|pace|cadence|effort"
+                                      "description": "none|hr|pace|cadence|effort|power"
                                     },
                                     "low_bpm": {
                                       "type": [
@@ -2169,18 +2239,32 @@
                                         "null",
                                         "integer"
                                       ],
-                                      "description": "Only for type cadence: lower bound in steps per minute"
+                                      "description": "Only for type cadence: lower bound in steps per minute (rpm for cycling)"
                                     },
                                     "high_spm": {
                                       "type": [
                                         "null",
                                         "integer"
                                       ],
-                                      "description": "Only for type cadence: upper bound in steps per minute"
+                                      "description": "Only for type cadence: upper bound in steps per minute (rpm for cycling)"
                                     },
                                     "cue": {
                                       "type": "string",
                                       "description": "Only for type effort: free-text effort cue, ≤100 chars"
+                                    },
+                                    "low_pct_ftp": {
+                                      "type": [
+                                        "null",
+                                        "integer"
+                                      ],
+                                      "description": "Only for type power (cycling only): lower bound in % of FTP"
+                                    },
+                                    "high_pct_ftp": {
+                                      "type": [
+                                        "null",
+                                        "integer"
+                                      ],
+                                      "description": "Only for type power (cycling only): upper bound in % of FTP"
                                     }
                                   },
                                   "description": "Optional intensity target",
