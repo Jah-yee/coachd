@@ -81,7 +81,10 @@ type proposalPage struct {
 	DeliveryNote                 string // coachd's own status line for the delivery states
 	SignIn                       string // what signing in would offer
 	WatchHint                    bool
+	OthersWaiting                int    // pending: how many other proposals are pending
 	Error                        string // a conflict to report
+
+	intact, decoded bool // the stored bytes match the hash; they decode
 }
 
 // replacedView is the proposal a replacement replaces, shown beside it.
@@ -127,74 +130,33 @@ func storedWorkout(p store.Proposal) (workout.Workout, string, error) {
 	return w, workout.ContentHash(p.ContentJSON), err
 }
 
-// linkTo links a span to the trace that proposed p, when one was stored.
-func linkTo(p store.Proposal) []trace.SpanStartOption {
+// traceLink is the link to the trace that proposed p, when one was stored.
+func traceLink(p store.Proposal) (trace.Link, bool) {
 	tid, terr := trace.TraceIDFromHex(p.TraceID)
 	sid, serr := trace.SpanIDFromHex(p.SpanID)
 	if terr != nil || serr != nil {
-		return nil
+		return trace.Link{}, false
 	}
-	sc := trace.NewSpanContext(trace.SpanContextConfig{TraceID: tid, SpanID: sid, Remote: true})
-	return []trace.SpanStartOption{trace.WithLinks(trace.Link{SpanContext: sc})}
+	return trace.Link{SpanContext: trace.NewSpanContext(trace.SpanContextConfig{TraceID: tid, SpanID: sid, Remote: true})}, true
+}
+
+// linkTo links a span to the trace that proposed p, when one was stored.
+func linkTo(p store.Proposal) []trace.SpanStartOption {
+	if l, ok := traceLink(p); ok {
+		return []trace.SpanStartOption{trace.WithLinks(l)}
+	}
+	return nil
 }
 
 // proposalView builds p's page. A pending, intact proposal dated today or
 // later gets a fresh approval ceremony bound to its ID and the hash of the
 // stored bytes.
 func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bool) (proposalPage, error) {
-	v := proposalPage{ID: p.ID, Name: p.Name, Day: longDay(p.Date), Sport: strings.ReplaceAll(string(p.Sport), "_", " "),
-		Status: string(p.Status), Rationale: p.Rationale}
-	w, hash, err := storedWorkout(p)
-	intact, decoded := hash == p.ContentHash, err == nil
-	switch {
-	case err == nil:
-		v.Lines, v.Notes = workout.Describe(w), w.Notes
-	case intact: // tampered content may not decode; intact content must
-		return v, fmt.Errorf("web: proposal %s content: %w", p.ID, err)
-	}
-	var warnings []struct {
-		Message string `json:"message"`
-	}
-	if len(p.WarningsJSON) > 0 {
-		if err := json.Unmarshal(p.WarningsJSON, &warnings); err != nil {
-			return v, fmt.Errorf("web: proposal %s warnings: %w", p.ID, err)
-		}
-	}
-	for _, x := range warnings {
-		v.Warnings = append(v.Warnings, x.Message)
-	}
-	if p.Replaces != nil {
-		old, err := s.d.DB.GetProposal(ctx, *p.Replaces)
-		switch {
-		case errors.Is(err, store.ErrNotFound):
-		case err != nil:
-			return v, err
-		default:
-			r := &replacedView{ID: old.ID, Name: old.Name, Day: longDay(old.Date), Status: string(old.Status),
-				WatchHint: old.Status == store.ProposalWithdrawn}
-			if ow, _, err := storedWorkout(old); err == nil {
-				r.Lines = workout.Describe(ow)
-			}
-			v.Replaces = r
-		}
-	}
-	repl, err := s.d.DB.ReplacementsOf(ctx, p.ID)
+	v, w, err := s.proposalDetail(ctx, p)
 	if err != nil {
 		return v, err
 	}
-	if v.ReplacedBy, err = proposalRows(repl); err != nil {
-		return v, err
-	}
-	same, err := s.d.DB.ListProposals(ctx, p.Date, p.Date, []store.ProposalStatus{store.ProposalApproved, store.ProposalDelivering,
-		store.ProposalDeliveryFailed, store.ProposalDelivered})
-	if err != nil {
-		return v, err
-	}
-	same = slices.DeleteFunc(same, func(o store.Proposal) bool { return o.ID == p.ID })
-	if v.SameDay, err = proposalRows(same); err != nil {
-		return v, err
-	}
-
+	intact, decoded := v.intact, v.decoded
 	now := s.d.Now()
 	switch p.Status {
 	case store.ProposalPending:
@@ -204,12 +166,17 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 			v.SignIn = "Sign in to decline"
 		}
 		v.DatePassed = p.Date.Before(civil.Of(now, s.d.TZ))
+		pending, err := s.d.DB.ListProposals(ctx, firstDate, lastDate, []store.ProposalStatus{store.ProposalPending})
+		if err != nil {
+			return v, err
+		}
+		v.OthersWaiting = len(pending) - 1
 		switch {
 		case !intact:
 			v.Integrity = msgHashApprove
 		case v.DatePassed:
 		default:
-			opts, token, err := s.d.Passkeys.BeginAssert(ctx, passkey.PurposeApprove, p.ID, hash, approveExpires(now, p.Date, s.d.TZ))
+			opts, token, err := s.d.Passkeys.BeginAssert(ctx, passkey.PurposeApprove, p.ID, p.ContentHash, approveExpires(now, p.Date, s.d.TZ))
 			switch {
 			case errors.Is(err, passkey.ErrNoPasskeys):
 				v.NoPasskey = true
@@ -248,6 +215,65 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 		v.WatchHint = true
 	}
 	return v, nil
+}
+
+// proposalDetail fills the part of p's page that shows the workout: what the
+// runner reviews before approving, on its own page and on the review page.
+// It also returns the decoded workout.
+func (s *Server) proposalDetail(ctx context.Context, p store.Proposal) (proposalPage, workout.Workout, error) {
+	v := proposalPage{ID: p.ID, Name: p.Name, Day: longDay(p.Date), Sport: strings.ReplaceAll(string(p.Sport), "_", " "),
+		Status: string(p.Status), Rationale: p.Rationale}
+	w, hash, err := storedWorkout(p)
+	v.intact, v.decoded = hash == p.ContentHash, err == nil
+	switch {
+	case err == nil:
+		v.Lines, v.Notes = workout.Describe(w), w.Notes
+	case v.intact: // tampered content may not decode; intact content must
+		return v, w, fmt.Errorf("web: proposal %s content: %w", p.ID, err)
+	}
+	var warnings []struct {
+		Message string `json:"message"`
+	}
+	if len(p.WarningsJSON) > 0 {
+		if err := json.Unmarshal(p.WarningsJSON, &warnings); err != nil {
+			return v, w, fmt.Errorf("web: proposal %s warnings: %w", p.ID, err)
+		}
+	}
+	for _, x := range warnings {
+		v.Warnings = append(v.Warnings, x.Message)
+	}
+	if p.Replaces != nil {
+		old, err := s.d.DB.GetProposal(ctx, *p.Replaces)
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+		case err != nil:
+			return v, w, err
+		default:
+			r := &replacedView{ID: old.ID, Name: old.Name, Day: longDay(old.Date), Status: string(old.Status),
+				WatchHint: old.Status == store.ProposalWithdrawn}
+			if ow, _, err := storedWorkout(old); err == nil {
+				r.Lines = workout.Describe(ow)
+			}
+			v.Replaces = r
+		}
+	}
+	repl, err := s.d.DB.ReplacementsOf(ctx, p.ID)
+	if err != nil {
+		return v, w, err
+	}
+	if v.ReplacedBy, err = proposalRows(repl); err != nil {
+		return v, w, err
+	}
+	same, err := s.d.DB.ListProposals(ctx, p.Date, p.Date, []store.ProposalStatus{store.ProposalApproved, store.ProposalDelivering,
+		store.ProposalDeliveryFailed, store.ProposalDelivered})
+	if err != nil {
+		return v, w, err
+	}
+	same = slices.DeleteFunc(same, func(o store.Proposal) bool { return o.ID == p.ID })
+	if v.SameDay, err = proposalRows(same); err != nil {
+		return v, w, err
+	}
+	return v, w, nil
 }
 
 // proposal serves GET /p/{id}.
@@ -368,31 +394,36 @@ func (s *Server) approveProposal(w http.ResponseWriter, r *http.Request, p store
 	if m := s.d.Metrics; m != nil && m.ApprovalLatency != nil {
 		m.ApprovalLatency.Record(ctx, now.Sub(p.CreatedAt).Seconds())
 	}
-	// The approval is committed, so the answer is ok whatever follows. The
-	// passkey's sign count and a session follow it; a failure there is
-	// logged and leaves no session. A passkey revoked in between gets no
-	// session either.
-	switch err := s.d.DB.UsePasskey(ctx, as.PasskeyID, as.CredentialJSON, now); {
-	case errors.Is(err, store.ErrNotFound):
-	case err != nil:
-		s.noSessionAfterApproval(r, p.ID, err)
-	default:
-		if _, ok := s.session(r); !ok {
-			if err := s.startSession(w, r, as.PasskeyID); err != nil {
-				s.noSessionAfterApproval(r, p.ID, err)
-			}
-		}
-	}
+	s.afterApproval(w, r, as, now, "proposal_id", p.ID)
 	writeJSON(w, http.StatusOK, approveResponse{OK: true,
 		ReplacedWithdrawn: res.Replaced != nil && res.Replaced.Status == store.ProposalWithdrawn})
 	return "approved"
 }
 
+// afterApproval records the passkey's use and starts a session if there was
+// none. The approval is committed, so the answer is ok whatever follows: a
+// failure here is logged with logAttrs (allowlisted keys naming what was
+// approved) and leaves no session. A passkey revoked in between gets no
+// session either.
+func (s *Server) afterApproval(w http.ResponseWriter, r *http.Request, as passkey.Assertion, now time.Time, logAttrs ...any) {
+	switch err := s.d.DB.UsePasskey(r.Context(), as.PasskeyID, as.CredentialJSON, now); {
+	case errors.Is(err, store.ErrNotFound):
+	case err != nil:
+		s.noSessionAfterApproval(r, err, logAttrs)
+	default:
+		if _, ok := s.session(r); !ok {
+			if err := s.startSession(w, r, as.PasskeyID); err != nil {
+				s.noSessionAfterApproval(r, err, logAttrs)
+			}
+		}
+	}
+}
+
 // noSessionAfterApproval logs a failure to record the passkey's use or to
 // start a session after an approval was committed. The approval stands.
-func (s *Server) noSessionAfterApproval(r *http.Request, id string, err error) {
-	s.d.Log.ErrorContext(r.Context(), "approval committed; no session started", "component", "web", "http.route", r.Pattern,
-		"proposal_id", id, "outcome", "no_session", "error_class", errorClass(err))
+func (s *Server) noSessionAfterApproval(r *http.Request, err error, attrs []any) {
+	s.d.Log.ErrorContext(r.Context(), "approval committed; no session started", append([]any{"component", "web",
+		"http.route", r.Pattern, "outcome", "no_session", "error_class", errorClass(err)}, attrs...)...)
 }
 
 // approveFailure answers a failed approval ceremony and returns its reason.

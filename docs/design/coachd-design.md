@@ -267,6 +267,8 @@ propose ─▶ invalid (rejected, reason returned)
    - expires after 24 h or at proposal expiry.
 
    The server re-checks that the proposal is still `pending` and its hash unchanged before transitioning.
+
+   *Note (2026-10-25, approve the week, `approve-week.md`):* a review page approves every approvable pending proposal with one assertion. Its nonce is single-use and HMAC-signed like any other, and bound to every proposal ID plus its content hash in the set; the approval is all or nothing.
 5. **Passkey enrolment:** `docker exec coachd coachd enroll` prints a one-time enrolment URL valid for 10 minutes. It is never written to logs. More than one passkey is allowed, and passkeys can be revoked on the web page.
 
 *Note (2026-10-23, builder decision pending owner confirmation):*
