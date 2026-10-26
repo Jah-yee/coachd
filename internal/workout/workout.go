@@ -17,7 +17,7 @@ import (
 // input schema.
 type Workout struct {
 	Name  string `json:"name" jsonschema:"Short title, ≤100 chars"`
-	Sport string `json:"sport" jsonschema:"running|trail_running|walking|hiking|cycling|strength|other"`
+	Sport string `json:"sport" jsonschema:"running|trail_running|walking|hiking|cycling|indoor_cycling|strength|other; indoor_cycling is a ride on a smart trainer: the watch opens its indoor bike activity"`
 	Date  string `json:"date" jsonschema:"Scheduled date YYYY-MM-DD in the runner's timezone; today up to +14 days"`
 	Notes string `json:"notes,omitempty" jsonschema:"Optional, ≤1000 chars"`
 	Steps []Step `json:"steps" jsonschema:"Ordered steps; repeats nest"`
@@ -69,8 +69,10 @@ type Target struct {
 	LowSpm         *int   `json:"low_spm,omitempty" jsonschema:"Only for type cadence: lower bound in steps per minute (rpm for cycling)"`
 	HighSpm        *int   `json:"high_spm,omitempty" jsonschema:"Only for type cadence: upper bound in steps per minute (rpm for cycling)"`
 	Cue            string `json:"cue,omitempty" jsonschema:"Only for type effort: free-text effort cue, ≤100 chars"`
-	LowPctFTP      *int   `json:"low_pct_ftp,omitempty" jsonschema:"Only for type power (cycling only): lower bound in % of FTP"`
-	HighPctFTP     *int   `json:"high_pct_ftp,omitempty" jsonschema:"Only for type power (cycling only): upper bound in % of FTP"`
+	LowPctFTP      *int   `json:"low_pct_ftp,omitempty" jsonschema:"Only for type power (cycling and indoor_cycling): lower bound in % of FTP"`
+	HighPctFTP     *int   `json:"high_pct_ftp,omitempty" jsonschema:"Only for type power (cycling and indoor_cycling): upper bound in % of FTP"`
+	LowW           *int   `json:"low_w,omitempty" jsonschema:"Only for type power (cycling and indoor_cycling), instead of low_pct_ftp: lower bound in watts"`
+	HighW          *int   `json:"high_w,omitempty" jsonschema:"Only for type power (cycling and indoor_cycling), instead of high_pct_ftp: upper bound in watts"`
 }
 
 // Limits are the physical-plausibility bounds. The pace bounds are those of

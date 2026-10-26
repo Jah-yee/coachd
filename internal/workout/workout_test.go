@@ -520,7 +520,7 @@ func TestPowerTarget(t *testing.T) {
 		w    Workout
 		want string
 	}{
-		{base(powerStep(ip(88), ip(92))), "steps[0].target: power targets are only supported for cycling"},
+		{base(powerStep(ip(88), ip(92))), "steps[0].target: power targets are only supported for cycling and indoor_cycling"},
 		{cycling(powerStep(ip(10), ip(92))), "steps[0].target: low_pct_ftp 10 % FTP below 20"},
 		{cycling(powerStep(ip(88), ip(301))), "steps[0].target: high_pct_ftp 301 % FTP above 300"},
 		{cycling(powerStep(ip(95), ip(90))), "steps[0].target: low_pct_ftp 95 is above high_pct_ftp 90; low must not exceed high"},
@@ -533,6 +533,50 @@ func TestPowerTarget(t *testing.T) {
 		if got := reason(t, c.w); got != c.want {
 			t.Errorf("reason = %q, want %q", got, c.want)
 		}
+	}
+}
+
+func wattStep(lo, hi *int) Step {
+	return sb("active", &Duration{Type: "time", TimeS: ip(600)}, &Target{Type: "power", LowW: lo, HighW: hi})
+}
+
+func TestPowerTargetWatts(t *testing.T) {
+	ok(t, cycling(wattStep(ip(200), ip(220))))
+	ok(t, cycling(wattStep(ip(1), ip(1500))))
+	both := wattStep(ip(200), ip(220))
+	both.Target.LowPctFTP, both.Target.HighPctFTP = ip(88), ip(92)
+	for _, c := range []struct {
+		w    Workout
+		want string
+	}{
+		{base(wattStep(ip(200), ip(220))), "steps[0].target: power targets are only supported for cycling and indoor_cycling"},
+		{cycling(wattStep(ip(0), ip(220))), "steps[0].target: low_w 0 W below 1"},
+		{cycling(wattStep(ip(200), ip(1501))), "steps[0].target: high_w 1501 W above 1500"},
+		{cycling(wattStep(ip(230), ip(220))), "steps[0].target: low_w 230 is above high_w 220; low must not exceed high"},
+		{cycling(wattStep(ip(200), nil)), "steps[0].target: high_w is required"},
+		{cycling(powerStep(ip(88), nil)), "steps[0].target: high_pct_ftp is required"},
+		{cycling(both), "steps[0].target: set low_pct_ftp and high_pct_ftp, or low_w and high_w, not both"},
+		{cycling(powerStep(nil, nil)), "steps[0].target: power needs low_pct_ftp and high_pct_ftp, or low_w and high_w"},
+		{cycling(sb("active", &Duration{Type: "time", TimeS: ip(600)}, &Target{Type: "cadence", LowSpm: ip(80), HighSpm: ip(95), HighW: ip(200)})),
+			"steps[0].target: high_w set for type=cadence"},
+	} {
+		if got := reason(t, c.w); got != c.want {
+			t.Errorf("reason = %q, want %q", got, c.want)
+		}
+	}
+}
+
+// indoor_cycling follows every cycling rule and is stored as cycling; only
+// the FIT file marks it indoor.
+func TestIndoorCycling(t *testing.T) {
+	w := cycling(powerStep(ip(88), ip(92)), wattStep(ip(200), ip(220)), distStep("active", 20000, 0, 0))
+	w.Sport = "indoor_cycling"
+	if p := ok(t, w); p.Sport != store.SportCycling || p.EstimatedS != 600+600+2880 {
+		t.Errorf("plan = %+v", p)
+	}
+	w.Sport = "indoor_running"
+	if got := reason(t, w); got != `sport: "indoor_running" is not one of running|trail_running|walking|hiking|cycling|indoor_cycling|strength|other` {
+		t.Errorf("reason = %q", got)
 	}
 }
 

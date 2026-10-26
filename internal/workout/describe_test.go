@@ -32,6 +32,7 @@ func TestDescribe(t *testing.T) {
 		{StepBase: step("active", timeD(3600), nil)},
 		{StepBase: step("active", timeD(5025), nil)},
 		{StepBase: step("active", timeD(300), &Target{Type: "power", LowPctFTP: ip(88), HighPctFTP: ip(92)})},
+		{StepBase: step("active", timeD(300), &Target{Type: "power", LowW: ip(200), HighW: ip(220)})},
 		{StepBase: StepBase{Kind: "cooldown", Duration: timeD(600), Notes: "easy"}},
 	}}
 	want := []Line{
@@ -54,6 +55,7 @@ func TestDescribe(t *testing.T) {
 		{0, "active", "Active · 1:00:00"},
 		{0, "active", "Active · 1:23:45"},
 		{0, "active", "Active · 5:00 · power 88–92% FTP"},
+		{0, "active", "Active · 5:00 · power 200–220 W"},
 		{0, "cooldown", "Cool-down · 10:00"},
 		{1, "note", "note: easy"},
 	}

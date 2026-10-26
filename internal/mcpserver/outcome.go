@@ -45,8 +45,10 @@ type plannedTargetOut struct {
 	HighPaceSPerKm *int   `json:"high_pace_s_per_km,omitempty" jsonschema:"For type pace: slower bound in seconds per km"`
 	LowSpm         *int   `json:"low_spm,omitempty" jsonschema:"For type cadence: lower bound"`
 	HighSpm        *int   `json:"high_spm,omitempty" jsonschema:"For type cadence: upper bound"`
-	LowPctFTP      *int   `json:"low_pct_ftp,omitempty" jsonschema:"For type power: lower bound in % of FTP"`
-	HighPctFTP     *int   `json:"high_pct_ftp,omitempty" jsonschema:"For type power: upper bound in % of FTP"`
+	LowPctFTP      *int   `json:"low_pct_ftp,omitempty" jsonschema:"For type power in % of FTP: lower bound in % of FTP"`
+	HighPctFTP     *int   `json:"high_pct_ftp,omitempty" jsonschema:"For type power in % of FTP: upper bound in % of FTP"`
+	LowW           *int   `json:"low_w,omitempty" jsonschema:"For type power in watts: lower bound in watts"`
+	HighW          *int   `json:"high_w,omitempty" jsonschema:"For type power in watts: upper bound in watts"`
 }
 
 type executedStepOut struct {
@@ -155,6 +157,8 @@ func plannedTarget(st fitdata.WorkoutStep) *plannedTargetOut {
 		return &plannedTargetOut{Type: "cadence", LowSpm: ptr(int(lo)), HighSpm: ptr(int(hi))}
 	case t == typedef.WktStepTargetPower && custom && lo <= 1000 && hi <= 1000:
 		return &plannedTargetOut{Type: "power", LowPctFTP: ptr(int(lo)), HighPctFTP: ptr(int(hi))}
+	case t == typedef.WktStepTargetPower && custom && lo > 1000 && hi > 1000:
+		return &plannedTargetOut{Type: "power", LowW: ptr(int(lo - 1000)), HighW: ptr(int(hi - 1000))}
 	}
 	return &plannedTargetOut{Type: "other"}
 }

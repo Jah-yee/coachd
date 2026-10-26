@@ -28,13 +28,14 @@ type sportPair struct {
 }
 
 var sports = map[string]sportPair{
-	"running":       {typedef.SportRunning, typedef.SubSportGeneric},
-	"trail_running": {typedef.SportRunning, typedef.SubSportTrail},
-	"walking":       {typedef.SportWalking, typedef.SubSportGeneric},
-	"hiking":        {typedef.SportHiking, typedef.SubSportGeneric},
-	"cycling":       {typedef.SportCycling, typedef.SubSportGeneric},
-	"strength":      {typedef.SportTraining, typedef.SubSportStrengthTraining},
-	"other":         {typedef.SportGeneric, typedef.SubSportGeneric},
+	"running":        {typedef.SportRunning, typedef.SubSportGeneric},
+	"trail_running":  {typedef.SportRunning, typedef.SubSportTrail},
+	"walking":        {typedef.SportWalking, typedef.SubSportGeneric},
+	"hiking":         {typedef.SportHiking, typedef.SubSportGeneric},
+	"cycling":        {typedef.SportCycling, typedef.SubSportGeneric},
+	"indoor_cycling": {typedef.SportCycling, typedef.SubSportIndoorCycling}, // the watch's indoor bike, which drives a trainer
+	"strength":       {typedef.SportTraining, typedef.SubSportStrengthTraining},
+	"other":          {typedef.SportGeneric, typedef.SubSportGeneric},
 }
 
 var intensities = map[string]typedef.Intensity{
@@ -245,9 +246,14 @@ func leafStep(n node, idx int) (*mesgdef.WorkoutStep, error) {
 			st.SetTargetType(typedef.WktStepTargetCadence).SetTargetValue(0).
 				SetCustomTargetValueLow(lo).SetCustomTargetValueHigh(hi)
 		case "power":
-			// Custom power values 0–1000 are % of FTP.
+			// Custom power values 0–1000 are % of FTP, above 1000 watts + 1000.
 			lo, ok1 := val(t.LowPctFTP)
 			hi, ok2 := val(t.HighPctFTP)
+			if t.LowW != nil || t.HighW != nil {
+				lo, ok1 = val(t.LowW)
+				hi, ok2 = val(t.HighW)
+				lo, hi = lo+uint32(typedef.WorkoutPowerWattsOffset), hi+uint32(typedef.WorkoutPowerWattsOffset)
+			}
 			if !ok1 || !ok2 {
 				return nil, bad
 			}

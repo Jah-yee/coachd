@@ -29,11 +29,12 @@ const (
 )
 
 // Unsupported returns why w cannot be a Zwift workout, or "" when it can: the
-// sport must be cycling and every step must have a time duration. The
+// sport must be cycling or indoor_cycling, every step must have a time
+// duration and no power target may be in watts (Zwift takes % of FTP). The
 // reason names the first other step in depth-first order, in the path style
 // of validation errors.
 func Unsupported(w workout.Workout) string {
-	if w.Sport != "cycling" {
+	if w.Sport != "cycling" && w.Sport != "indoor_cycling" {
 		return "sport: only cycling workouts export to Zwift"
 	}
 	return unsupportedIn(flatten(w.Steps), "steps")
@@ -54,6 +55,9 @@ func unsupportedIn(ns []node, path string) string {
 				typ = n.Duration.Type
 			}
 			return fmt.Sprintf("%s.duration: %s durations have no Zwift equivalent", p, typ)
+		}
+		if t := n.Target; t != nil && t.Type == "power" && (t.LowW != nil || t.HighW != nil) {
+			return p + ".target: watt targets have no Zwift equivalent (Zwift takes % of FTP)"
 		}
 	}
 	return ""

@@ -199,7 +199,7 @@ func (s *Server) proposalView(ctx context.Context, p store.Proposal, signedIn bo
 		if signedIn {
 			v.Withdraw = true
 			v.Deliver = intact
-			if intact && decoded && w.Sport == "cycling" {
+			if intact && decoded && p.Sport == store.SportCycling {
 				if why := zwiftworkout.Unsupported(w); why == "" {
 					v.Zwift = true
 				} else {
@@ -228,6 +228,9 @@ func (s *Server) proposalDetail(ctx context.Context, p store.Proposal) (proposal
 	switch {
 	case err == nil:
 		v.Lines, v.Notes = workout.Describe(w), w.Notes
+		if w.Sport == "indoor_cycling" { // stored as cycling, like indoor rides
+			v.Sport = "indoor cycling"
+		}
 	case v.intact: // tampered content may not decode; intact content must
 		return v, w, fmt.Errorf("web: proposal %s content: %w", p.ID, err)
 	}

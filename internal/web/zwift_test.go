@@ -118,6 +118,30 @@ func TestZwoThenFITDeliversOnce(t *testing.T) {
 	}
 }
 
+// An indoor ride shows its sport and exports to Zwift; a watt target does not.
+func TestIndoorRidePage(t *testing.T) {
+	ts := newTestServer(t)
+	cookie := ts.enroll(t)
+	w := ride(ts.today().AddDays(1))
+	w.Sport = "indoor_cycling"
+	p := ts.propose(t, w, proposeOpts{status: store.ProposalApproved})
+	page := ts.page(t, p.ID, cookie)
+	if !strings.Contains(page, "indoor cycling</span>") || !strings.Contains(page, "Download for Zwift") {
+		t.Fatalf("indoor page: %s", page)
+	}
+
+	w.Steps[1].Target = &workout.Target{Type: "power", LowW: ip(200), HighW: ip(220)}
+	p = ts.propose(t, w, proposeOpts{status: store.ProposalApproved})
+	page = ts.page(t, p.ID, cookie)
+	if !strings.Contains(page, "power 200–220 W") ||
+		!strings.Contains(page, "Not exportable to Zwift: steps[1].target: watt targets have no Zwift equivalent (Zwift takes % of FTP)") {
+		t.Errorf("watt page: %s", page)
+	}
+	if strings.Contains(page, "/zwo") {
+		t.Error("watt page offers the Zwift download")
+	}
+}
+
 // Review focus 4: a cycling workout Zwift cannot take shows the reason and
 // refuses the download without a transition; other sports show neither.
 func TestZwoNotExportable(t *testing.T) {

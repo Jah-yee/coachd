@@ -67,8 +67,12 @@ func (ts *testServer) propose(t *testing.T, w workout.Workout, o proposeOpts) st
 	if o.warnings == "" {
 		o.warnings = "[]"
 	}
+	sport := store.Sport(w.Sport)
+	if plan, err := workout.PlanOf(w, workout.DefaultLimits); err == nil {
+		sport = plan.Sport // indoor_cycling is stored as cycling
+	}
 	now := ts.clock.Now()
-	p := store.Proposal{ID: hex.EncodeToString(id), Date: date, Sport: store.Sport(w.Sport), Name: w.Name,
+	p := store.Proposal{ID: hex.EncodeToString(id), Date: date, Sport: sport, Name: w.Name,
 		ContentJSON: canon, ContentHash: workout.ContentHash(canon), Rationale: o.rationale,
 		WarningsJSON: []byte(o.warnings), Status: o.status, StatusAt: now, CreatedAt: now,
 		CreatedLane: "private", CreatedBy: "agent", CreatedClient: "claude"}
