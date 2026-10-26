@@ -33,8 +33,10 @@ func (s *svc) registerProposals(srv *mcp.Server) {
 		"an implausible workout returns verdict invalid with a reason and stores nothing. A plausible one is stored " +
 		"as pending with deterministic warnings (longest-run spike, same-day workouts, heart rate above the 90-day " +
 		"maximum, not exportable to Zwift, stale data, thin history), which never block. Power targets are in % of " +
-		"FTP and only for cycling. Zwift takes only time durations: the runner can download a cycling workout for " +
-		"Zwift when every step has one; distance, open and heart-rate-bounded steps give the Zwift warning. " +
+		"FTP (the watch and Zwift apply their own FTP) or in watts, and only for cycling and indoor_cycling. " +
+		"indoor_cycling is a ride on a smart trainer: the watch starts it as an indoor ride. Zwift takes only time " +
+		"durations and % of FTP: the runner can download a cycling workout for Zwift when every step has a time " +
+		"duration; distance, open and heart-rate-bounded steps and watt targets give the Zwift warning. " +
 		"A pending proposal waits for the runner: the runner " +
 		"must approve on coachd's page; this tool cannot approve, and nothing reaches the watch until then. To " +
 		"change a proposal, propose a new one with replaces set to its id." + localWrite + descSuffix},

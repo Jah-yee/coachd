@@ -179,6 +179,9 @@ func TestUnsupportedReasons(t *testing.T) {
 	dist := leaf(step("active", &workout.Duration{Type: "distance", DistanceM: ip(5000)}, nil, ""))
 	running := ride("r", "", ok)
 	running.Sport = "running"
+	indoor := ride("r", "", ok)
+	indoor.Sport = "indoor_cycling"
+	watts := step("active", secs(600), &workout.Target{Type: "power", LowW: ip(200), HighW: ip(220)}, "")
 	nested := workout.Step2{StepBase: workout.StepBase{Kind: "repeat"}, Count: 2, Steps: []workout.Step3{
 		{StepBase: step("active", &workout.Duration{Type: "hr_above", HRBpm: ip(150)}, nil, "")},
 	}}
@@ -188,6 +191,9 @@ func TestUnsupportedReasons(t *testing.T) {
 	}{
 		{ride("r", "", ok, ok), ""},
 		{running, "sport: only cycling workouts export to Zwift"},
+		{indoor, ""},
+		{ride("r", "", ok, rep(2, "", child(step("active", secs(60), pw(100, 110), "")), child(watts))),
+			"steps[1].steps[1].target: watt targets have no Zwift equivalent (Zwift takes % of FTP)"},
 		{ride("r", "", ok, dist), "steps[1].duration: distance durations have no Zwift equivalent"},
 		{ride("r", "", rep(2, "", child(step("active", secs(60), nil, "")), child(step("rest", &workout.Duration{Type: "open"}, nil, "")))),
 			"steps[0].steps[1].duration: open durations have no Zwift equivalent"},

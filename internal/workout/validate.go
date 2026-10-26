@@ -22,6 +22,8 @@ const (
 	maxCadence       = 250
 	minPowerPct      = 20
 	maxPowerPct      = 300
+	minPowerW        = 1 // FIT power 1000 is % of FTP, so 0 W has no encoding
+	maxPowerW        = 1500
 	maxTimeS         = 36000
 	maxDistanceM     = 100000
 	defaultPaceSPerK = 360
@@ -32,6 +34,9 @@ var sports = map[string]store.Sport{
 	"walking": store.SportWalking, "hiking": store.SportHiking,
 	"cycling": store.SportCycling, "strength": store.SportStrength,
 	"other": store.SportOther,
+	// A trainer ride is stored as cycling, as ingest stores indoor rides;
+	// only the FIT file marks it indoor.
+	"indoor_cycling": store.SportCycling,
 }
 
 // sportRule holds a sport's pace bounds and the pace that estimates a
@@ -133,7 +138,7 @@ func Validate(w Workout, today civil.Date, l Limits) (Plan, error) {
 	}
 	sport, okSport := sports[w.Sport]
 	if !okSport {
-		return p, bad("sport: %q is not one of running|trail_running|walking|hiking|cycling|strength|other", clip(w.Sport))
+		return p, bad("sport: %q is not one of running|trail_running|walking|hiking|cycling|indoor_cycling|strength|other", clip(w.Sport))
 	}
 	d, err := civil.Parse(w.Date)
 	if err != nil {
@@ -353,6 +358,7 @@ func checkTarget(path string, t *Target, l Limits, r sportRule, a *acc) (int, er
 			{"low_pace_s_per_km", "pace", t.LowPaceSPerKm != nil}, {"high_pace_s_per_km", "pace", t.HighPaceSPerKm != nil},
 			{"low_spm", "cadence", t.LowSpm != nil}, {"high_spm", "cadence", t.HighSpm != nil},
 			{"low_pct_ftp", "power", t.LowPctFTP != nil}, {"high_pct_ftp", "power", t.HighPctFTP != nil},
+			{"low_w", "power", t.LowW != nil}, {"high_w", "power", t.HighW != nil},
 		} {
 			if f.set && f.typ != allowed {
 				return bad("%s: %s set for type=%s", path, f.name, t.Type)
@@ -402,10 +408,20 @@ func checkTarget(path string, t *Target, l Limits, r sportRule, a *acc) (int, er
 		return 0, pair("low_spm", "high_spm", t.LowSpm, t.HighSpm, minCadence, maxCadence, "spm")
 	case "power":
 		if r.sport != store.SportCycling {
-			return 0, bad("%s: power targets are only supported for cycling", path)
+			return 0, bad("%s: power targets are only supported for cycling and indoor_cycling", path)
 		}
 		if err := other("power"); err != nil {
 			return 0, err
+		}
+		pct := t.LowPctFTP != nil || t.HighPctFTP != nil
+		watts := t.LowW != nil || t.HighW != nil
+		switch {
+		case pct && watts:
+			return 0, bad("%s: set low_pct_ftp and high_pct_ftp, or low_w and high_w, not both", path)
+		case watts:
+			return 0, pair("low_w", "high_w", t.LowW, t.HighW, minPowerW, maxPowerW, "W")
+		case !pct:
+			return 0, bad("%s: power needs low_pct_ftp and high_pct_ftp, or low_w and high_w", path)
 		}
 		return 0, pair("low_pct_ftp", "high_pct_ftp", t.LowPctFTP, t.HighPctFTP, minPowerPct, maxPowerPct, "% FTP")
 	case "effort":

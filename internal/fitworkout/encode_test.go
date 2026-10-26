@@ -203,13 +203,14 @@ func TestEncodeTruncatesAtRuneBoundary(t *testing.T) {
 
 func TestEncodeSportTable(t *testing.T) {
 	cases := map[string][2]any{
-		"running":       {typedef.SportRunning, typedef.SubSportGeneric},
-		"trail_running": {typedef.SportRunning, typedef.SubSportTrail},
-		"walking":       {typedef.SportWalking, typedef.SubSportGeneric},
-		"hiking":        {typedef.SportHiking, typedef.SubSportGeneric},
-		"cycling":       {typedef.SportCycling, typedef.SubSportGeneric},
-		"strength":      {typedef.SportTraining, typedef.SubSportStrengthTraining},
-		"other":         {typedef.SportGeneric, typedef.SubSportGeneric},
+		"running":        {typedef.SportRunning, typedef.SubSportGeneric},
+		"trail_running":  {typedef.SportRunning, typedef.SubSportTrail},
+		"walking":        {typedef.SportWalking, typedef.SubSportGeneric},
+		"hiking":         {typedef.SportHiking, typedef.SubSportGeneric},
+		"cycling":        {typedef.SportCycling, typedef.SubSportGeneric},
+		"indoor_cycling": {typedef.SportCycling, typedef.SubSportIndoorCycling},
+		"strength":       {typedef.SportTraining, typedef.SubSportStrengthTraining},
+		"other":          {typedef.SportGeneric, typedef.SubSportGeneric},
 	}
 	for sport, want := range cases {
 		_, wk, _ := encode(t, workout.Workout{Name: "s", Sport: sport, Steps: []workout.Step{
@@ -258,5 +259,23 @@ func TestEncodePower(t *testing.T) {
 	s := st[0]
 	if s.TargetType != typedef.WktStepTargetPower || s.TargetValue != 0 || s.CustomTargetValueLow != 88 || s.CustomTargetValueHigh != 92 {
 		t.Errorf("power: %+v", s)
+	}
+}
+
+// Custom power values above 1000 are watts + 1000.
+func TestEncodePowerWatts(t *testing.T) {
+	w := workout.Workout{Name: "p", Sport: "indoor_cycling", Steps: []workout.Step{
+		{StepBase: base("active", dur("time", 600), &workout.Target{Type: "power", LowW: ip(200), HighW: ip(220)})},
+		{StepBase: base("active", dur("time", 60), &workout.Target{Type: "power", LowW: ip(1), HighW: ip(1500)})},
+	}}
+	_, wk, st := encode(t, w)
+	if wk.Sport != typedef.SportCycling || wk.SubSport != typedef.SubSportIndoorCycling {
+		t.Errorf("sport = %v/%v", wk.Sport, wk.SubSport)
+	}
+	for i, want := range [][2]uint32{{1200, 1220}, {1001, 2500}} {
+		s := st[i]
+		if s.TargetType != typedef.WktStepTargetPower || s.TargetValue != 0 || s.CustomTargetValueLow != want[0] || s.CustomTargetValueHigh != want[1] {
+			t.Errorf("step %d power: %+v", i, s)
+		}
 	}
 }

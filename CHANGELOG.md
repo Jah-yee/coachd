@@ -6,6 +6,12 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+### Added
+
+- **Trainer workouts on the watch** (`docs/design/trainer-workouts.md`):
+  - **Watt targets:** a `power` step target takes `low_w` and `high_w` (1 to 1500 W) instead of `low_pct_ftp` and `high_pct_ftp`, for cycling. The FIT file carries them as watts, the page and the watch show `power 200–220 W`, and `get_activity` reads them back from a ride's planned steps. A workout with a watt step is not exportable to Zwift, which takes % of FTP.
+  - **Indoor cycling:** the new workout sport `indoor_cycling` is a ride on a smart trainer. The FIT file marks it indoor, so the watch starts it as an indoor ride, where a paired trainer can follow the power targets. It is stored and listed as cycling and exports to Zwift like any cycling workout.
+
 ## [0.4.0] - 2026-10-25
 
 ### Added

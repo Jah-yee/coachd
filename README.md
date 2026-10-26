@@ -40,6 +40,7 @@ coachd is a **gateway, not a coach**:
    - you approve with a passkey;
    - it delivers through a Connect IQ watch app, or as a FIT file download;
    - a cycling workout with time-based steps also downloads as a Zwift workout file (`.zwo`), with power targets in % of FTP.
+   - an `indoor_cycling` workout starts on the watch as an indoor ride, so a watch paired with a smart trainer can drive it; power targets are in % of FTP or in watts.
 4. **Your own rating.** The "How did you feel?" and RPE answers you give on the watch after a workout reach the agent too, read from the FIT file.
 5. **Planned vs actual.** When you run a structured workout on the watch, coachd reads the steps back from the activity's FIT file: per executed step, the time, distance, heart rate, pace and power, and the seconds inside, below and above its heart-rate or pace range. It links the activity to the workout it delivered, so the agent can review a week of plans against what you did. This works for Garmin Coach and Garmin Connect workouts too, without the link.
 
@@ -109,7 +110,7 @@ A cycling workout whose steps all have a time duration can be downloaded for Zwi
 2. Copy the `.zwo` file into `Documents/Zwift/Workouts/<your Zwift ID>/` on your Mac (`Documents\Zwift\Workouts\<your Zwift ID>\` on Windows). If the numbered folder is missing, start Zwift on that computer and sign in once.
 3. Restart Zwift. The workout is under **Custom Workouts** in the workout list.
 
-Zwift on Apple TV or iPad cannot import files: import on a Mac or PC first, and Zwift's cloud sync brings it to your other devices. A cycling workout with distance, open or heart-rate-bounded steps cannot be a Zwift workout; the page says which step, and the agent gets the same fact as a warning.
+Zwift on Apple TV or iPad cannot import files: import on a Mac or PC first, and Zwift's cloud sync brings it to your other devices. A cycling workout with distance, open or heart-rate-bounded steps, or with power targets in watts, cannot be a Zwift workout; the page says which step, and the agent gets the same fact as a warning.
 
 ### ntfy
 

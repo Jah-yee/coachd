@@ -1,6 +1,6 @@
 # coachd: power targets and Zwift workouts
 
-Status: design, 2026-10-25. Extends `coachd-design.md` §8 (Data out: workouts). Tags as in the main
+Status: design, 2026-10-25. Watt targets and indoor cycling: `trainer-workouts.md` (2026-10-26). Extends `coachd-design.md` §8 (Data out: workouts). Tags as in the main
 design: **[owner]** = owner decision, **[call]** = designer's call, **[builder]** = left to the
 implementer.
 

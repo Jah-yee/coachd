@@ -26,8 +26,8 @@ var kindLabels = map[string]string{
 // "Warm-up · 10:00 · HR 120–140 bpm", "Repeat 6×", "Active · 400 m · pace 3:50–4:00 /km",
 // "Recovery · open (lap button)", "Active · until HR above 160 bpm",
 // "Active · 2 km · cadence 170–180 spm", "Active · 5:00 · effort: <cue>",
-// "Active · 5:00 · power 88–92% FTP"; step notes become an
-// extra line "note: <notes>" at Indent+1.
+// "Active · 5:00 · power 88–92% FTP", "Active · 5:00 · power 200–220 W"; step
+// notes become an extra line "note: <notes>" at Indent+1.
 //
 // Cues and notes are agent-written: a page must show the lines escaped and
 // labelled. Describe never fails; a missing value reads "?".
@@ -104,6 +104,9 @@ func describeTarget(t *Target) string {
 	case "effort":
 		return "effort: " + t.Cue
 	case "power":
+		if t.LowW != nil || t.HighW != nil {
+			return "power " + num(t.LowW) + "–" + num(t.HighW) + " W"
+		}
 		return "power " + num(t.LowPctFTP) + "–" + num(t.HighPctFTP) + "% FTP"
 	}
 	return t.Type
