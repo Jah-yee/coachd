@@ -604,7 +604,7 @@ func TestServeWritesStartupBackup(t *testing.T) {
 	}
 }
 
-func TestBackupLoopSkipsWhenFresh(t *testing.T) {
+func TestBackupCheckSkipsWhenFresh(t *testing.T) {
 	dir := t.TempDir()
 	db, err := store.Open(context.Background(), filepath.Join(dir, "coachd.db"))
 	if err != nil {
@@ -615,15 +615,13 @@ func TestBackupLoopSkipsWhenFresh(t *testing.T) {
 	if _, err := backup.Run(context.Background(), db, dir, "test", now.Add(-time.Hour)); err != nil {
 		t.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
-	defer cancel()
-	backupLoop(ctx, db, dir, "test", func() time.Time { return now }, time.Hour, nil, slog.New(slog.DiscardHandler))
+	backupCheck(context.Background(), db, dir, "test", now, nil, slog.New(slog.DiscardHandler))
 	if m, _ := filepath.Glob(filepath.Join(dir, "backups", "coachd-*.json")); len(m) != 1 {
 		t.Fatalf("manifests %v", m)
 	}
 }
 
-func TestBackupLoopRunsWhenNewestIsFutureDated(t *testing.T) {
+func TestBackupCheckRunsWhenNewestIsFutureDated(t *testing.T) {
 	dir := t.TempDir()
 	db, err := store.Open(context.Background(), filepath.Join(dir, "coachd.db"))
 	if err != nil {
@@ -634,26 +632,22 @@ func TestBackupLoopRunsWhenNewestIsFutureDated(t *testing.T) {
 	if _, err := backup.Run(context.Background(), db, dir, "test", now.Add(2*time.Hour)); err != nil {
 		t.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
-	defer cancel()
-	backupLoop(ctx, db, dir, "test", func() time.Time { return now }, time.Hour, nil, slog.New(slog.DiscardHandler))
+	backupCheck(context.Background(), db, dir, "test", now, nil, slog.New(slog.DiscardHandler))
 	if m, _ := filepath.Glob(filepath.Join(dir, "backups", "coachd-*.json")); len(m) != 2 {
 		t.Fatalf("manifests %v, want a new backup beside the future-dated one", m)
 	}
 }
 
-// backupLoopOnce runs one check of backupLoop at now, with real metrics, and
-// returns coachd.backup.runs by outcome.
-func backupLoopOnce(t *testing.T, db *store.DB, dir string, now time.Time) map[string]int64 {
+// backupCheckOnce runs backupCheck at now, with real metrics, and returns
+// coachd.backup.runs by outcome.
+func backupCheckOnce(t *testing.T, db *store.DB, dir string, now time.Time) map[string]int64 {
 	t.Helper()
 	reader := sdkmetric.NewManualReader()
 	m, err := telemetry.NewMetrics(sdkmetric.NewMeterProvider(sdkmetric.WithReader(reader)))
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
-	defer cancel()
-	backupLoop(ctx, db, dir, "test", func() time.Time { return now }, time.Hour, m, slog.New(slog.DiscardHandler))
+	backupCheck(context.Background(), db, dir, "test", now, m, slog.New(slog.DiscardHandler))
 	var rm metricdata.ResourceMetrics
 	if err := reader.Collect(context.Background(), &rm); err != nil {
 		t.Fatal(err)
@@ -684,7 +678,7 @@ func openBackupTestDB(t *testing.T) (string, *store.DB) {
 	return dir, db
 }
 
-func TestBackupLoopCountsOutcomes(t *testing.T) {
+func TestBackupCheckCountsOutcomes(t *testing.T) {
 	now := time.Date(2026, 10, 24, 12, 0, 0, 0, time.UTC)
 	manifests := func(dir string) int {
 		m, _ := filepath.Glob(filepath.Join(dir, "backups", "coachd-*.json"))
@@ -696,7 +690,7 @@ func TestBackupLoopCountsOutcomes(t *testing.T) {
 		if _, err := backup.Run(context.Background(), db, dir, "test", now.Add(-backup.Interval-time.Hour)); err != nil {
 			t.Fatal(err)
 		}
-		if got := backupLoopOnce(t, db, dir, now); len(got) != 1 || got["ok"] != 1 {
+		if got := backupCheckOnce(t, db, dir, now); len(got) != 1 || got["ok"] != 1 {
 			t.Fatalf("outcomes %v, want ok=1", got)
 		}
 		if n := manifests(dir); n != 2 {
@@ -707,7 +701,7 @@ func TestBackupLoopCountsOutcomes(t *testing.T) {
 	t.Run("busy while the backup lock is held", func(t *testing.T) {
 		dir, db := openBackupTestDB(t)
 		holdBackupLock(t, dir)
-		if got := backupLoopOnce(t, db, dir, now); len(got) != 1 || got["busy"] != 1 {
+		if got := backupCheckOnce(t, db, dir, now); len(got) != 1 || got["busy"] != 1 {
 			t.Fatalf("outcomes %v, want busy=1", got)
 		}
 		if n := manifests(dir); n != 0 {
@@ -727,7 +721,7 @@ func TestBackupLoopCountsOutcomes(t *testing.T) {
 		if err := os.WriteFile(fit, []byte("x"), 0o000); err != nil {
 			t.Fatal(err)
 		}
-		if got := backupLoopOnce(t, db, dir, now); len(got) != 1 || got["failed"] != 1 {
+		if got := backupCheckOnce(t, db, dir, now); len(got) != 1 || got["failed"] != 1 {
 			t.Fatalf("outcomes %v, want failed=1", got)
 		}
 		if n := manifests(dir); n != 0 {
@@ -1038,7 +1032,7 @@ func TestServeAccessModeUnchanged(t *testing.T) {
 	getStatus(t, pub+"/mcp", jwt)
 }
 
-// housekeepingLoop also purges expired OAuth state.
+// housekeep also purges expired OAuth state.
 func TestHousekeepingPurgesOAuth(t *testing.T) {
 	cfg := testCfg(t)
 	access, _ := seedOAuth(t, cfg, time.Now().Add(-40*24*time.Hour))
@@ -1050,9 +1044,7 @@ func TestHousekeepingPurgesOAuth(t *testing.T) {
 	if _, _, err := db.AccessGrant(context.Background(), access, time.Now()); !errors.Is(err, store.ErrExpired) {
 		t.Fatalf("before: %v, want ErrExpired", err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
-	defer cancel()
-	housekeepingLoop(ctx, db, slog.New(slog.DiscardHandler))
+	housekeep(context.Background(), db, slog.New(slog.DiscardHandler))
 	if _, _, err := db.AccessGrant(context.Background(), access, time.Now()); !errors.Is(err, store.ErrNotFound) {
 		t.Fatalf("after: %v, want ErrNotFound (purged)", err)
 	}
