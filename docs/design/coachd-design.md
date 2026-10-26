@@ -201,7 +201,7 @@ Modelled on the FIT workout structure so encoding is lossless:
 |---|---|
 | Kind | warmup, active, recovery, rest, cooldown, repeat (with child steps and a count) |
 | Duration | time, distance, open (lap button), or heart rate above/below a value |
-| Target | none, heart-rate range (bpm), pace range, cadence range, power range (% of FTP, cycling only), or a free-text effort cue |
+| Target | none, heart-rate range (bpm), pace range, cadence range, power range (% of FTP or watts, cycling and indoor cycling only; `trainer-workouts.md`), or a free-text effort cue |
 | Notes | optional |
 
 The JSON Schema is defined once and used both as the MCP tool input schema and for server-side validation.
@@ -213,7 +213,7 @@ These are integrity checks, not coaching:
   - total duration 1 min–10 h;
   - pace 2:30–25:00 min/km;
   - heart rate 40–230 bpm;
-  - power 20–300 % of FTP, cycling only (`zwift-workouts.md`, 2026-10-25);
+  - power 20–300 % of FTP, cycling only (`zwift-workouts.md`, 2026-10-25), or 1–1500 W (`trainer-workouts.md`, 2026-10-26);
   - at most 100 steps after expanding repeats.
 - The date is today or up to 14 days ahead.
 - *Note (2026-10-23, builder decision pending owner confirmation):*
