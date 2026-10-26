@@ -6,6 +6,10 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+### Fixed
+
+- **FIT files with an empty header CRC:** some Zwift rides write a 14-byte FIT header whose optional CRC is 0x0000. The FIT decoder coachd uses then computed the file CRC without the header and rejected these valid files, so the ride had no laps, series or perceived effort ("fit detail failed", error class `other`). coachd now checks FIT integrity as Garmin's FIT SDK does; truncated and damaged files are still rejected. Affected rides fill in on the next sync after upgrading.
+
 ## [0.5.0] - 2026-10-26
 
 ### Added
