@@ -6,6 +6,8 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-26
+
 ### Added
 
 - **Trainer workouts on the watch** (`docs/design/trainer-workouts.md`):
