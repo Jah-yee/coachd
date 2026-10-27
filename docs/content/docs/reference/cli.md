@@ -3,15 +3,11 @@ title: Command line
 weight: 2
 ---
 
-The `coachd` binary has these subcommands. In the container, run them from `deploy/` with `docker compose exec coachd /coachd <command>`.
-
-```text
-usage: coachd <serve|import|token|device|enroll|backup|restore|healthcheck|version>
-```
+Run them from `deploy/` with `docker compose exec coachd /coachd <command>`.
 
 ## serve
 
-Runs coachd: Garmin sync, the listeners, backups. The container's default command.
+Runs coachd; the container's default command.
 
 ## token
 
@@ -74,7 +70,3 @@ Probes the ops listener's `/livez`; the compose healthcheck uses it. It needs no
 ## version
 
 Prints the version.
-
-## import
-
-Not implemented yet.
