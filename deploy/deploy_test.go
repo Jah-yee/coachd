@@ -108,7 +108,7 @@ func TestAlertRulesDataSources(t *testing.T) {
 }
 
 // TestAlertRuleSemantics pins the thresholds and no-data handling the
-// README's sanity-check table documents.
+// docs' alert table (docs/content/docs/operations/monitoring.md) documents.
 func TestAlertRuleSemantics(t *testing.T) {
 	rs := rules(t)
 	for title, want := range map[string][]string{
@@ -682,7 +682,7 @@ func runEntrypoint(t *testing.T, secret string) (stderr, alerting string, err er
 	return errb.String(), filepath.Join(tmp, "dst", "alerting"), err
 }
 
-const badAlertURL = "coachd: secrets/grafana_alert_url must be one https:// URL (see deploy/README.md)\n"
+const badAlertURL = "coachd: secrets/grafana_alert_url must be one https:// URL (see https://stefiix92.github.io/coachd/docs/operations/monitoring/)\n"
 
 func TestEntrypointAlertURL(t *testing.T) {
 	const url = "https://ntfy.example/topic-abc?x=1"

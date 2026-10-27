@@ -1,0 +1,58 @@
+name: docs
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  # Pinned by hand, like govulncheck in ci.yml: Dependabot does not bump it.
+  # The checksum is hugo_extended_<version>_linux-amd64.tar.gz in the release's checksums file.
+  HUGO_VERSION: 0.168.0
+  HUGO_SHA256: 787f100057328824f38c6ad7c87ff10d6451ae0a7bc39cedaad0dd2bcde17e53
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # page dates come from git history
+      # Hugo fetches the Hextra theme as a Go module.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27'
+          cache: false
+      - name: Install Hugo
+        run: |
+          f="hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+          curl -fsSLo "$RUNNER_TEMP/$f" "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/$f"
+          echo "$HUGO_SHA256  $RUNNER_TEMP/$f" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/hugo" && tar -xzf "$RUNNER_TEMP/$f" -C "$RUNNER_TEMP/hugo" hugo
+          echo "$RUNNER_TEMP/hugo" >> "$GITHUB_PATH"
+      - name: Build
+        working-directory: docs
+        run: hugo --gc --minify
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: docs/public
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

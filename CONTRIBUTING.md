@@ -25,14 +25,16 @@ CGO_ENABLED=0 go build ./cmd/coachd            # static binary; keep the build c
 docker compose -f deploy/compose.yaml config   # compose check
 ```
 
-The watch app lives in `watch/`; see [`watch/README.md`](watch/README.md).
+The watch app lives in `watch/`; see its [development guide](https://stefiix92.github.io/coachd/docs/watch/development/).
+
+The documentation site is a [Hugo](https://gohugo.io/) site with the Hextra theme in `docs/`: pages in `docs/content/`, published to GitHub Pages by the `docs` workflow. To preview it, install Hugo extended and run `hugo server` in `docs/`.
 
 ## Pull requests
 
 - Keep each PR to one change, with tests: a failing test first for bug fixes.
 - Match the surrounding code: its naming, comment density and error handling.
 - New dependencies need a reason: a small dependency footprint is a review criterion.
-- Update `deploy/README.md` when you change configuration or operations.
+- Update the documentation (`docs/content/`) when you change behaviour, configuration or operations.
 - CI (vet, race tests, govulncheck, the multi-arch image build) must pass.
 
 ## Sign-off (DCO)
