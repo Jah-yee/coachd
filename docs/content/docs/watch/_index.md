@@ -5,7 +5,7 @@ weight: 5
 
 A Connect IQ app for fēnix and Forerunner watches. It copies the workouts you approved onto the watch and confirms delivery to coachd. It shows the next workout, each workout's steps and the agent's reasons, and the messages your agent sends, and it notifies you of new ones. It only reads coachd's device API: it can't approve, change or withdraw anything.
 
-Tested with Android phones; iPhone is not yet verified.
+Get it from the [Connect IQ Store](https://apps.garmin.com/apps/14f05551-a935-44d7-9227-6b4762e4b341). Tested with Android phones; iPhone is not yet verified.
 
 ## Server setup
 
@@ -35,7 +35,7 @@ The pairing endpoints are open, with global limits shared by every client. So sc
 
 ## Install
 
-1. Install **coachd** from the Connect IQ Store.
+1. Install **coachd** from the [Connect IQ Store](https://apps.garmin.com/apps/14f05551-a935-44d7-9227-6b4762e4b341).
 2. In the Connect IQ app, set coachd's **coachd URL** setting to your `COACHD_PUBLIC_URL`, for example `https://coachd.example.com`. It must be `https://`; a bare host works too.
 3. [Pair the watch](pairing/).
 

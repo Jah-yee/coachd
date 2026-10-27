@@ -33,7 +33,7 @@ coachd is a **gateway, not a coach**: the AI agent and you decide the training; 
 
 1. **Data in.** Activities with their original FIT files, sleep, HRV, resting HR, Body Battery and more, from the official [Garmin Connect Personal API](https://developer.garmin.com/gc-developer-program/personal/), plus simple totals. Numbers, never verdicts.
 2. **Context.** The goal the agent sets and a few durable notes, so any agent or new chat starts informed.
-3. **Workout out.** The agent proposes a structured workout; you approve it with a passkey; coachd delivers it through a Connect IQ watch app, as a FIT file, or as a Zwift workout.
+3. **Workout out.** The agent proposes a structured workout; you approve it with a passkey; coachd delivers it through the [Connect IQ watch app](https://apps.garmin.com/apps/14f05551-a935-44d7-9227-6b4762e4b341), as a FIT file, or as a Zwift workout.
 4. **Your own rating.** Your post-workout "How did you feel?" and RPE reach the agent too.
 5. **Planned vs actual.** The executed steps of each workout, linked to the workout coachd delivered.
 
