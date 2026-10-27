@@ -451,27 +451,12 @@ func opsMux(db *store.DB) http.Handler {
 	return mux
 }
 
-// housekeepingLoop purges audit rows older than a year, expired runner auth
-// rows (enrolments, sessions) and expired OAuth state, at start and daily.
+// housekeepingLoop runs housekeep at start and daily, until ctx ends.
 func housekeepingLoop(ctx context.Context, db *store.DB, log *slog.Logger) {
 	t := time.NewTicker(auditPurgeEvery)
 	defer t.Stop()
 	for {
-		if n, err := db.PurgeAudit(ctx, time.Now().Add(-auditRetention)); err == nil {
-			log.Info("audit purged", "count", n)
-		} else if ctx.Err() == nil {
-			log.Warn("audit purge failed", "error_class", fmt.Sprintf("%T", err), "error", err)
-		}
-		if n, err := db.PurgeRunnerAuth(ctx, time.Now()); err == nil {
-			log.Info("runner auth purged", "count", n)
-		} else if ctx.Err() == nil {
-			log.Warn("runner auth purge failed", "error_class", fmt.Sprintf("%T", err), "error", err)
-		}
-		if n, err := db.PurgeOAuth(ctx, time.Now()); err == nil {
-			log.Info("oauth purged", "count", n)
-		} else if ctx.Err() == nil {
-			log.Warn("oauth purge failed", "error_class", fmt.Sprintf("%T", err), "error", err)
-		}
+		housekeep(ctx, db, log)
 		select {
 		case <-ctx.Done():
 			return
@@ -480,11 +465,46 @@ func housekeepingLoop(ctx context.Context, db *store.DB, log *slog.Logger) {
 	}
 }
 
-// backupLoop writes a backup when the newest is missing, at least
-// backup.Interval old, or more than 1 h in the future (a wrong clock named
-// it), at start and then every `every`. A skipped, busy or failed run is only
-// logged and counted; the next check retries. m may be nil.
+// housekeep purges audit rows older than a year, expired runner auth rows
+// (enrolments, sessions) and expired OAuth state.
+func housekeep(ctx context.Context, db *store.DB, log *slog.Logger) {
+	if n, err := db.PurgeAudit(ctx, time.Now().Add(-auditRetention)); err == nil {
+		log.Info("audit purged", "count", n)
+	} else if ctx.Err() == nil {
+		log.Warn("audit purge failed", "error_class", fmt.Sprintf("%T", err), "error", err)
+	}
+	if n, err := db.PurgeRunnerAuth(ctx, time.Now()); err == nil {
+		log.Info("runner auth purged", "count", n)
+	} else if ctx.Err() == nil {
+		log.Warn("runner auth purge failed", "error_class", fmt.Sprintf("%T", err), "error", err)
+	}
+	if n, err := db.PurgeOAuth(ctx, time.Now()); err == nil {
+		log.Info("oauth purged", "count", n)
+	} else if ctx.Err() == nil {
+		log.Warn("oauth purge failed", "error_class", fmt.Sprintf("%T", err), "error", err)
+	}
+}
+
+// backupLoop runs backupCheck at start and then every `every`, until ctx
+// ends. m may be nil.
 func backupLoop(ctx context.Context, db *store.DB, dataDir, version string, now func() time.Time, every time.Duration, m *telemetry.Metrics, log *slog.Logger) {
+	t := time.NewTicker(every)
+	defer t.Stop()
+	for {
+		backupCheck(ctx, db, dataDir, version, now(), m, log)
+		select {
+		case <-ctx.Done():
+			return
+		case <-t.C:
+		}
+	}
+}
+
+// backupCheck writes a backup when the newest is missing, at least
+// backup.Interval old, or more than 1 h in the future (a wrong clock named
+// it). A skipped, busy or failed run is only logged and counted; the next
+// check retries. A run cut short by ctx is neither. m may be nil.
+func backupCheck(ctx context.Context, db *store.DB, dataDir, version string, now time.Time, m *telemetry.Metrics, log *slog.Logger) {
 	count := func(outcome string) {
 		if m != nil {
 			m.BackupRuns.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", outcome)))
@@ -494,33 +514,24 @@ func backupLoop(ctx context.Context, db *store.DB, dataDir, version string, now 
 		count("failed")
 		log.Warn("backup failed", "error_class", fmt.Sprintf("%T", err), "error", err)
 	}
-	t := time.NewTicker(every)
-	defer t.Stop()
-	for {
-		newest, ok, err := backup.Newest(dataDir)
-		switch {
-		case err != nil:
-			if ctx.Err() == nil {
-				fail(err)
-			}
-		case !ok || now().Sub(newest) >= backup.Interval || newest.Sub(now()) > time.Hour:
-			start := time.Now()
-			res, err := backup.Run(ctx, db, dataDir, version, now())
-			switch {
-			case err == nil:
-				count("ok")
-				log.Info("backup written", "count", res.FITFiles, "duration_ms", time.Since(start).Milliseconds())
-			case errors.Is(err, backup.ErrBusy):
-				count("busy")
-				log.Info("backup skipped: busy")
-			case ctx.Err() == nil:
-				fail(err)
-			}
+	newest, ok, err := backup.Newest(dataDir)
+	switch {
+	case err != nil:
+		if ctx.Err() == nil {
+			fail(err)
 		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-t.C:
+	case !ok || now.Sub(newest) >= backup.Interval || newest.Sub(now) > time.Hour:
+		start := time.Now()
+		res, err := backup.Run(ctx, db, dataDir, version, now)
+		switch {
+		case err == nil:
+			count("ok")
+			log.Info("backup written", "count", res.FITFiles, "duration_ms", time.Since(start).Milliseconds())
+		case errors.Is(err, backup.ErrBusy):
+			count("busy")
+			log.Info("backup skipped: busy")
+		case ctx.Err() == nil:
+			fail(err)
 		}
 	}
 }
