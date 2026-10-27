@@ -3,11 +3,7 @@ title: MCP tools
 weight: 1
 ---
 
-Every tool coachd offers an agent. Read tools need the read scope; write tools need the write scope and change only coachd's own store. Values are measurements, not advice; fields under `garmin_derived` are Garmin's proprietary estimates.
-
-{{< callout type="important" >}}
-No tool can approve, deliver or withdraw a workout. Only you can, on coachd's approval page with a passkey.
-{{< /callout >}}
+Every tool coachd offers an agent. Write tools need the write scope and change only coachd's own store: none can approve, deliver or withdraw a workout. Values are measurements, not advice; fields under `garmin_derived` are Garmin's proprietary estimates.
 
 ## Garmin data
 

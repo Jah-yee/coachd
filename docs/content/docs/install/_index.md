@@ -3,23 +3,13 @@ title: Install
 weight: 2
 ---
 
-From an empty Docker host to a working coachd: Garmin data in, an agent connected, and your first passkey enrolled.
+From an empty Docker host to a working coachd: Garmin data in, an agent connected, and your passkey enrolled.
 
-## The stack
-
-`deploy/compose.yaml` runs coachd with Tailscale (the private lane), Grafana Alloy, VictoriaMetrics and VictoriaLogs. Two optional overrides add Grafana Cloud (`compose.cloud.yaml`) and a self-hosted Grafana (`compose.local.yaml`); see [monitoring](/docs/operations/monitoring/).
-
-The public lane is a `cloudflared` **on the host** (systemd, dashboard-managed tunnel) or a reverse proxy such as Caddy, forwarding `coachd.<your-domain>` to `http://127.0.0.1:8080`. coachd publishes only that listener, on loopback. Ports 8081 (private) and 9090 (ops, unauthenticated pprof) are never published, and there is no cloudflared container.
-
-Layout on the host (for example `~/coachd/deploy`): `compose.yaml`, `compose.cloud.yaml`, `compose.local.yaml`, `.env`, `alloy/`, `grafana/`, `restic/`, `tailscale/`, `secrets/`. Run every command in these pages from this directory.
-
-## Steps
+`deploy/compose.yaml` runs coachd with Tailscale (the private lane), Grafana Alloy, VictoriaMetrics and VictoriaLogs. coachd publishes one port, its public listener on `127.0.0.1:8080`: a Cloudflare Tunnel (`cloudflared` on the host) or a reverse proxy on the host forwards your hostname to it. Run every command in these pages from `deploy/`.
 
 {{% steps %}}
 
 ### Get the stack files
-
-Clone the repository on the host and copy the settings template:
 
 ```bash
 git clone https://github.com/stefiix92/coachd.git
@@ -27,30 +17,30 @@ cd coachd/deploy
 cp .env.example .env
 ```
 
-`.env` holds non-secret settings only; tokens live in `secrets/`. Set `COACHD_TIMEZONE` (for example `Europe/Bratislava`). The [configuration reference](/docs/reference/configuration/) lists every setting.
+Set `COACHD_TIMEZONE` in `.env`. Tokens never go in `.env`: they are [secret files](secrets/). Every setting is in the [configuration reference](/docs/reference/configuration/).
 
-### Put the data on an encrypted disk
+### Encrypt the data disk
 
-`/data` (the `coachd-data` volume) holds health data, the Garmin raw JSON and FIT files, and token hashes. It **must be on an encrypted disk**. A plain SD card is not encrypted: put Docker's data root (or just this volume) on a LUKS-encrypted USB drive or SSD, or use LUKS on the root. Unlocking at boot is up to you; coachd does not manage disk encryption.
+The `coachd-data` volume holds health data, raw Garmin JSON and FIT files, and token hashes. It **must be on an encrypted disk**: put Docker's data root (or just this volume) on LUKS. coachd does not manage disk encryption.
 
 ### Get the image
 
-Run the signed release image, or build your own: [Get the image](image/).
+The signed release image, or your own build: [Get the image](image/).
 
 ### Create the secrets
 
-The Garmin key, the Tailscale auth key and the ntfy token are files in `secrets/`, each owned by the container that reads it: [Secrets](secrets/).
+The Garmin key, the Tailscale auth key and the ntfy token: [Secrets](secrets/).
 
 ### Add your Garmin key
 
-[Garmin key](garmin-key/): create it, save it and set its expiry date.
+[Garmin key](garmin-key/).
 
 ### Open the public lane
 
-Pick one mode:
+Pick one:
 
-- [Cloudflare Access](cloudflare-access/): Cloudflare does the login and MFA, and its Managed OAuth signs in the AI apps.
-- [Built-in auth](builtin-auth/): coachd does it itself, with your passkey for the page and its own OAuth 2.1 server for the AI apps. No Cloudflare account needed.
+- [Cloudflare Access](cloudflare-access/): Cloudflare does the login and MFA, and signs in the AI apps.
+- [Built-in auth](builtin-auth/): coachd does it with your passkey and its own OAuth 2.1 server. No Cloudflare account needed.
 
 ### Open the private lane
 
@@ -58,11 +48,11 @@ Pick one mode:
 
 ### Enrol your passkey
 
-[Enrol a passkey](passkey/) once the public lane works. You need it to approve workouts.
+[Enrol a passkey](passkey/). It approves every workout.
 
 ### Connect an agent
 
-[Connect Claude, ChatGPT or a local client](/docs/agents/).
+[Claude, ChatGPT or a local client](/docs/agents/).
 
 {{% /steps %}}
 

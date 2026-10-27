@@ -24,7 +24,7 @@ COACHD_PUBLIC_URL=https://coachd.example.com ./build.sh test   # bin/coachd-test
 - **Two app ids.** The public id in `manifest.xml` ("coachd") is used only by `store`. Sideload, test and `store-beta` builds use a dev id ("coachd dev"), so they sit next to the Store install instead of replacing it; a Store beta cannot use the public app's id. `build.sh` writes the dev manifest and `bin/dev.jungle` on every build and never edits tracked files.
 - **The URL.** Sideloaded apps get no phone settings, so sideload and test builds compile `COACHD_PUBLIC_URL` into `source/Config.mc` (generated from `source/Config.mc.example`, git-ignored) as the setting's default; it must be `https://`. Store builds take no URL and embed none (`build.sh` refuses a set `COACHD_PUBLIC_URL`).
 - `CIQ_DEVICE` picks the device of a sideload or test build: any product in `manifest.xml`.
-- Builds use strict type checking (`-l 3`) and show warnings (`-w`). Store builds warn, for each watch without watch-app glances (fēnix 5 and 6, the Forerunners), that the `:glance` annotation is ignored; that is expected.
+- Builds use strict type checking (`-l 3`). Store builds warn that `:glance` is ignored on watches without glances; that is expected.
 
 {{< callout type="warning" >}}
 The first build creates the developer key `.secrets/ciq-developer.der` at the repo root (RSA 4096, PKCS#8 DER, mode 0600, git-ignored). Every build is signed with it, Store uploads included. Keep it and back it up: an update signed with another key is another app.
@@ -66,9 +66,7 @@ The listing text and the upload checklist (beta first, the public app only after
 
 ## Tests
 
-The `(:test)` suite covers the pure parts of the sync and the background check (`SyncModel`: what to download, remove and forget, which errors stop a sync, parsing coachd's answers, what to notify, dates), `PairingModel` (whether a stored pairing is resumed, and its expiry), `ServerModel` (normalising the URL setting and when to forget a server) and `Fmt` (durations, distances, day labels), plus `CoachdApp.reconcile`, the default URL, the 404 message and a stale pairing answer against the simulator's storage. Smoke tests draw every screen and the glance into an offscreen bitmap, and run the background check's notification on canned answers.
-
-It runs only in the Connect IQ simulator, which needs its GUI and the macOS SDK (from the SDK Manager):
+The `(:test)` suite covers the sync, pairing and URL logic and the formatting, and smoke-tests every screen, the glance and the background notification. It runs only in the Connect IQ simulator, which needs its GUI and the macOS SDK:
 
 ```bash
 export CIQ_SDK="$HOME/Library/Application Support/Garmin/ConnectIQ/Sdks/<macOS SDK 9.3.0 directory>"

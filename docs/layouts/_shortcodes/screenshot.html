@@ -1,0 +1,2 @@
+{{- /* A phone screenshot at a fixed width: {{< screenshot src="images/x.png" alt="..." width="300" >}} */ -}}
+<img src="{{ .Get "src" | relURL }}" alt="{{ .Get "alt" }}" width="{{ .Get "width" | default "300" }}" style="height:auto;margin:1.5rem 0">

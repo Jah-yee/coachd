@@ -3,15 +3,19 @@ title: Grafana Cloud
 weight: 3
 ---
 
-Off by default: Alloy keeps metrics and logs local, drops traces and runs no profiling, and nothing needs cloud credentials. With Grafana Cloud on, traces go to Tempo, profiles to Pyroscope, and Grafana Cloud reads the host's VictoriaMetrics and VictoriaLogs through Private Data Source Connect (PDC).
+Off by default. With it on, traces go to Grafana Cloud Tempo, profiles to Pyroscope, and Grafana Cloud reads the host's VictoriaMetrics and VictoriaLogs through Private Data Source Connect (PDC).
 
 ## Turn it on
 
 {{% steps %}}
 
-### Create the token files
+### Store the tokens
 
-`grafana_cloud_otlp_token` and `grafana_cloud_pyroscope_token` (owned `473:473`), and `grafana_cloud_pdc_token` (owned `30000:30000`), all mode `0400`, as in [Secrets](/docs/install/secrets/).
+```bash
+put_secret grafana_cloud_otlp_token 473:473        # the helper from Secrets
+put_secret grafana_cloud_pyroscope_token 473:473
+put_secret grafana_cloud_pdc_token 30000:30000
+```
 
 ### Fill the settings
 
@@ -19,19 +23,15 @@ The `GRAFANA_CLOUD_*` and `GRAFANA_PDC_*` variables in `.env`: see the [configur
 
 ### Add the override
 
-```bash
-docker compose -f compose.yaml -f compose.cloud.yaml up -d
-```
-
-Make it the single switch by putting it in `.env`, so a bare `docker compose up -d` does not silently revert to cloud-off:
-
 ```bash {filename=".env"}
 COMPOSE_FILE=compose.yaml:compose.cloud.yaml
 ```
 
+Then `docker compose up -d`. With `COMPOSE_FILE` in `.env`, a bare `docker compose up -d` keeps it on.
+
 {{% /steps %}}
 
-The override swaps `cloud-off.alloy` for `cloud-on.alloy` (traces to Grafana Cloud OTLP, a 15 s Pyroscope scrape of `coachd:9090`), and adds the token secrets and the `pdc-agent`. To disable it again, remove that line (or the `-f`) and run `docker compose up -d --remove-orphans` to stop `pdc-agent`.
+To turn it off, remove that line and run `docker compose up -d --remove-orphans`.
 
 ## Data sources
 
@@ -41,7 +41,6 @@ In Grafana Cloud, add the data sources through the PDC network:
 - VictoriaLogs plugin → `http://victorialogs:9428`
 - Tempo, with the trace-to-logs custom query `trace_id:="${__trace.traceId}"`
 
-Metrics carry no health values; keep it that way.
 
 ## Dashboard and alerts
 
@@ -119,6 +118,6 @@ The new group gets the default 60 s evaluation interval. Step 4 overwrites the r
 
 ## The PDC agent
 
-`pdc-agent` only accepts its token as a CLI flag. The entrypoint reads it from the secret file at start, so it is not in the compose files or in `docker inspect`, but the token is in the process argv: visible to every user on the host via `ps` or `/proc/<pid>/cmdline`, as well as inside the container. Treat the host as trusted, and rotate the token if that changes.
+`pdc-agent` takes its token only as a command-line flag. It is read from the secret file at start, so it isn't in the compose files or `docker inspect`, but it is visible in the process list to every user on the host: treat the host as trusted.
 
-The agent sits on a dedicated internal `pdc` network shared only with VictoriaMetrics and VictoriaLogs, plus its own `pdc-egress` network for Grafana Cloud. (`-permit-domains` exists but is honoured only with `-use-gossh`, which is not used here; the network is the restriction.) So neither the agent nor a Grafana Cloud data source routed through PDC can reach coachd (8080, 8081, 9090), Alloy (4318, 12345) or Tailscale. Remaining exposure: through `pdc-egress` the agent can still reach the internet, the LAN and the host's addresses, as any container with outbound access can.
+The agent shares an internal network only with VictoriaMetrics and VictoriaLogs, so neither it nor a Grafana Cloud data source can reach coachd, Alloy or Tailscale.

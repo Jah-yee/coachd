@@ -3,7 +3,7 @@ title: Configuration
 weight: 1
 ---
 
-Settings live in `deploy/.env` (copied from [`.env.example`](https://github.com/stefiix92/coachd/blob/main/deploy/.env.example)), and compose passes them to the containers. `.env` holds non-secret settings only: tokens live in [secret files](/docs/install/secrets/). Unset or empty means the default.
+Settings live in `deploy/.env` (from [`.env.example`](https://github.com/stefiix92/coachd/blob/main/deploy/.env.example)); tokens live in [secret files](/docs/install/secrets/). Unset or empty means the default.
 
 ## coachd
 
@@ -54,16 +54,4 @@ Settings live in `deploy/.env` (copied from [`.env.example`](https://github.com/
 
 ## Set by compose
 
-`compose.yaml` sets these inside the container; you don't need to change them. They matter only when running the binary outside compose.
-
-| Setting | Value in compose | Meaning |
-|---|---|---|
-| `COACHD_GARMIN_API_KEY_FILE` | `/run/secrets/garmin_api_key` | The Garmin key file. |
-| `COACHD_NTFY_TOKEN_FILE` | `/run/secrets/ntfy_token` | The ntfy token file. |
-| `COACHD_WEBHOOK_TOKEN_FILE` | unset | The webhook bearer token file, added by a [compose override](/docs/install/notifications/#post-run-webhook). |
-| `COACHD_DATA_DIR` | `/data` (default) | Database, FIT files, backups and keys. |
-| `COACHD_PUBLIC_ADDR` | `:8080` (default) | Public listener: the page, public `/mcp`, OAuth and `/device/v1`. Published on `127.0.0.1:8080` only. |
-| `COACHD_PRIVATE_ADDR` | `:8081` (default) | Private listener: `/mcp` for Tailscale clients. Never published. |
-| `COACHD_OPS_ADDR` | `:9090` (default) | Ops listener: `/livez`, `/readyz` and unauthenticated pprof. Never published. |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://alloy:4318` | Where telemetry goes; Alloy routes each signal. |
-| `GOMEMLIMIT` | `100MiB` | Soft heap limit below the container's 128 MB memory limit. |
+`compose.yaml` also sets settings you don't change: the secret file paths (`COACHD_GARMIN_API_KEY_FILE`, `COACHD_NTFY_TOKEN_FILE`, and `COACHD_WEBHOOK_TOKEN_FILE` from a [compose override](/docs/install/notifications/#post-run-webhook)), the data directory (`COACHD_DATA_DIR`, `/data`), the listeners (`COACHD_PUBLIC_ADDR` `:8080`, `COACHD_PRIVATE_ADDR` `:8081`, `COACHD_OPS_ADDR` `:9090` for `/livez`, `/readyz` and pprof) and the telemetry endpoint (Alloy).

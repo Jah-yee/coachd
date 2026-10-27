@@ -31,37 +31,37 @@ layout: hextra-home
   {{< hextra/feature-card
     title="Your Garmin data, for any agent"
     icon="chart-bar"
-    subtitle="Activities with their FIT files, sleep, HRV, resting HR, Body Battery and more, from the official Garmin Connect Personal API. Claude, ChatGPT, Cursor or a local model reads them over MCP."
+    subtitle="Activities with their FIT files, sleep, HRV and more, from the official Garmin Connect Personal API, over MCP to Claude, ChatGPT or any MCP client."
     link="docs/how-it-works/"
   >}}
   {{< hextra/feature-card
     title="Nothing reaches the watch without you"
     icon="finger-print"
-    subtitle="The agent proposes a workout. You read it, with the agent's reasons and coachd's warnings, and approve it with a passkey. No agent credential can approve, deliver or withdraw anything."
+    subtitle="The agent proposes; you read the workout, its reasons and coachd's warnings, and approve with a passkey. No agent credential can approve, deliver or withdraw."
     link="docs/workouts/"
   >}}
   {{< hextra/feature-card
     title="On your wrist or your trainer"
     icon="lightning-bolt"
-    subtitle="The Connect IQ watch app copies approved workouts onto your fēnix or Forerunner. Or download the FIT file, or a Zwift workout for cycling."
-    link="docs/watch/"
+    subtitle="The coachd app from the Connect IQ Store copies approved workouts onto your fēnix or Forerunner. Or download the FIT file, or a Zwift workout for cycling."
+    link="https://apps.garmin.com/apps/14f05551-a935-44d7-9227-6b4762e4b341"
   >}}
   {{< hextra/feature-card
     title="Planned vs actual"
     icon="clipboard-check"
-    subtitle="coachd reads the executed steps back from each activity and links them to the workout it delivered, so the agent can review a week of plans against what you did."
+    subtitle="Executed steps are read back from each activity and linked to the workout delivered, so the agent can review the plan against what you did."
     link="docs/how-it-works/#planned-vs-actual"
   >}}
   {{< hextra/feature-card
-    title="Runs on a Raspberry Pi"
+    title="Self-hosted, one runner"
     icon="server"
-    subtitle="One signed multi-arch Docker image for a Pi, a home server or a VPS. One instance serves one runner, and your Garmin key stays on your hardware."
+    subtitle="One signed Docker image, one instance per runner. Your Garmin key and your health data stay on your server."
     link="docs/install/"
   >}}
   {{< hextra/feature-card
     title="A gateway, not a coach"
     icon="shield-check"
-    subtitle="coachd computes numbers, never verdicts. You and your agent decide the training; coachd provides the data, keeps the context, warns and delivers."
+    subtitle="Numbers, never verdicts. You and your agent decide the training; coachd provides the data, keeps the context, warns and delivers."
     link="docs/"
   >}}
 {{< /hextra/feature-grid >}}

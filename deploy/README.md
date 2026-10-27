@@ -15,7 +15,7 @@ Where the former sections of this file went:
 | 4. Tailscale (private lane) | [Tailscale](https://stefiix92.github.io/coachd/docs/install/tailscale/) |
 | 5. Grafana Cloud | [Grafana Cloud](https://stefiix92.github.io/coachd/docs/operations/grafana-cloud/) |
 | 6. Local monitoring | [Monitoring](https://stefiix92.github.io/coachd/docs/operations/monitoring/) |
-| 7. Encrypted `/data` | [Install](https://stefiix92.github.io/coachd/docs/install/#put-the-data-on-an-encrypted-disk) |
+| 7. Encrypted `/data` | [Install](https://stefiix92.github.io/coachd/docs/install/#encrypt-the-data-disk) |
 | 8. ntfy, post-run webhook | [ntfy and webhook](https://stefiix92.github.io/coachd/docs/install/notifications/) |
 | 9. Built-in auth | [Built-in auth](https://stefiix92.github.io/coachd/docs/install/builtin-auth/) |
 | 10. Watch app | [Watch app](https://stefiix92.github.io/coachd/docs/watch/) |
