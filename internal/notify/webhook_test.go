@@ -121,15 +121,20 @@ func TestWebhookSendsEvent(t *testing.T) {
 	defer srv.Close()
 	rig := newWebhookRig(t, srv.URL+"/hook/secret-path", "hook-token")
 	rig.w.ActivityStored(context.Background(), run26)
-	rig.run(t, func() bool { mu.Lock(); defer mu.Unlock(); return len(bodies) == 1 })
-	if bodies[0] != `{"event":"activity.stored","activity_id":24745625144,"date":"2026-10-26","sport":"running","proposal_id":null}` {
-		t.Fatalf("body %s", bodies[0])
+	// Wait for the counted outcome, not the server's receipt: the handler
+	// records the body before the response reaches coachd, and stopping Run
+	// in between interrupts the send, which is not counted.
+	rig.run(t, func() bool { return rig.outcomes(t)["sent"] == 1 })
+	if got := rig.outcomes(t); len(got) != 1 {
+		t.Fatalf("outcomes %v", got)
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if len(bodies) != 1 || bodies[0] != `{"event":"activity.stored","activity_id":24745625144,"date":"2026-10-26","sport":"running","proposal_id":null}` {
+		t.Fatalf("bodies %q", bodies)
 	}
 	if auth != "Bearer hook-token" || ctype != "application/json" {
 		t.Fatalf("headers %q %q", auth, ctype)
-	}
-	if got := rig.outcomes(t); got["sent"] != 1 {
-		t.Fatalf("outcomes %v", got)
 	}
 }
 
