@@ -7,6 +7,11 @@ updates:
     groups:
       go:
         patterns: ["*"]
+  # The docs site's Hugo theme (Hextra), a Go module.
+  - package-ecosystem: gomod
+    directory: /docs
+    schedule:
+      interval: weekly
   - package-ecosystem: github-actions
     directory: /
     schedule:

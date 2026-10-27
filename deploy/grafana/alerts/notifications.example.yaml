@@ -1,5 +1,5 @@
 # Example notification setup for coachd alerts (not provisioned automatically).
-# Replace the ntfy placeholders; see README.md.
+# Replace the ntfy placeholders; see https://stefiix92.github.io/coachd/docs/operations/grafana-cloud/
 apiVersion: 1
 contactPoints:
   # Example only. Replace the URL placeholder with your ntfy topic URL. Keep the

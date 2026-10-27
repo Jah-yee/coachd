@@ -6,6 +6,14 @@ The release workflow publishes the section whose heading matches the pushed tag 
 
 ## [Unreleased]
 
+### Added
+
+- **Documentation site** at [stefiix92.github.io/coachd](https://stefiix92.github.io/coachd/): install, agents, workouts, the watch app, operations and reference, with search, built with Hugo and the Hextra theme from `docs/` and published to GitHub Pages by the new `docs` workflow. Every page is also served as Markdown, with an `llms.txt` index, for agents reading the docs.
+
+### Changed
+
+- The install guide (`deploy/README.md`), the watch app guide (`watch/README.md`) and the Grafana guide (`deploy/grafana/README.md`) moved to the documentation site; those files now point to its pages. The README is shorter and links to the site.
+
 ## [0.5.0] - 2026-10-26
 
 ### Added

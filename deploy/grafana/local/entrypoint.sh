@@ -9,7 +9,7 @@ set -eu
 src=/etc/coachd-grafana
 dst=/tmp/provisioning
 secret=/run/secrets/grafana_alert_url
-bad="coachd: secrets/grafana_alert_url must be one https:// URL (see deploy/README.md)"
+bad="coachd: secrets/grafana_alert_url must be one https:// URL (see https://stefiix92.github.io/coachd/docs/operations/monitoring/)"
 rm -rf "$dst"
 mkdir -p "$dst/datasources" "$dst/dashboards" "$dst/alerting" "$dst/plugins"
 cp "$src"/provisioning/datasources/*.yaml "$dst/datasources/"
