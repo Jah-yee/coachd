@@ -44,7 +44,7 @@ layout: hextra-home
     title="On your wrist or your trainer"
     icon="lightning-bolt"
     subtitle="The coachd app from the Connect IQ Store copies approved workouts onto your fēnix or Forerunner. Or download the FIT file, or a Zwift workout for cycling."
-    link="docs/watch/"
+    link="https://apps.garmin.com/apps/14f05551-a935-44d7-9227-6b4762e4b341"
   >}}
   {{< hextra/feature-card
     title="Planned vs actual"
