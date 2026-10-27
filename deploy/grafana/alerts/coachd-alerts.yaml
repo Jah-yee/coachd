@@ -2,7 +2,7 @@
 # coachd-vm is the fixed UID of the VictoriaMetrics data source that the local
 # Grafana provisions; use this file as is there. Only on Grafana Cloud with an
 # existing data source under another UID, rewrite a copy first:
-# sed 's/coachd-vm/<uid>/g' (see README.md).
+# sed 's/coachd-vm/<uid>/g' (see https://stefiix92.github.io/coachd/docs/operations/grafana-cloud/#data-source-uid).
 apiVersion: 1
 groups:
   - orgId: 1

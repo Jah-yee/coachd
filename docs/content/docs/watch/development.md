@@ -1,0 +1,80 @@
+---
+title: Development
+weight: 4
+---
+
+Building the watch app yourself is for development and for the Store uploads; runners install it from the Store. The source is in [`watch/`](https://github.com/stefiix92/coachd/tree/main/watch).
+
+## Prerequisites
+
+- **Connect IQ SDK 9.3.0** unpacked at `~/.cache/connectiq/sdk-9.3.0`, or point `CIQ_SDK` at another SDK directory, such as one the SDK Manager installed under `~/Library/Application Support/Garmin/ConnectIQ/Sdks/`. The builds use `$CIQ_SDK/bin/monkeyc`, which runs from the Linux or the macOS SDK alike; the simulator (needed only for the tests) runs only from the macOS SDK.
+- **Java 17** on `PATH` (monkeyc is a Java program), for example `brew install openjdk@17` and `export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"`.
+- **Device files.** They come from the Connect IQ SDK Manager and need a Garmin developer login: sign in and download the devices; they land in `~/Library/Application Support/Garmin/ConnectIQ/Devices/`. A sideload or test build needs its one device (default `fenix7spro`; a test build falls back to `fenix6pro`). A Store build needs every device in `manifest.xml` and lists the missing ones.
+
+## Build
+
+```bash
+cd watch
+COACHD_PUBLIC_URL=https://coachd.example.com ./build.sh        # bin/coachd.prg, sideload
+COACHD_PUBLIC_URL=https://coachd.example.com ./build.sh test   # bin/coachd-test.prg
+./build.sh store                                               # bin/coachd.iq, the public Store app
+./build.sh store-beta                                          # bin/coachd-beta.iq, the Store beta
+```
+
+- **Two app ids.** The public id in `manifest.xml` ("coachd") is used only by `store`. Sideload, test and `store-beta` builds use a dev id ("coachd dev"), so they sit next to the Store install instead of replacing it; a Store beta cannot use the public app's id. `build.sh` writes the dev manifest and `bin/dev.jungle` on every build and never edits tracked files.
+- **The URL.** Sideloaded apps get no phone settings, so sideload and test builds compile `COACHD_PUBLIC_URL` into `source/Config.mc` (generated from `source/Config.mc.example`, git-ignored) as the setting's default; it must be `https://`. Store builds take no URL and embed none (`build.sh` refuses a set `COACHD_PUBLIC_URL`).
+- `CIQ_DEVICE` picks the device of a sideload or test build: any product in `manifest.xml`.
+- Builds use strict type checking (`-l 3`) and show warnings (`-w`). Store builds warn, for each watch without watch-app glances (fēnix 5 and 6, the Forerunners), that the `:glance` annotation is ignored; that is expected.
+
+{{< callout type="warning" >}}
+The first build creates the developer key `.secrets/ciq-developer.der` at the repo root (RSA 4096, PKCS#8 DER, mode 0600, git-ignored). Every build is signed with it, Store uploads included. Keep it and back it up: an update signed with another key is another app.
+{{< /callout >}}
+
+## Supported devices
+
+`./devices.sh` lists the installed fēnix and Forerunner device files that run watch apps at API level 3.0 or later and have app workouts and FIT downloads, which the sync needs. Paste its output into `<iq:products>` in `manifest.xml` after downloading new devices.
+
+## Sideload
+
+The watch is an MTP device, so the Mac needs [OpenMTP](https://openmtp.ganeshrvel.com/) (`brew install --cask openmtp`) or Android File Transfer.
+
+{{% steps %}}
+
+### Free the USB connection
+
+Quit Garmin Express, and any app that grabs USB devices: Chrome with a WebUSB tab or the ChatGPT desktop app take the watch for themselves, and OpenMTP then sees nothing.
+
+### Connect the watch
+
+Connect it with its USB cable, directly to the Mac: a dock or hub may pass only power. Check that the Mac sees it (Garmin's USB vendor id is 0x091e): `ioreg -p IOUSB -l -w0 | grep -c '"idVendor" = 2334'` prints 1. If it does but OpenMTP still shows nothing, `killall ptpcamerad` and press Refresh.
+
+### Copy the app
+
+Open the watch in OpenMTP and copy `watch/bin/coachd.prg` into `GARMIN/APPS/`.
+
+### Disconnect
+
+The app appears in the apps list as "coachd dev".
+
+{{% /steps %}}
+
+To update, copy the new `coachd.prg` over the old one. A `coachd.prg` from a build before the Store release used the public id: it is a separate app, so delete it from `GARMIN/APPS/`. If the app does not start, look in `GARMIN/APPS/LOGS/CIQ_LOG.YML` on the watch.
+
+## Store upload
+
+The listing text and the upload checklist (beta first, the public app only after the owner approves the beta) are in [`watch/STORE.md`](https://github.com/stefiix92/coachd/blob/main/watch/STORE.md).
+
+## Tests
+
+The `(:test)` suite covers the pure parts of the sync and the background check (`SyncModel`: what to download, remove and forget, which errors stop a sync, parsing coachd's answers, what to notify, dates), `PairingModel` (whether a stored pairing is resumed, and its expiry), `ServerModel` (normalising the URL setting and when to forget a server) and `Fmt` (durations, distances, day labels), plus `CoachdApp.reconcile`, the default URL, the 404 message and a stale pairing answer against the simulator's storage. Smoke tests draw every screen and the glance into an offscreen bitmap, and run the background check's notification on canned answers.
+
+It runs only in the Connect IQ simulator, which needs its GUI and the macOS SDK (from the SDK Manager):
+
+```bash
+export CIQ_SDK="$HOME/Library/Application Support/Garmin/ConnectIQ/Sdks/<macOS SDK 9.3.0 directory>"
+COACHD_PUBLIC_URL=https://coachd.example.com ./build.sh test
+"$CIQ_SDK/bin/connectiq"                                       # starts the simulator
+"$CIQ_SDK/bin/monkeydo" bin/coachd-test.prg fenix7spro -t      # or the device build.sh printed
+```
+
+The results list the 40 tests and end with `PASSED`; `monkeydo` exits 1 even then, so read the last line. `build.sh test` adds `test/` to the source path; the app build leaves it out.

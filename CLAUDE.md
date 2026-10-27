@@ -16,6 +16,7 @@ Implemented: M1 (data gateway), M2 (context, proposals, passkey approval, ntfy, 
 - Compose check: `docker compose -f deploy/compose.yaml config` (add `-f deploy/compose.cloud.yaml` for the cloud override)
 - Perf: `COACHD_PERF=1 go test -run Perf ./cmd/coachd/`
 - FIT decode benchmark: `go test -bench Decode36k -benchmem ./internal/fitdata/`
+- Docs site: `hugo server` in `docs/` (Hugo extended; Hextra theme as a Go module in `docs/go.mod`). User docs live in `docs/content/` and publish to https://stefiix92.github.io/coachd/ via `.github/workflows/docs.yml`; update them with behaviour or configuration changes.
 
 ## What coachd is
 

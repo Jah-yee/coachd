@@ -1,0 +1,113 @@
+# coachd documentation site: Hugo with the Hextra theme, published to GitHub
+# Pages by .github/workflows/docs.yml. Preview: `hugo server` in this directory.
+baseURL: https://stefiix92.github.io/coachd/
+title: coachd
+locale: en
+enableRobotsTXT: true
+enableGitInfo: true
+
+# Every page also as Markdown, and /llms.txt, for AI agents reading the docs.
+outputs:
+  home: [html, llms]
+  page: [html, markdown]
+  section: [html, rss, markdown]
+
+module:
+  hugoVersion:
+    extended: true
+    min: "0.146.0"
+  imports:
+    - path: github.com/imfing/hextra
+  # docs/ also holds the design records and the README screenshots: only
+  # content/ is the site, and images/ is served as /images/.
+  mounts:
+    - source: content
+      target: content
+    - source: images
+      target: static/images
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: Docs
+      pageRef: /docs
+      weight: 1
+    - name: Changelog ↗
+      url: https://github.com/stefiix92/coachd/blob/main/CHANGELOG.md
+      weight: 2
+    - name: Search
+      weight: 3
+      params:
+        type: search
+    - name: GitHub
+      weight: 4
+      url: https://github.com/stefiix92/coachd
+      params:
+        icon: github
+  sidebar:
+    - identifier: more
+      name: More
+      params:
+        type: separator
+      weight: 1
+    - name: Changelog ↗
+      url: https://github.com/stefiix92/coachd/blob/main/CHANGELOG.md
+      weight: 2
+    - name: Releases ↗
+      url: https://github.com/stefiix92/coachd/releases
+      weight: 3
+    - name: Contributing ↗
+      url: https://github.com/stefiix92/coachd/blob/main/CONTRIBUTING.md
+      weight: 4
+    - name: Security policy ↗
+      url: https://github.com/stefiix92/coachd/blob/main/SECURITY.md
+      weight: 5
+
+params:
+  description: A self-hosted gateway between your AI coach and your Garmin watch.
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: images/coachd-icon.svg
+      width: 28
+      height: 28
+    width: wide
+  theme:
+    default: system
+    displayToggle: true
+  footer:
+    enable: true
+    displayCopyright: false
+    displayPoweredBy: true
+  displayUpdatedDate: true
+  dateFormat: "2 January 2006"
+  search:
+    enable: true
+    type: flexsearch
+    flexsearch:
+      index: content
+      tokenize: forward
+  editURL:
+    enable: true
+    base: https://github.com/stefiix92/coachd/edit/main/docs/content
+  highlight:
+    copy:
+      enable: true
+      display: hover
+  page:
+    width: normal
+    contextMenu:
+      enable: true
+      links:
+        - name: Open in Claude
+          icon: claude
+          url: "https://claude.ai/new?q=I%27m+reading+the+coachd+documentation%3A+{url}%0AHelp+me+with+it."
+  imageZoom:
+    enable: true

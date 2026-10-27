@@ -2,7 +2,7 @@
 # Public lane: a HOST cloudflared (dashboard-managed tunnel) forwards to
 # http://localhost:8080, which is coachd's public listener published on
 # loopback only. Nothing else is published. Private lane: tailscale container.
-# Grafana Cloud is OFF by default; enable it by adding compose.cloud.yaml (see README).
+# Grafana Cloud is OFF by default; enable it by adding compose.cloud.yaml (https://stefiix92.github.io/coachd/docs/operations/grafana-cloud/).
 
 name: coachd
 
@@ -25,7 +25,7 @@ services:
       context: ..
       args:
         VERSION: ${COACHD_VERSION:-dev}
-    # A release image (see deploy/README.md) or the local build.
+    # A release image (https://stefiix92.github.io/coachd/docs/install/image/) or the local build.
     image: ${COACHD_IMAGE:-coachd:local}
     # Only the public listener, only on loopback, for the host cloudflared.
     # :8081 (private) and :9090 (ops, unauthenticated pprof) are never published.
@@ -90,7 +90,7 @@ services:
       TS_STATE_DIR: /var/lib/tailscale
       TS_SERVE_CONFIG: /config/serve.json
     # No capabilities added (DAC_READ_SEARCH would enable open_by_handle_at
-    # host-file reads). The key file must be owned 0:0, mode 0400 (see README).
+    # host-file reads). The key file must be owned 0:0, mode 0400 (https://stefiix92.github.io/coachd/docs/install/secrets/).
     secrets:
       - tailscale_authkey
     volumes:
